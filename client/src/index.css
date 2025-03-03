@@ -3,11 +3,36 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --sidebar-width: 240px;
+    --header-height: 64px;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-gray-50 text-foreground;
   }
+}
+
+.sidebar {
+  @apply fixed top-0 left-0 h-full w-[var(--sidebar-width)] bg-[#31373D] text-white transition-transform duration-200 ease-in-out z-40;
+}
+
+.main-content {
+  @apply ml-0 md:ml-[var(--sidebar-width)] min-h-screen bg-gray-50 transition-all duration-200;
+}
+
+.header {
+  @apply fixed top-0 right-0 left-0 md:left-[var(--sidebar-width)] h-[var(--header-height)] bg-white border-b border-gray-200 z-30;
+}
+
+.page-container {
+  @apply pt-[calc(var(--header-height)+24px)] px-4 md:px-8 pb-8;
+}
+
+.card {
+  @apply bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200;
 }

@@ -7,23 +7,56 @@ import Dashboard from "@/pages/dashboard";
 import TrendAnalysis from "@/pages/trend-analysis";
 import Predictions from "@/pages/predictions";
 import Sidebar from "@/components/Sidebar";
+import { Bell, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+function Header() {
+  return (
+    <header className="header">
+      <div className="flex items-center justify-between h-full px-4">
+        <div className="flex items-center flex-1">
+          <div className="w-full max-w-lg">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="pl-9 bg-gray-50 border-gray-300 focus:border-gray-500"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative text-gray-700 hover:text-gray-900"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 function Router() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <main className="flex-1 px-4 md:px-8 py-8 overflow-x-hidden">
-          <div className="max-w-7xl mx-auto">
-            <Switch>
-              <Route path="/" component={Dashboard} />
-              <Route path="/trend-analysis" component={TrendAnalysis} />
-              <Route path="/predictions" component={Predictions} />
-              <Route component={NotFound} />
-            </Switch>
-          </div>
-        </main>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar />
+      <Header />
+      <main className="main-content">
+        <div className="page-container">
+          <Switch>
+            <Route path="/" component={Dashboard} />
+            <Route path="/trend-analysis" component={TrendAnalysis} />
+            <Route path="/predictions" component={Predictions} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
+      </main>
     </div>
   );
 }
