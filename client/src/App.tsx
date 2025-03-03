@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import Content from "@/pages/content";
 import Commerce from "@/pages/commerce";
 import CommerceOverview from "@/pages/commerce/Overview";
+import Automations from "@/pages/automations";
 
 function Header() {
   return (
@@ -63,6 +64,7 @@ function Router() {
             <Route path="/commerce/overview" component={CommerceOverview} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
+            <Route path="/automations" component={Automations} />
             <Route component={NotFound} />
           </Switch>
         </div>
