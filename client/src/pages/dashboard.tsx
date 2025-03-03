@@ -4,6 +4,7 @@ import { fetchTrendData } from "@/lib/trends";
 import { Trend } from "@shared/schema";
 import { ArrowUp, DollarSign, Package, Users, Mail, Phone, MessageSquare, Calendar } from "lucide-react";
 import TrendChart from "@/components/TrendChart";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const { data: trends, isLoading } = useQuery<Trend[]>({
@@ -32,36 +33,36 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Tasks Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your tasks</CardTitle>
+        <Card className="overflow-hidden border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600">
+            <CardTitle className="text-xl text-white">Your tasks</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div className="space-y-6">
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-2">HIGH PRIORITY</h3>
-                <div className="text-2xl font-bold">0</div>
+                <div className="text-3xl font-bold text-red-500">0</div>
               </div>
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-2">ALL TASKS</h3>
-                <div className="text-2xl font-bold">0</div>
+                <div className="text-3xl font-bold text-blue-500">0</div>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center text-sm">
-                  <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                  <span>To-dos (0)</span>
+              <div className="space-y-3">
+                <div className="flex items-center text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                  <Mail className="h-5 w-5 mr-3 text-blue-400" />
+                  <span className="font-medium">To-dos (0)</span>
                 </div>
-                <div className="flex items-center text-sm">
-                  <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                  <span>Calls (0)</span>
+                <div className="flex items-center text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                  <Phone className="h-5 w-5 mr-3 text-green-400" />
+                  <span className="font-medium">Calls (0)</span>
                 </div>
-                <div className="flex items-center text-sm">
-                  <MessageSquare className="h-4 w-4 mr-2 text-gray-400" />
-                  <span>Emails (0)</span>
+                <div className="flex items-center text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                  <MessageSquare className="h-5 w-5 mr-3 text-purple-400" />
+                  <span className="font-medium">Emails (0)</span>
                 </div>
-                <div className="flex items-center text-sm">
-                  <Users className="h-4 w-4 mr-2 text-gray-400" />
-                  <span>LinkedIn (0)</span>
+                <div className="flex items-center text-sm p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                  <Users className="h-5 w-5 mr-3 text-orange-400" />
+                  <span className="font-medium">LinkedIn (0)</span>
                 </div>
               </div>
             </div>
@@ -69,21 +70,19 @@ export default function Dashboard() {
         </Card>
 
         {/* Sequence Activities */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your sequence activities</CardTitle>
+        <Card className="overflow-hidden border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600">
+            <CardTitle className="text-xl text-white">Your sequence activities</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8">
-              <img 
-                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23CBD5E0' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'%3E%3C/path%3E%3C/svg%3E"
-                alt="No sequences"
-                className="w-16 h-16 mb-4"
-              />
-              <p className="text-gray-500 text-center">You don't have any sequences yet.</p>
-              <button className="text-blue-500 hover:text-blue-600 mt-2">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                <Package className="h-8 w-8 text-purple-500" />
+              </div>
+              <p className="text-gray-600 text-center font-medium">You don't have any sequences yet.</p>
+              <Button variant="link" className="mt-2 text-purple-500 hover:text-purple-600">
                 Manage sequences
-              </button>
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -91,25 +90,27 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Schedule Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Schedule</CardTitle>
+        <Card className="overflow-hidden border-0 shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600">
+            <CardTitle className="text-xl text-white">Schedule</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col items-center justify-center py-8">
-              <Calendar className="w-16 h-16 text-gray-300 mb-4" />
-              <p className="text-gray-500 text-center">Connect your calendar to get ready for your next meeting</p>
-              <button className="mt-4 bg-coral-500 text-white px-4 py-2 rounded hover:bg-coral-600 transition-colors">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Calendar className="h-8 w-8 text-green-500" />
+              </div>
+              <p className="text-gray-600 text-center font-medium">Connect your calendar to get ready for your next meeting</p>
+              <Button className="mt-4 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all">
                 Connect your calendar in settings
-              </button>
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {trendData && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Trend Overview</CardTitle>
+          <Card className="overflow-hidden border-0 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-amber-500 to-amber-600">
+              <CardTitle className="text-xl text-white">Trend Overview</CardTitle>
             </CardHeader>
             <CardContent>
               <TrendChart
