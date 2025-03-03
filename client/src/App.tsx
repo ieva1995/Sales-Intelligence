@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Content from "@/pages/content";
 import Commerce from "@/pages/commerce";
+import CommerceOverview from "@/pages/commerce/Overview";
 
 function Header() {
   return (
@@ -59,6 +60,7 @@ function Router() {
             <Route path="/marketing" component={Marketing} />
             <Route path="/content" component={Content} />
             <Route path="/commerce" component={Commerce} />
+            <Route path="/commerce/overview" component={CommerceOverview} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route component={NotFound} />
