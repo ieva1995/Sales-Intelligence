@@ -5,19 +5,15 @@ import {
   BarChart2,
   ShoppingBag,
   Users,
-  Package,
-  DollarSign,
-  TrendingUp,
-  Brain,
-  Menu,
-  X,
-  Settings,
   MessageSquare,
-  Inbox,
   FileText,
+  Zap,
+  TrendingUp,
   Database,
   Library,
-  Zap
+  Menu,
+  X,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +26,7 @@ export default function Sidebar() {
     { href: "/crm", icon: Users, label: "CRM" },
     { href: "/marketing", icon: MessageSquare, label: "Marketing" },
     { href: "/content", icon: FileText, label: "Content" },
-    { href: "/sales", icon: ShoppingBag, label: "Commerce" },
+    { href: "/commerce", icon: ShoppingBag, label: "Commerce" },
     { href: "/automations", icon: Zap, label: "Automations" },
     { href: "/reporting", icon: TrendingUp, label: "Reporting" },
     { href: "/data", icon: Database, label: "Data Management" },
@@ -52,7 +48,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <div
         className={cn(
-          "sidebar",
+          "fixed top-0 left-0 h-full w-64 bg-slate-700 shadow-lg z-40 transition-transform duration-200 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
@@ -63,33 +59,33 @@ export default function Sidebar() {
         <nav className="space-y-1 px-3">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href}>
-              <div
+              <a
                 className={cn(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer",
+                  "flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors duration-200",
                   location === item.href
-                    ? "bg-gray-700 text-white"
-                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    ? "bg-slate-600 text-white"
+                    : "text-gray-300 hover:bg-slate-600 hover:text-white"
                 )}
                 onClick={() => setIsOpen(false)}
               >
                 <item.icon className="mr-3 h-5 w-5" />
                 {item.label}
-              </div>
+              </a>
             </Link>
           ))}
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <Link href="/settings">
-            <div className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white rounded-md cursor-pointer">
+            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer">
               <Settings className="mr-3 h-5 w-5" />
               Settings
-            </div>
+            </a>
           </Link>
         </div>
       </div>
 
-      {/* Overlay */}
+      {/* Mobile Overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/20 z-30 md:hidden"
