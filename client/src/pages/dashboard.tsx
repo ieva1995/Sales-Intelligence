@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import TrendChart from "@/components/TrendChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchTrendData } from "@/lib/trends";
 import { Trend } from "@shared/schema";
 import { ArrowUp, DollarSign, Package, Users } from "lucide-react";
+import TrendChart from "@/components/TrendChart";
+import ActivityGlobe from "@/components/ActivityGlobe";
 
 export default function Dashboard() {
   const { data: trends, isLoading } = useQuery<Trend[]>({
@@ -96,19 +97,23 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      {trendData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Trend Overview</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TrendChart
-              data={trendData.timelineData}
-              title=""
-            />
-          </CardContent>
-        </Card>
-      )}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ActivityGlobe />
+
+        {trendData && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Trend Overview</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TrendChart
+                data={trendData.timelineData}
+                title=""
+              />
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
