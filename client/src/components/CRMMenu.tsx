@@ -1,25 +1,30 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
+import { ChevronUp } from "lucide-react";
 
 interface CRMMenuItem {
   label: string;
   href: string;
+  hasSubmenu?: boolean;
+  gradient?: string;
 }
 
 const menuItems: CRMMenuItem[] = [
-  { label: "Contacts", href: "/crm/contacts" },
-  { label: "Companies", href: "/crm/companies" },
-  { label: "Deals", href: "/crm/deals" },
-  { label: "Tickets", href: "/crm/tickets" },
-  { label: "Lists", href: "/crm/lists" },
-  { label: "Inbox", href: "/crm/inbox" },
-  { label: "Calls", href: "/crm/calls" },
-  { label: "Tasks", href: "/crm/tasks" },
+  { label: "Contacts", href: "/crm/contacts", gradient: "from-blue-500 to-blue-600" },
+  { label: "Companies", href: "/crm/companies", gradient: "from-green-500 to-green-600" },
+  { label: "Deals", href: "/crm/deals", gradient: "from-purple-500 to-purple-600" },
+  { label: "Tickets", href: "/crm/tickets", gradient: "from-pink-500 to-pink-600" },
+  { label: "Lists", href: "/crm/lists", gradient: "from-amber-500 to-amber-600" },
+  { label: "Inbox", href: "/crm/inbox", gradient: "from-red-500 to-red-600" },
+  { label: "Calls", href: "/crm/calls", gradient: "from-cyan-500 to-cyan-600" },
+  { label: "Tasks", href: "/crm/tasks", gradient: "from-indigo-500 to-indigo-600" },
 ];
 
 export default function CRMMenu() {
+  const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <div className="relative">
@@ -35,12 +40,9 @@ export default function CRMMenu() {
       <nav
         className={cn(
           "absolute left-0 bg-slate-700 text-white rounded-lg shadow-xl overflow-hidden w-48 transition-all duration-300 ease-in-out",
-          // Mobile: Fade in/out
           "md:relative md:w-full",
           isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
         )}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
       >
         <div className="py-2">
           {menuItems.map((item) => (
@@ -49,8 +51,32 @@ export default function CRMMenu() {
               href={item.href}
               onClick={() => setIsOpen(false)}
             >
-              <a className="block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-colors">
-                {item.label}
+              <a 
+                className={cn(
+                  "block px-6 py-3 text-gray-100 transition-all duration-200",
+                  "relative group flex items-center justify-between",
+                  "hover:scale-105 transform",
+                  location === item.href
+                    ? `bg-gradient-to-r ${item.gradient} text-white`
+                    : "hover:text-white"
+                )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                  item.gradient,
+                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
+                )} />
+                <span className="relative z-10">{item.label}</span>
+                {item.hasSubmenu && (
+                  <ChevronUp 
+                    className={cn(
+                      "h-4 w-4 text-gray-400 transition-all duration-200",
+                      hoveredItem === item.label ? "rotate-180" : ""
+                    )}
+                  />
+                )}
               </a>
             </Link>
           ))}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
 import { ChevronUp } from "lucide-react";
 
@@ -7,25 +7,28 @@ interface ContentMenuItem {
   label: string;
   href: string;
   hasSubmenu?: boolean;
+  gradient?: string;
 }
 
 const menuItems: ContentMenuItem[] = [
-  { label: "Website Pages", href: "/content/website-pages" },
-  { label: "Landing Pages", href: "/content/landing-pages" },
-  { label: "Blog", href: "/content/blog" },
-  { label: "Podcasts", href: "/content/podcasts", hasSubmenu: true },
-  { label: "Case Studies", href: "/content/case-studies", hasSubmenu: true },
-  { label: "Embeds", href: "/content/embeds", hasSubmenu: true },
-  { label: "Knowledge Base", href: "/content/knowledge-base", hasSubmenu: true },
-  { label: "Customer Portal", href: "/content/customer-portal", hasSubmenu: true },
-  { label: "Remix", href: "/content/remix", hasSubmenu: true },
-  { label: "SEO", href: "/content/seo", hasSubmenu: true },
-  { label: "Memberships", href: "/content/memberships", hasSubmenu: true },
-  { label: "Design Manager", href: "/content/design-manager" },
+  { label: "Website Pages", href: "/content/website-pages", gradient: "from-blue-500 to-blue-600" },
+  { label: "Landing Pages", href: "/content/landing-pages", gradient: "from-green-500 to-green-600" },
+  { label: "Blog", href: "/content/blog", gradient: "from-purple-500 to-purple-600" },
+  { label: "Podcasts", href: "/content/podcasts", hasSubmenu: true, gradient: "from-pink-500 to-pink-600" },
+  { label: "Case Studies", href: "/content/case-studies", hasSubmenu: true, gradient: "from-amber-500 to-amber-600" },
+  { label: "Embeds", href: "/content/embeds", hasSubmenu: true, gradient: "from-red-500 to-red-600" },
+  { label: "Knowledge Base", href: "/content/knowledge-base", hasSubmenu: true, gradient: "from-cyan-500 to-cyan-600" },
+  { label: "Customer Portal", href: "/content/customer-portal", hasSubmenu: true, gradient: "from-indigo-500 to-indigo-600" },
+  { label: "Remix", href: "/content/remix", hasSubmenu: true, gradient: "from-teal-500 to-teal-600" },
+  { label: "SEO", href: "/content/seo", hasSubmenu: true, gradient: "from-violet-500 to-violet-600" },
+  { label: "Memberships", href: "/content/memberships", hasSubmenu: true, gradient: "from-fuchsia-500 to-fuchsia-600" },
+  { label: "Design Manager", href: "/content/design-manager", gradient: "from-rose-500 to-rose-600" },
 ];
 
 export default function ContentMenu() {
+  const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <div className="relative">
@@ -44,8 +47,6 @@ export default function ContentMenu() {
           "md:relative md:w-full",
           isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
         )}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
       >
         <div className="py-2">
           {menuItems.map((item) => (
@@ -54,10 +55,31 @@ export default function ContentMenu() {
               href={item.href}
               onClick={() => setIsOpen(false)}
             >
-              <a className="block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-colors flex items-center justify-between">
-                {item.label}
+              <a 
+                className={cn(
+                  "block px-6 py-3 text-gray-100 transition-all duration-200",
+                  "relative group flex items-center justify-between",
+                  "hover:scale-105 transform",
+                  location === item.href
+                    ? `bg-gradient-to-r ${item.gradient} text-white`
+                    : "hover:text-white"
+                )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                  item.gradient,
+                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
+                )} />
+                <span className="relative z-10">{item.label}</span>
                 {item.hasSubmenu && (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                  <ChevronUp 
+                    className={cn(
+                      "h-4 w-4 text-gray-400 transition-all duration-200",
+                      hoveredItem === item.label ? "rotate-180" : ""
+                    )}
+                  />
                 )}
               </a>
             </Link>

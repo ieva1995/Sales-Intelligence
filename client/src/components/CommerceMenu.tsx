@@ -1,24 +1,27 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
 
 interface CommerceMenuItem {
   label: string;
   href: string;
+  gradient: string;
 }
 
 const menuItems: CommerceMenuItem[] = [
-  { label: "Overview", href: "/commerce/overview" },
-  { label: "Payments", href: "/commerce/payments" },
-  { label: "Invoices", href: "/commerce/invoices" },
-  { label: "Payment Links", href: "/commerce/payment-links" },
-  { label: "Quotes", href: "/commerce/quotes" },
-  { label: "Products", href: "/commerce/products" },
-  { label: "Subscriptions", href: "/commerce/subscriptions" },
+  { label: "Overview", href: "/commerce/overview", gradient: "from-blue-500 to-blue-600" },
+  { label: "Payments", href: "/commerce/payments", gradient: "from-green-500 to-green-600" },
+  { label: "Invoices", href: "/commerce/invoices", gradient: "from-purple-500 to-purple-600" },
+  { label: "Payment Links", href: "/commerce/payment-links", gradient: "from-pink-500 to-pink-600" },
+  { label: "Quotes", href: "/commerce/quotes", gradient: "from-amber-500 to-amber-600" },
+  { label: "Products", href: "/commerce/products", gradient: "from-red-500 to-red-600" },
+  { label: "Subscriptions", href: "/commerce/subscriptions", gradient: "from-cyan-500 to-cyan-600" },
 ];
 
 export default function CommerceMenu() {
+  const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <div className="relative">
@@ -45,8 +48,24 @@ export default function CommerceMenu() {
               href={item.href}
               onClick={() => setIsOpen(false)}
             >
-              <a className="block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-colors">
-                {item.label}
+              <a 
+                className={cn(
+                  "block px-6 py-3 text-gray-100 transition-all duration-200",
+                  "relative group flex items-center justify-between",
+                  "hover:scale-105 transform",
+                  location === item.href
+                    ? `bg-gradient-to-r ${item.gradient} text-white`
+                    : "hover:text-white"
+                )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                  item.gradient,
+                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
+                )} />
+                <span className="relative z-10">{item.label}</span>
               </a>
             </Link>
           ))}

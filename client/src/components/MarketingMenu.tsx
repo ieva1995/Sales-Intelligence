@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
 import { ChevronUp } from "lucide-react";
 
@@ -7,21 +7,24 @@ interface MarketingMenuItem {
   label: string;
   href: string;
   hasSubmenu?: boolean;
+  gradient?: string;
 }
 
 const menuItems: MarketingMenuItem[] = [
-  { label: "Campaigns", href: "/marketing/campaigns", hasSubmenu: true },
-  { label: "Email", href: "/marketing/email" },
-  { label: "Social", href: "/marketing/social", hasSubmenu: true },
-  { label: "Ads", href: "/marketing/ads" },
-  { label: "Events", href: "/marketing/events" },
-  { label: "Forms", href: "/marketing/forms" },
-  { label: "Buyer Intent", href: "/marketing/buyer-intent" },
-  { label: "Lead Scoring", href: "/marketing/lead-scoring", hasSubmenu: true },
+  { label: "Campaigns", href: "/marketing/campaigns", hasSubmenu: true, gradient: "from-blue-500 to-blue-600" },
+  { label: "Email", href: "/marketing/email", gradient: "from-green-500 to-green-600" },
+  { label: "Social", href: "/marketing/social", hasSubmenu: true, gradient: "from-purple-500 to-purple-600" },
+  { label: "Ads", href: "/marketing/ads", gradient: "from-pink-500 to-pink-600" },
+  { label: "Events", href: "/marketing/events", gradient: "from-amber-500 to-amber-600" },
+  { label: "Forms", href: "/marketing/forms", gradient: "from-red-500 to-red-600" },
+  { label: "Buyer Intent", href: "/marketing/buyer-intent", gradient: "from-cyan-500 to-cyan-600" },
+  { label: "Lead Scoring", href: "/marketing/lead-scoring", hasSubmenu: true, gradient: "from-indigo-500 to-indigo-600" },
 ];
 
 export default function MarketingMenu() {
+  const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <div className="relative">
@@ -40,8 +43,6 @@ export default function MarketingMenu() {
           "md:relative md:w-full",
           isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
         )}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
       >
         <div className="py-2">
           {menuItems.map((item) => (
@@ -50,10 +51,31 @@ export default function MarketingMenu() {
               href={item.href}
               onClick={() => setIsOpen(false)}
             >
-              <a className="block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-colors flex items-center justify-between">
-                {item.label}
+              <a 
+                className={cn(
+                  "block px-6 py-3 text-gray-100 transition-all duration-200",
+                  "relative group flex items-center justify-between",
+                  "hover:scale-105 transform",
+                  location === item.href
+                    ? `bg-gradient-to-r ${item.gradient} text-white`
+                    : "hover:text-white"
+                )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                  item.gradient,
+                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
+                )} />
+                <span className="relative z-10">{item.label}</span>
                 {item.hasSubmenu && (
-                  <ChevronUp className="h-4 w-4 text-gray-400" />
+                  <ChevronUp 
+                    className={cn(
+                      "h-4 w-4 text-gray-400 transition-all duration-200",
+                      hoveredItem === item.label ? "rotate-180" : ""
+                    )}
+                  />
                 )}
               </a>
             </Link>
