@@ -18,6 +18,17 @@ export default function ActivityGlobe() {
   const [activities, setActivities] = useState<ActivityPoint[]>([]);
   const [rotation, setRotation] = useState<boolean>(true);
 
+  // Generate hexagonal grid data
+  const generateHexGrid = () => {
+    const hexData = [];
+    for (let lat = -90; lat <= 90; lat += 1) {  // Smaller step size for denser grid
+      for (let lng = -180; lng <= 180; lng += 1) {
+        hexData.push({ lat, lng });
+      }
+    }
+    return hexData;
+  };
+
   // Simulate live data
   useEffect(() => {
     const interval = setInterval(() => {
@@ -66,25 +77,25 @@ export default function ActivityGlobe() {
             />
           </div>
         </div>
-        <div className="h-[400px] relative bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="h-[400px] relative bg-[#1C2B36]"> 
           <Globe
             ref={globeEl}
-            globeImageUrl="//unpkg.com/three-globe/example/img/earth-dot.png"
             backgroundColor="rgba(0,0,0,0)"
             pointsData={activities}
             pointLat="lat"
             pointLng="lng"
-            pointColor={() => '#0091ff'}
-            pointAltitude={0.1}
-            pointRadius={1.2}
+            pointColor="#0091ff"
+            pointAltitude={0.15}
+            pointRadius={1.5}
             pointsMerge={true}
             atmosphereColor="transparent"
             atmosphereAltitude={0.1}
             onGlobeClick={() => setRotation(!rotation)}
-            hexPolygonsData={[]}
+            hexPolygonsData={generateHexGrid()}
             hexPolygonResolution={3}
             hexPolygonMargin={0.7}
-            hexPolygonColor={() => 'rgba(255,255,255,0.7)'}
+            hexPolygonColor="#64B5F6" // Lighter blue color
+            hexPolygonAltitude={0.01}
           />
         </div>
         <div className="p-4 space-y-2 border-t">
