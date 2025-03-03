@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 interface CommerceMenuItem {
   label: string;
@@ -19,6 +20,7 @@ const menuItems: CommerceMenuItem[] = [
 
 export default function CommerceMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
     <div className="relative">
@@ -47,8 +49,22 @@ export default function CommerceMenu() {
               href={item.href}
               onClick={() => setIsOpen(false)}
             >
-              <a className="block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-colors">
-                {item.label}
+              <a 
+                className={cn(
+                  "block px-6 py-3 text-gray-100 hover:bg-slate-600 hover:text-white transition-all duration-200",
+                  "relative group flex items-center justify-between",
+                  hoveredItem === item.label && "bg-slate-600"
+                )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
+              >
+                <span>{item.label}</span>
+                <ChevronRight 
+                  className={cn(
+                    "h-4 w-4 text-gray-400 transition-transform duration-200",
+                    hoveredItem === item.label ? "translate-x-1 opacity-100" : "opacity-0"
+                  )}
+                />
               </a>
             </Link>
           ))}
