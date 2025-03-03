@@ -18,7 +18,7 @@ import CommerceOverview from "@/pages/commerce/Overview";
 import Automations from "@/pages/automations";
 import Reporting from "@/pages/reporting";
 import DataManagement from "@/pages/data"; //Import the new component
-
+import Library from "@/pages/library";
 
 function Header() {
   return (
@@ -67,7 +67,8 @@ function Router() {
             <Route path="/commerce/overview" component={CommerceOverview} />
             <Route path="/automations" component={Automations} />
             <Route path="/reporting" component={Reporting} />
-            <Route path="/data" component={DataManagement} /> {/* Added new route */}
+            <Route path="/data" component={DataManagement} />
+            <Route path="/library" component={Library} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route component={NotFound} />
