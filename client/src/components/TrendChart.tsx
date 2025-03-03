@@ -8,21 +8,28 @@ interface TrendChartProps {
 
 export default function TrendChart({ data, title }: TrendChartProps) {
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle className="text-xl md:text-2xl">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[300px] md:h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
+            <LineChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis
                 dataKey="time"
                 tickFormatter={(time) => new Date(time).toLocaleDateString()}
+                stroke="hsl(var(--foreground))"
+                fontSize={12}
               />
-              <YAxis />
+              <YAxis stroke="hsl(var(--foreground))" fontSize={12} />
               <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "var(--radius)",
+                }}
                 labelFormatter={(time) => new Date(time).toLocaleDateString()}
               />
               <Line
@@ -30,6 +37,8 @@ export default function TrendChart({ data, title }: TrendChartProps) {
                 dataKey="value"
                 stroke="hsl(var(--primary))"
                 strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6 }}
               />
             </LineChart>
           </ResponsiveContainer>

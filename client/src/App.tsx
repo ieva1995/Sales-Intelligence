@@ -10,16 +10,20 @@ import Sidebar from "@/components/Sidebar";
 
 function Router() {
   return (
-    <div className="flex">
-      <Sidebar />
-      <main className="flex-1">
-        <Switch>
-          <Route path="/" component={Dashboard} />
-          <Route path="/trend-analysis" component={TrendAnalysis} />
-          <Route path="/predictions" component={Predictions} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
+    <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen">
+        <Sidebar />
+        <main className="flex-1 px-4 md:px-8 py-8 overflow-x-hidden">
+          <div className="max-w-7xl mx-auto">
+            <Switch>
+              <Route path="/" component={Dashboard} />
+              <Route path="/trend-analysis" component={TrendAnalysis} />
+              <Route path="/predictions" component={Predictions} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
