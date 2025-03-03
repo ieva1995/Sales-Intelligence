@@ -1,21 +1,21 @@
-import { googleTrends } from 'google-trends-api';
+import { apiRequest } from "./queryClient";
 
 export async function fetchTrendData(keyword: string) {
-  // Mock data for demonstration
-  const mockData = {
-    timelineData: Array.from({ length: 30 }, (_, i) => ({
-      time: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
-      value: Math.floor(Math.random() * 100)
-    }))
-  };
-
-  return mockData;
+  try {
+    const res = await apiRequest('GET', `/api/trends-data/${encodeURIComponent(keyword)}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error fetching Google Trends data:', error);
+    throw new Error('Failed to fetch trend data');
+  }
 }
 
 export async function predictTrend(keyword: string) {
-  // Mock ML prediction
-  return {
-    predictedInterest: Math.floor(Math.random() * 100),
-    confidence: Math.floor(Math.random() * 100)
-  };
+  try {
+    const res = await apiRequest('GET', `/api/trends-prediction/${encodeURIComponent(keyword)}`);
+    return await res.json();
+  } catch (error) {
+    console.error('Error predicting trend:', error);
+    throw new Error('Failed to predict trend');
+  }
 }

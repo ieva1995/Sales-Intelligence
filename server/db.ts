@@ -11,12 +11,7 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
-  maxConnections: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 // Test the connection
 pool.connect((err, client, release) => {
