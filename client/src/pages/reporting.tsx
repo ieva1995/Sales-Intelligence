@@ -3,8 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ReportingMenu from "@/components/ReportingMenu";
 import ReactConfetti from 'react-confetti';
 
-const emojis = ["😊", "🎉", "🌟", "✨", "💫", "🎈", "🎊", "🥳"];
-
 export default function Reporting() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [windowDimensions, setWindowDimensions] = useState({ 
@@ -40,14 +38,11 @@ export default function Reporting() {
         <ReactConfetti
           width={windowDimensions.width}
           height={windowDimensions.height}
-          numberOfPieces={50}
+          numberOfPieces={200}
           recycle={false}
-          confettiSource={{ x: windowDimensions.width / 2, y: 0 }}
-          drawShape={ctx => {
-            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-            ctx.font = "24px Arial";
-            ctx.fillText(emoji, 0, 0);
-          }}
+          gravity={0.2}
+          colors={['#FFD700', '#FFA500', '#FF69B4', '#87CEEB', '#98FB98']}
+          tweenDuration={5000}
         />
       )}
 
