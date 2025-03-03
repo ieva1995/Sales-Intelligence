@@ -1,7 +1,12 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Building2, Users, Cog } from "lucide-react";
 import { useLocation } from "wouter";
+import { LionSvg } from "@/components/LionSvg";
 
 interface LoginOptionProps {
   title: string;
@@ -10,36 +15,17 @@ interface LoginOptionProps {
   gradient: string;
 }
 
-const LoginOption = ({ title, description, icon: Icon, gradient }: LoginOptionProps) => {
-  const [, setLocation] = useLocation();
-
-  return (
-    <Card className="group transition-all duration-300 hover:scale-[1.02] cursor-pointer border-2 hover:border-transparent hover:shadow-xl">
-      <CardHeader>
-        <div className="flex items-center gap-4">
-          <div className={`p-3 rounded-lg bg-gradient-to-r ${gradient} group-hover:scale-110 transition-transform duration-300`}>
-            <Icon className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <CardTitle className="text-xl">{title}</CardTitle>
-            <p className="text-sm text-muted-foreground">{description}</p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Button 
-          className={`w-full bg-gradient-to-r ${gradient} hover:opacity-90 transition-opacity`}
-          onClick={() => setLocation('/settings')}
-        >
-          Login
-        </Button>
-      </CardContent>
-    </Card>
-  );
-};
-
 export default function Login() {
-  const loginOptions = [
+  const [, setLocation] = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isHappy, setIsHappy] = useState(true);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  });
+
+  const loginOptions: LoginOptionProps[] = [
     {
       title: "Enterprise Login",
       description: "For large organizations and corporate users",
@@ -60,18 +46,109 @@ export default function Login() {
     }
   ];
 
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">Choose your login type to access settings</p>
-      </div>
+  const handleLogin = () => {
+    if (formData.username && formData.password) {
+      setIsHappy(true);
+      setLocation('/settings');
+    } else {
+      setIsHappy(false);
+      setTimeout(() => setIsHappy(true), 2000);
+    }
+  };
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {loginOptions.map((option) => (
-          <LoginOption key={option.title} {...option} />
-        ))}
+  if (!selectedRole) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-4xl w-full space-y-8">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">Welcome to SalesBoost AI</h1>
+            <p className="text-muted-foreground">Choose your login type to continue</p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {loginOptions.map((option) => (
+              <motion.div
+                key={option.title}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card 
+                  className="cursor-pointer border-2 hover:border-transparent hover:shadow-xl"
+                  onClick={() => setSelectedRole(option.title)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-lg bg-gradient-to-r ${option.gradient}`}>
+                        <option.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-xl">{option.title}</CardTitle>
+                        <p className="text-sm text-muted-foreground">{option.description}</p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <Card className="max-w-md w-full">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">{selectedRole}</CardTitle>
+          <Button 
+            variant="ghost" 
+            className="absolute top-2 left-2"
+            onClick={() => setSelectedRole(null)}
+          >
+            ← Back
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex justify-center">
+            <LionSvg 
+              isPasswordVisible={showPassword} 
+              isHappy={isHappy} 
+            />
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Username</Label>
+              <Input
+                placeholder="Enter your username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                onFocus={() => setIsHappy(true)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Password</Label>
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onFocus={() => setShowPassword(true)}
+                onBlur={() => setShowPassword(false)}
+              />
+            </div>
+
+            <Button 
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600"
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
