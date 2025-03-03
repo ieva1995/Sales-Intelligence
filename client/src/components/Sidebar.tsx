@@ -65,7 +65,7 @@ export default function Sidebar() {
               <a
                 className={cn(
                   "flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer",
-                  "transition-all duration-200 transform hover:scale-105",
+                  "transition-all duration-200 transform hover:scale-102",
                   "relative overflow-hidden group",
                   location === item.href
                     ? `bg-gradient-to-r ${item.gradient} text-white`
@@ -82,8 +82,10 @@ export default function Sidebar() {
                 )} />
                 <item.icon 
                   className={cn(
-                    "mr-3 h-5 w-5 transition-all duration-200",
-                    location === item.href ? "animate-pulse" : "group-hover:scale-110 group-hover:rotate-3"
+                    "mr-3 h-5 w-5 transition-all duration-500",
+                    location === item.href 
+                      ? "animate-[pulse_2s_ease-in-out_infinite]" 
+                      : "group-hover:animate-[pulse_2s_ease-in-out_infinite]"
                   )} 
                 />
                 <span className="relative z-10">{item.label}</span>
@@ -94,8 +96,8 @@ export default function Sidebar() {
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <Link href="/settings">
-            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer group transition-all duration-200 hover:scale-105">
-              <Settings className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:rotate-90" />
+            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer group transition-all duration-200">
+              <Settings className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:animate-[pulse_2s_ease-in-out_infinite]" />
               Settings
             </a>
           </Link>
