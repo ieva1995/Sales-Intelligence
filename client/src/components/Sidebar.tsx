@@ -20,17 +20,18 @@ import { Button } from "@/components/ui/button";
 export default function Sidebar() {
   const [location] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const navItems = [
-    { href: "/", icon: BarChart2, label: "Dashboard" },
-    { href: "/crm", icon: Users, label: "CRM" },
-    { href: "/marketing", icon: MessageSquare, label: "Marketing" },
-    { href: "/content", icon: FileText, label: "Content" },
-    { href: "/commerce", icon: ShoppingBag, label: "Commerce" },
-    { href: "/automations", icon: Zap, label: "Automations" },
-    { href: "/reporting", icon: TrendingUp, label: "Reporting" },
-    { href: "/data", icon: Database, label: "Data Management" },
-    { href: "/library", icon: Library, label: "Library" },
+    { href: "/", icon: BarChart2, label: "Dashboard", gradient: "from-blue-500 to-blue-600" },
+    { href: "/crm", icon: Users, label: "CRM", gradient: "from-green-500 to-green-600" },
+    { href: "/marketing", icon: MessageSquare, label: "Marketing", gradient: "from-purple-500 to-purple-600" },
+    { href: "/content", icon: FileText, label: "Content", gradient: "from-pink-500 to-pink-600" },
+    { href: "/commerce", icon: ShoppingBag, label: "Commerce", gradient: "from-amber-500 to-amber-600" },
+    { href: "/automations", icon: Zap, label: "Automations", gradient: "from-red-500 to-red-600" },
+    { href: "/reporting", icon: TrendingUp, label: "Reporting", gradient: "from-cyan-500 to-cyan-600" },
+    { href: "/data", icon: Database, label: "Data Management", gradient: "from-indigo-500 to-indigo-600" },
+    { href: "/library", icon: Library, label: "Library", gradient: "from-teal-500 to-teal-600" },
   ];
 
   return (
@@ -53,7 +54,9 @@ export default function Sidebar() {
         )}
       >
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-white">SalesBoost AI</h2>
+          <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+            SalesBoost AI
+          </h2>
         </div>
 
         <nav className="space-y-1 px-3">
@@ -61,15 +64,29 @@ export default function Sidebar() {
             <Link key={item.href} href={item.href}>
               <a
                 className={cn(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer transition-colors duration-200",
+                  "flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer",
+                  "transition-all duration-200 transform hover:scale-105",
+                  "relative overflow-hidden group",
                   location === item.href
-                    ? "bg-slate-600 text-white"
-                    : "text-gray-300 hover:bg-slate-600 hover:text-white"
+                    ? `bg-gradient-to-r ${item.gradient} text-white`
+                    : "text-gray-300 hover:text-white"
                 )}
+                onMouseEnter={() => setHoveredItem(item.label)}
+                onMouseLeave={() => setHoveredItem(null)}
                 onClick={() => setIsOpen(false)}
               >
-                <item.icon className="mr-3 h-5 w-5" />
-                {item.label}
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                  item.gradient,
+                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
+                )} />
+                <item.icon 
+                  className={cn(
+                    "mr-3 h-5 w-5 transition-all duration-200",
+                    location === item.href ? "animate-pulse" : "group-hover:scale-110 group-hover:rotate-3"
+                  )} 
+                />
+                <span className="relative z-10">{item.label}</span>
               </a>
             </Link>
           ))}
@@ -77,8 +94,8 @@ export default function Sidebar() {
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <Link href="/settings">
-            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer">
-              <Settings className="mr-3 h-5 w-5" />
+            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer group transition-all duration-200 hover:scale-105">
+              <Settings className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:rotate-90" />
               Settings
             </a>
           </Link>
