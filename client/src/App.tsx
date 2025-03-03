@@ -17,8 +17,10 @@ import Commerce from "@/pages/commerce";
 import CommerceOverview from "@/pages/commerce/Overview";
 import Automations from "@/pages/automations";
 import Reporting from "@/pages/reporting";
-import DataManagement from "@/pages/data"; //Import the new component
+import DataManagement from "@/pages/data";
 import Library from "@/pages/library";
+import Login from "@/pages/login";
+import Settings from "@/pages/settings";
 
 function Header() {
   return (
@@ -69,6 +71,8 @@ function Router() {
             <Route path="/reporting" component={Reporting} />
             <Route path="/data" component={DataManagement} />
             <Route path="/library" component={Library} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/settings/login" component={Login} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route component={NotFound} />

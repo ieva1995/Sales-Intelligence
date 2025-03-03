@@ -80,13 +80,13 @@ export default function Sidebar() {
                   item.gradient,
                   (hoveredItem === item.label && location !== item.href) && "opacity-10"
                 )} />
-                <item.icon 
+                <item.icon
                   className={cn(
                     "mr-3 h-5 w-5 transition-all duration-500",
-                    location === item.href 
-                      ? "animate-[pulse_2s_ease-in-out_infinite]" 
+                    location === item.href
+                      ? "animate-[pulse_2s_ease-in-out_infinite]"
                       : "group-hover:animate-[pulse_2s_ease-in-out_infinite]"
-                  )} 
+                  )}
                 />
                 <span className="relative z-10">{item.label}</span>
               </a>
@@ -95,7 +95,7 @@ export default function Sidebar() {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <Link href="/settings">
+          <Link href="/settings/login">
             <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-600 hover:text-white rounded-md cursor-pointer group transition-all duration-200">
               <Settings className="mr-3 h-5 w-5 transition-transform duration-200 group-hover:animate-[pulse_2s_ease-in-out_infinite]" />
               Settings
