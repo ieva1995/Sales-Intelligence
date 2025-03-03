@@ -13,6 +13,7 @@ import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Content from "@/pages/content";
+import Commerce from "@/pages/commerce";
 
 function Header() {
   return (
@@ -57,6 +58,7 @@ function Router() {
             <Route path="/crm" component={CRM} />
             <Route path="/marketing" component={Marketing} />
             <Route path="/content" component={Content} />
+            <Route path="/commerce" component={Commerce} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route component={NotFound} />
