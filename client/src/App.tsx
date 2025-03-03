@@ -6,6 +6,8 @@ import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import TrendAnalysis from "@/pages/trend-analysis";
 import Predictions from "@/pages/predictions";
+import Marketing from "@/pages/marketing";
+import CRM from "@/pages/crm";
 import Sidebar from "@/components/Sidebar";
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -51,6 +53,8 @@ function Router() {
         <div className="page-container">
           <Switch>
             <Route path="/" component={Dashboard} />
+            <Route path="/crm" component={CRM} />
+            <Route path="/marketing" component={Marketing} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route component={NotFound} />

@@ -11,7 +11,13 @@ import {
   Brain,
   Menu,
   X,
-  Settings
+  Settings,
+  MessageSquare,
+  Inbox,
+  FileText,
+  Database,
+  Library,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,12 +27,14 @@ export default function Sidebar() {
 
   const navItems = [
     { href: "/", icon: BarChart2, label: "Dashboard" },
-    { href: "/sales", icon: ShoppingBag, label: "Sales" },
-    { href: "/customers", icon: Users, label: "Customers" },
-    { href: "/products", icon: Package, label: "Products" },
-    { href: "/finances", icon: DollarSign, label: "Finances" },
-    { href: "/trend-analysis", icon: TrendingUp, label: "Trend Analysis" },
-    { href: "/predictions", icon: Brain, label: "ML Predictions" },
+    { href: "/crm", icon: Users, label: "CRM" },
+    { href: "/marketing", icon: MessageSquare, label: "Marketing" },
+    { href: "/content", icon: FileText, label: "Content" },
+    { href: "/sales", icon: ShoppingBag, label: "Commerce" },
+    { href: "/automations", icon: Zap, label: "Automations" },
+    { href: "/reporting", icon: TrendingUp, label: "Reporting" },
+    { href: "/data", icon: Database, label: "Data Management" },
+    { href: "/library", icon: Library, label: "Library" },
   ];
 
   return (
