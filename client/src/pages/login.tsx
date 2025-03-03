@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Users, Cog } from "lucide-react";
 import { useLocation } from "wouter";
-import { LionSvg } from "@/components/LionSvg";
+import { YetiSvg } from "@/components/YetiSvg";
 
 interface LoginOptionProps {
   title: string;
@@ -111,7 +111,7 @@ export default function Login() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex justify-center">
-            <LionSvg 
+            <YetiSvg 
               isPasswordVisible={showPassword} 
               isHappy={isHappy} 
             />
