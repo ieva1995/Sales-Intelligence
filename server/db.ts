@@ -11,5 +11,26 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  maxConnections: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
+});
+
+// Test the connection
+pool.connect((err, client, release) => {
+  if (err) {
+    console.error('Error acquiring client', err.stack);
+    return;
+  }
+  client.query('SELECT NOW()', (err, result) => {
+    release();
+    if (err) {
+      return console.error('Error executing query', err.stack);
+    }
+    console.log('Database connection successful');
+  });
+});
+
 export const db = drizzle(pool, { schema });

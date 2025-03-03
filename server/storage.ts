@@ -25,44 +25,84 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getTrends(): Promise<Trend[]> {
-    return await db.select().from(trends);
+    try {
+      return await db.select().from(trends);
+    } catch (error) {
+      console.error('Error fetching trends:', error);
+      return [];
+    }
   }
 
   async getTrendByKeyword(keyword: string): Promise<Trend | undefined> {
-    const [trend] = await db.select().from(trends).where(eq(trends.keyword, keyword));
-    return trend;
+    try {
+      const [trend] = await db.select().from(trends).where(eq(trends.keyword, keyword));
+      return trend;
+    } catch (error) {
+      console.error('Error fetching trend by keyword:', error);
+      return undefined;
+    }
   }
 
   async createTrend(trend: InsertTrend): Promise<Trend> {
-    const [newTrend] = await db.insert(trends).values(trend).returning();
-    return newTrend;
+    try {
+      const [newTrend] = await db.insert(trends).values(trend).returning();
+      return newTrend;
+    } catch (error) {
+      console.error('Error creating trend:', error);
+      throw new Error('Failed to create trend');
+    }
   }
 
   async getPredictions(): Promise<Prediction[]> {
-    return await db.select().from(predictions);
+    try {
+      return await db.select().from(predictions);
+    } catch (error) {
+      console.error('Error fetching predictions:', error);
+      return [];
+    }
   }
 
   async createPrediction(prediction: InsertPrediction): Promise<Prediction> {
-    const [newPrediction] = await db.insert(predictions).values(prediction).returning();
-    return newPrediction;
+    try {
+      const [newPrediction] = await db.insert(predictions).values(prediction).returning();
+      return newPrediction;
+    } catch (error) {
+      console.error('Error creating prediction:', error);
+      throw new Error('Failed to create prediction');
+    }
   }
 
   async getAlerts(): Promise<Alert[]> {
-    return await db.select().from(alerts);
+    try {
+      return await db.select().from(alerts);
+    } catch (error) {
+      console.error('Error fetching alerts:', error);
+      return [];
+    }
   }
 
   async createAlert(alert: InsertAlert): Promise<Alert> {
-    const [newAlert] = await db.insert(alerts).values(alert).returning();
-    return newAlert;
+    try {
+      const [newAlert] = await db.insert(alerts).values(alert).returning();
+      return newAlert;
+    } catch (error) {
+      console.error('Error creating alert:', error);
+      throw new Error('Failed to create alert');
+    }
   }
 
   async updateAlert(id: number, active: boolean): Promise<Alert | undefined> {
-    const [updatedAlert] = await db
-      .update(alerts)
-      .set({ active })
-      .where(eq(alerts.id, id))
-      .returning();
-    return updatedAlert;
+    try {
+      const [updatedAlert] = await db
+        .update(alerts)
+        .set({ active })
+        .where(eq(alerts.id, id))
+        .returning();
+      return updatedAlert;
+    } catch (error) {
+      console.error('Error updating alert:', error);
+      return undefined;
+    }
   }
 }
 
