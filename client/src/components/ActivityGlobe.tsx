@@ -24,7 +24,7 @@ export default function ActivityGlobe() {
         lng: (Math.random() - 0.5) * 360,
         city: ["New York", "London", "Tokyo", "Paris", "Sydney"][Math.floor(Math.random() * 5)],
         country: ["USA", "UK", "Japan", "France", "Australia"][Math.floor(Math.random() * 5)],
-        activity: ["placed an order", "viewed a product", "started a session"][Math.floor(Math.random() * 3)],
+        activity: ["viewed a product", "started a session", "placed an order"][Math.floor(Math.random() * 3)],
         timestamp: Date.now()
       };
 
@@ -38,6 +38,13 @@ export default function ActivityGlobe() {
     if (globeEl.current) {
       globeEl.current.controls().autoRotate = rotation;
       globeEl.current.controls().autoRotateSpeed = 0.5;
+
+      // Set initial camera position
+      globeEl.current.pointOfView({
+        lat: 0,
+        lng: 0,
+        altitude: 2.5
+      });
     }
   }, [rotation]);
 
@@ -47,23 +54,22 @@ export default function ActivityGlobe() {
         <CardTitle>Live Activity</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="h-[400px] relative">
+        <div className="h-[400px] relative bg-[#31373D]">
           <Globe
             ref={globeEl}
             globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-            backgroundColor="rgba(0,0,0,0)"
+            backgroundColor="#31373D"
             pointsData={activities}
             pointLat="lat"
             pointLng="lng"
             pointColor={() => '#fff'}
             pointAltitude={0.1}
-            pointRadius={0.5}
+            pointRadius={0.8}
             pointsMerge={true}
-            atmosphereColor="#ffffff"
-            atmosphereAltitude={0.1}
+            atmosphereColor="transparent"
+            atmosphereAltitude={0}
             onGlobeClick={() => setRotation(!rotation)}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-transparent h-16" />
         </div>
         <div className="p-4 space-y-2">
           {activities.slice(-3).reverse().map((activity, idx) => (
