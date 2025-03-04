@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer } from "http";
+import { WebSocketServer } from 'ws';
 import { storage } from "./storage";
 import {
   insertTrendSchema, insertPredictionSchema, insertAlertSchema,
@@ -8,9 +9,18 @@ import {
 } from "@shared/schema";
 import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
+import { newsService } from "./services/newsService";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
+
+  // Setup WebSocket server for real-time updates
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+
+  wss.on('connection', (ws) => {
+    console.log('Client connected to WebSocket');
+    newsService.addClient(ws);
+  });
 
   // Register chat router
   app.use(chatRouter);
@@ -63,7 +73,7 @@ export async function registerRoutes(app: Express) {
   app.patch("/api/alerts/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     const { active } = req.body;
-    
+
     if (typeof active !== "boolean") {
       return res.status(400).json({ error: "active must be a boolean" });
     }

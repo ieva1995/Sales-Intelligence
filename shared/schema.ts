@@ -109,6 +109,18 @@ export const customers = pgTable("customers", {
   metadata: jsonb("metadata")
 });
 
+// Add new News table and types after the existing tables
+export const news = pgTable("news", {
+  id: serial("id").primaryKey(),
+  company: text("company").notNull(),
+  insight: text("insight").notNull(),
+  opportunity: text("opportunity").notNull(),
+  date: timestamp("date").notNull().defaultNow(),
+  priority: text("priority").notNull(),
+  source: text("source"),
+  metadata: jsonb("metadata")
+});
+
 // Create insert schemas for all tables
 export const insertTrendSchema = createInsertSchema(trends).omit({ id: true });
 export const insertPredictionSchema = createInsertSchema(predictions).omit({ id: true });
@@ -119,6 +131,7 @@ export const insertSaleSchema = createInsertSchema(sales).omit({ id: true });
 export const insertSaleItemSchema = createInsertSchema(saleItems).omit({ id: true });
 export const insertEmployeeSchema = createInsertSchema(employees).omit({ id: true });
 export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true });
+export const insertNewsSchema = createInsertSchema(news).omit({ id: true });
 
 // Export types
 export type Trend = typeof trends.$inferSelect;
@@ -130,6 +143,7 @@ export type Sale = typeof sales.$inferSelect;
 export type SaleItem = typeof saleItems.$inferSelect;
 export type Employee = typeof employees.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
+export type News = typeof news.$inferSelect;
 
 // Export insert types
 export type InsertTrend = z.infer<typeof insertTrendSchema>;
@@ -141,3 +155,4 @@ export type InsertSale = z.infer<typeof insertSaleSchema>;
 export type InsertSaleItem = z.infer<typeof insertSaleItemSchema>;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
 export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
+export type InsertNews = z.infer<typeof insertNewsSchema>;

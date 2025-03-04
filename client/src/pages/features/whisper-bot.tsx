@@ -30,6 +30,44 @@ export default function WhisperBot() {
     }
   ]);
 
+  useEffect(() => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const socket = new WebSocket(wsUrl);
+
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message.type === 'news-update') {
+          setInsights(message.data);
+          toast({
+            title: "New Insights Available",
+            description: "Latest market intelligence has been updated.",
+          });
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
+    };
+
+    socket.onopen = () => {
+      console.log("Connected to news feed");
+    };
+
+    socket.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      toast({
+        title: "Connection Error",
+        description: "Unable to connect to real-time news feed.",
+        variant: "destructive"
+      });
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, []);
+
   const handleQuickAction = (action: string) => {
     toast({
       title: `${action} Initiated`,
@@ -181,8 +219,8 @@ export default function WhisperBot() {
         <CardContent>
           <div className="space-y-4">
             {insights.map((item, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
                 onClick={() => handleInsightClick(item.company, item.opportunity)}
               >
