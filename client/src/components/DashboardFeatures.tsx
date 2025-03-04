@@ -39,7 +39,7 @@ const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise
           </div>
           <div className="space-y-2 flex-1 pr-20">
             <h3 className="text-sm font-medium text-gray-100 group-hover:text-blue-400 transition-colors">{title}</h3>
-            <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
+            <p className="text-xs text-gray-400 leading-relaxed line-clamp-2 h-[32px] overflow-hidden">{description}</p>
           </div>
         </div>
         <div className="absolute top-4 right-4 flex gap-2">
