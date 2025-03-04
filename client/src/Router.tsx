@@ -35,7 +35,7 @@ export default function Router() {
         <Menu className="h-6 w-6" />
       </Button>
 
-      <Sidebar />
+      <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <Header />
       <main className="main-content">
         <div className="page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8">

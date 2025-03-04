@@ -14,9 +14,13 @@ import {
   Settings,
 } from "lucide-react";
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [location] = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   const navItems = [
@@ -33,7 +37,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Sidebar */}
       <div
         className={cn(
           "fixed top-0 left-0 h-full w-64 bg-slate-700 shadow-lg z-40 transition-transform duration-200 ease-in-out",
@@ -60,7 +63,7 @@ export default function Sidebar() {
                 )}
                 onMouseEnter={() => setHoveredItem(item.label)}
                 onMouseLeave={() => setHoveredItem(null)}
-                onClick={() => setIsOpen(false)}
+                onClick={onClose}
               >
                 <div className={cn(
                   "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
@@ -95,7 +98,7 @@ export default function Sidebar() {
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/20 z-30 md:hidden"
-          onClick={() => setIsOpen(false)}
+          onClick={onClose}
         />
       )}
     </>
