@@ -28,7 +28,7 @@ import {
   AlertCircle,
   RefreshCw
 } from "lucide-react";
-import { getShopifyProducts, getShopifyOrders, getShopifyCustomers } from "@/lib/shopify";
+import { getShopifyPerformance } from "@/lib/shopify";
 
 // Sample data for charts
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#4CAF50'];
@@ -38,7 +38,7 @@ export default function ShopifyPerformance() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
-  
+
   // Dashboard metrics state
   const [metrics, setMetrics] = useState({
     totalRevenue: "0.00",
@@ -58,17 +58,12 @@ export default function ShopifyPerformance() {
   const fetchPerformanceData = async () => {
     try {
       setLoading(true);
-      
-      // Fetch data from Shopify API
-      const [products, orders, customers] = await Promise.all([
-        getShopifyProducts(),
-        getShopifyOrders(),
-        getShopifyCustomers()
-      ]);
-      
-      // Process the data to generate dashboard metrics
-      const processedMetrics = processShopifyData(products, orders, customers);
-      setMetrics(processedMetrics);
+
+      // Fetch performance data from Shopify API
+      const performanceData = await getShopifyPerformance();
+
+      // Update metrics state with fetched data
+      setMetrics(performanceData);
       setError(null);
     } catch (err: any) {
       console.error("Error fetching performance data:", err);
@@ -78,25 +73,12 @@ export default function ShopifyPerformance() {
         description: err.message,
         variant: "destructive"
       });
-      
+
       // Load sample data if we can't fetch real data
       loadSampleData();
     } finally {
       setLoading(false);
     }
-  };
-
-  // Process Shopify data into dashboard metrics
-  const processShopifyData = (products: any[], orders: any[], customers: any[]) => {
-    // If we have real data, process it here
-    if (products.length || orders.length || customers.length) {
-      // This would be the real processing logic
-      // For now, return sample data since we might not have real data
-      return generateSampleData();
-    }
-    
-    // Fallback to sample data
-    return generateSampleData();
   };
 
   // Generate sample data for demonstration
@@ -234,7 +216,7 @@ export default function ShopifyPerformance() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-green-500/10 border-0">
           <CardContent className="p-4">
             <div className="flex items-center space-x-4">
@@ -246,7 +228,7 @@ export default function ShopifyPerformance() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-purple-500/10 border-0">
           <CardContent className="p-4">
             <div className="flex items-center space-x-4">
@@ -258,7 +240,7 @@ export default function ShopifyPerformance() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="bg-amber-500/10 border-0">
           <CardContent className="p-4">
             <div className="flex items-center space-x-4">
@@ -401,7 +383,7 @@ export default function ShopifyPerformance() {
               </Card>
             </div>
           </div>
-          
+
           <Card className="border-0 bg-slate-800">
             <CardHeader>
               <CardTitle>Top Selling Products</CardTitle>
@@ -643,7 +625,7 @@ export default function ShopifyPerformance() {
                       <span className="text-sm text-green-400 ml-1">+0.3 from last month</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Days of Inventory</h4>
                     <p className="text-sm text-gray-300 mb-2">Average time to sell through current inventory</p>
@@ -653,7 +635,7 @@ export default function ShopifyPerformance() {
                       <span className="text-sm text-green-400 ml-1">-3 days from last month</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Stockout Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of products currently out of stock</p>
@@ -716,7 +698,7 @@ export default function ShopifyPerformance() {
                       <span className="text-sm text-green-400 ml-1">+$35.20 from last month</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Repeat Purchase Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of customers who make more than one purchase</p>
@@ -726,7 +708,7 @@ export default function ShopifyPerformance() {
                       <span className="text-sm text-green-400 ml-1">+2.1% from last month</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Customer Acquisition Cost</h4>
                     <p className="text-sm text-gray-300 mb-2">Average cost to acquire a new customer</p>
@@ -736,7 +718,7 @@ export default function ShopifyPerformance() {
                       <span className="text-sm text-green-400 ml-1">-$1.85 from last month</span>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Customer Retention Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of customers who remain active</p>
