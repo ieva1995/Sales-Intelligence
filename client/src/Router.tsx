@@ -45,6 +45,8 @@ export default function Router() {
         <div className="page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8">
           <Switch>
             <Route path="/" component={Dashboard} />
+            <Route path="/trend-analysis" component={TrendAnalysis} />
+            <Route path="/predictions" component={Predictions} />
             <Route path="/crm" component={CRM} />
             <Route path="/marketing" component={Marketing} />
             <Route path="/content" component={Content} />
@@ -57,8 +59,6 @@ export default function Router() {
             <Route path="/library/trends" component={TrendsExplorer} />
             <Route path="/settings" component={Settings} />
             <Route path="/settings/login" component={Login} />
-            <Route path="/trend-analysis" component={TrendAnalysis} />
-            <Route path="/predictions" component={Predictions} />
 
             {/* AI-Powered Feature Routes */}
             <Route path="/features/smart-proposal" component={SmartProposal} />
@@ -66,20 +66,31 @@ export default function Router() {
             <Route path="/features/whisper-bot" component={WhisperBot} />
             <Route path="/features/stealth-audit" component={StealthAudit} />
 
-            {/* Placeholder routes for features in development */}
-            <Route path="/features/configurator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Product Configurator - Coming Soon</h1></div>} />
-            <Route path="/features/upsell" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Upsell Brain - Coming Soon</h1></div>} />
-            <Route path="/features/heatmap" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Intent Heatmap - Coming Soon</h1></div>} />
-            <Route path="/features/case-studies" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Case Study Finder - Coming Soon</h1></div>} />
-            <Route path="/features/loyalty" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Loyalty Discounts - Coming Soon</h1></div>} />
-            <Route path="/features/sales-agent" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Silent Sales Agent - Coming Soon</h1></div>} />
-            <Route path="/features/simulator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">POC Simulator - Coming Soon</h1></div>} />
-            <Route path="/features/reputation" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Digital Reputation Score - Coming Soon</h1></div>} />
-            <Route path="/features/warm-up" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Auto Warm-Up Campaign - Coming Soon</h1></div>} />
-            <Route path="/features/corporate-leech" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Corporate Leech System™ - Coming Soon</h1></div>} />
-            <Route path="/features/champion-hunter" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Secret Champion Hunter - Coming Soon</h1></div>} />
-            <Route path="/features/roi-calculator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Instant ROI Calculator - Coming Soon</h1></div>} />
-            <Route path="/features/beta-system" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Private BETA System - Coming Soon</h1></div>} />
+            {/* Interactive Feature Routes */}
+            <Route path="/features/configurator" component={() => (
+              <div className="p-6">
+                <h1 className="text-2xl font-bold mb-4">Product Configurator</h1>
+                <p className="text-gray-600">This feature is currently in development.</p>
+              </div>
+            )} />
+            <Route path="/features/upsell" component={() => (
+              <div className="p-6">
+                <h1 className="text-2xl font-bold mb-4">Upsell Brain</h1>
+                <p className="text-gray-600">This feature is currently in development.</p>
+              </div>
+            )} />
+            <Route path="/features/case-studies" component={() => (
+              <div className="p-6">
+                <h1 className="text-2xl font-bold mb-4">Case Study Finder</h1>
+                <p className="text-gray-600">This feature is currently in development.</p>
+              </div>
+            )} />
+            <Route path="/features/reputation" component={() => (
+              <div className="p-6">
+                <h1 className="text-2xl font-bold mb-4">Digital Reputation Score</h1>
+                <p className="text-gray-600">This feature is currently in development.</p>
+              </div>
+            )} />
 
             <Route component={NotFound} />
           </Switch>

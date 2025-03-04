@@ -45,8 +45,22 @@ export default function StealthAudit() {
   const [securityLevel, setSecurityLevel] = useState("Enterprise Grade");
   const [scanTimeout, setScanTimeout] = useState(30);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [showScanConfigDialog, setShowScanConfigDialog] = useState(false);
-  const [showSecurityDialog, setShowSecurityDialog] = useState(false);
+  const [scanDialogOpen, setScanDialogOpen] = useState(false);
+  const [securityDialogOpen, setSecurityDialogOpen] = useState(false);
+  const [tempScanConfig, setTempScanConfig] = useState({
+    depth: "Deep Analysis",
+    timeout: 30,
+    autoRefresh: true
+  });
+  const [tempSecurityConfig, setTempSecurityConfig] = useState({
+    level: "Enterprise Grade",
+    options: {
+      deepPacket: false,
+      threatDetection: false,
+      zeroTrust: false,
+      auditLogging: false
+    }
+  });
 
   // Simulate progress updates
   useEffect(() => {
@@ -69,7 +83,6 @@ export default function StealthAudit() {
   }, []);
 
   const handleRefresh = () => {
-    // Simulate new scan data
     const newScans = [
       {
         target: "newtech-platform.com",
@@ -88,31 +101,25 @@ export default function StealthAudit() {
     });
   };
 
-  const handleScanDepthChange = (value: string) => {
-    setScanDepth(value);
+  const handleSaveScanConfig = () => {
+    setScanDepth(tempScanConfig.depth);
+    setScanTimeout(tempScanConfig.timeout);
+    setAutoRefresh(tempScanConfig.autoRefresh);
+    setScanDialogOpen(false);
+
     toast({
-      title: "Scan Depth Updated",
-      description: `Analysis depth changed to: ${value}`,
+      title: "Scan Configuration Updated",
+      description: "Your scan settings have been saved successfully.",
     });
   };
 
-  const handleSecurityLevelChange = (value: string) => {
-    setSecurityLevel(value);
-    toast({
-      title: "Security Level Updated",
-      description: `Security level upgraded to: ${value}`,
-    });
-  };
+  const handleSaveSecurityConfig = () => {
+    setSecurityLevel(tempSecurityConfig.level);
+    setSecurityDialogOpen(false);
 
-  const handleScanTimeoutChange = (value: number[]) => {
-    setScanTimeout(value[0]);
-  };
-
-  const handleAutoRefreshChange = (checked: boolean) => {
-    setAutoRefresh(checked);
     toast({
-      title: "Auto Refresh",
-      description: checked ? "Enabled automatic scan updates" : "Disabled automatic scan updates",
+      title: "Security Settings Updated",
+      description: "Your security configuration has been applied.",
     });
   };
 
@@ -280,7 +287,7 @@ export default function StealthAudit() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <Dialog>
+              <Dialog open={scanDialogOpen} onOpenChange={setScanDialogOpen}>
                 <DialogTrigger asChild>
                   <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70">
                     <div className="flex items-center space-x-3">
@@ -305,7 +312,10 @@ export default function StealthAudit() {
                   <div className="space-y-6 py-4">
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Scan Depth</h4>
-                      <RadioGroup value={scanDepth} onValueChange={handleScanDepthChange}>
+                      <RadioGroup 
+                        value={tempScanConfig.depth}
+                        onValueChange={(value) => setTempScanConfig(prev => ({ ...prev, depth: value }))}
+                      >
                         {["Quick Scan", "Standard Analysis", "Deep Analysis", "Comprehensive Audit"].map((depth) => (
                           <div key={depth} className="flex items-center space-x-2">
                             <RadioGroupItem value={depth} id={depth} />
@@ -317,13 +327,13 @@ export default function StealthAudit() {
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Scan Timeout (seconds)</h4>
                       <Slider
-                        value={[scanTimeout]}
-                        onValueChange={handleScanTimeoutChange}
+                        value={[tempScanConfig.timeout]}
+                        onValueChange={(value) => setTempScanConfig(prev => ({ ...prev, timeout: value[0] }))}
                         max={120}
                         min={10}
                         step={5}
                       />
-                      <p className="text-sm text-gray-400">{scanTimeout} seconds</p>
+                      <p className="text-sm text-gray-400">{tempScanConfig.timeout} seconds</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
@@ -331,23 +341,23 @@ export default function StealthAudit() {
                         <p className="text-sm text-gray-400">Update scans automatically</p>
                       </div>
                       <Switch
-                        checked={autoRefresh}
-                        onCheckedChange={handleAutoRefreshChange}
+                        checked={tempScanConfig.autoRefresh}
+                        onCheckedChange={(checked) => setTempScanConfig(prev => ({ ...prev, autoRefresh: checked }))}
                       />
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowScanConfigDialog(false)}>
+                    <Button variant="outline" onClick={() => setScanDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={() => setShowScanConfigDialog(false)}>
+                    <Button onClick={handleSaveScanConfig}>
                       Save Changes
                     </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
 
-              <Dialog>
+              <Dialog open={securityDialogOpen} onOpenChange={setSecurityDialogOpen}>
                 <DialogTrigger asChild>
                   <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70">
                     <div className="flex items-center space-x-3">
@@ -372,7 +382,10 @@ export default function StealthAudit() {
                   <div className="space-y-6 py-4">
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Security Level</h4>
-                      <RadioGroup value={securityLevel} onValueChange={handleSecurityLevelChange}>
+                      <RadioGroup 
+                        value={tempSecurityConfig.level}
+                        onValueChange={(value) => setTempSecurityConfig(prev => ({ ...prev, level: value }))}
+                      >
                         {["Standard", "Enhanced", "Enterprise Grade", "Military Grade"].map((level) => (
                           <div key={level} className="flex items-center space-x-2">
                             <RadioGroupItem value={level} id={level} />
@@ -385,24 +398,33 @@ export default function StealthAudit() {
                       <h4 className="font-medium text-sm">Additional Security Options</h4>
                       <div className="space-y-2">
                         {[
-                          "Enable Deep Packet Inspection",
-                          "Use Advanced Threat Detection",
-                          "Apply Zero Trust Policy",
-                          "Enable Audit Logging"
+                          { id: "deepPacket", label: "Enable Deep Packet Inspection" },
+                          { id: "threatDetection", label: "Use Advanced Threat Detection" },
+                          { id: "zeroTrust", label: "Apply Zero Trust Policy" },
+                          { id: "auditLogging", label: "Enable Audit Logging" }
                         ].map((option) => (
-                          <div key={option} className="flex items-center justify-between">
-                            <Label htmlFor={option}>{option}</Label>
-                            <Switch id={option} />
+                          <div key={option.id} className="flex items-center justify-between">
+                            <Label htmlFor={option.id}>{option.label}</Label>
+                            <Switch
+                              id={option.id}
+                              checked={tempSecurityConfig.options[option.id]}
+                              onCheckedChange={(checked) => 
+                                setTempSecurityConfig(prev => ({
+                                  ...prev,
+                                  options: { ...prev.options, [option.id]: checked }
+                                }))
+                              }
+                            />
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowSecurityDialog(false)}>
+                    <Button variant="outline" onClick={() => setSecurityDialogOpen(false)}>
                       Cancel
                     </Button>
-                    <Button onClick={() => setShowSecurityDialog(false)}>
+                    <Button onClick={handleSaveSecurityConfig}>
                       Apply Security Settings
                     </Button>
                   </DialogFooter>
