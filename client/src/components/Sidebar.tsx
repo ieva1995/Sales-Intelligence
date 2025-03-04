@@ -38,7 +38,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     <>
       <div
         className={cn(
-          "fixed top-0 left-0 h-full w-64 bg-slate-800 shadow-lg z-40 transition-transform duration-200 ease-in-out overflow-y-auto",
+          "fixed top-0 left-0 h-full w-64 bg-slate-800 shadow-lg z-40 transition-transform duration-200 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
