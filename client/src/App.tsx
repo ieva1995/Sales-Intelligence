@@ -21,19 +21,29 @@ import DataManagement from "@/pages/data";
 import Library from "@/pages/library";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
+import { useState } from 'react';
+
 
 function Header() {
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+
   return (
-    <header className="header">
+    <header className="header relative z-50">
       <div className="flex items-center justify-between h-full px-4">
-        <div className="flex items-center flex-1">
-          <div className="w-full max-w-lg">
+        <div className={`flex items-center transition-all duration-300 ease-in-out ${isSearchFocused ? 'w-full max-w-3xl mx-auto' : 'flex-1'}`}>
+          <div className={`relative transition-all duration-300 ${isSearchFocused ? 'w-full' : 'w-full max-w-lg'}`}>
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Search className={`absolute left-2.5 top-2.5 h-4 w-4 transition-colors ${isSearchFocused ? 'text-white' : 'text-gray-500'}`} />
               <Input
                 type="search"
                 placeholder="Search..."
-                className="pl-9 bg-gray-50 border-gray-300 focus:border-gray-500"
+                className={`pl-9 transition-all duration-300 ${
+                  isSearchFocused 
+                    ? 'bg-black/20 border-gray-600 text-white backdrop-blur-sm focus:border-gray-400' 
+                    : 'bg-gray-50/5 border-gray-800 focus:border-gray-600'
+                }`}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
               />
             </div>
           </div>
@@ -42,13 +52,21 @@ function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="relative text-gray-700 hover:text-gray-900"
+            className="relative h-8 w-8 text-gray-400 hover:text-white"
           >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
+            <Bell className="h-4 w-4" />
+            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
           </Button>
         </div>
       </div>
+
+      {/* Backdrop overlay when search is focused */}
+      {isSearchFocused && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setIsSearchFocused(false)}
+        />
+      )}
     </header>
   );
 }
