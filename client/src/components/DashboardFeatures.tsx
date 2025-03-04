@@ -183,17 +183,17 @@ export default function DashboardFeatures() {
         <h2 className="text-2xl font-bold text-white">AI-Powered Features</h2>
         <p className="text-gray-400">Advanced tools to boost your sales performance</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {features.map((feature, index) => (
           <FeatureCard key={index} {...feature} />
         ))}
       </div>
 
-      <div className="mb-6">
+      <div className="mb-6 mt-12">
         <h2 className="text-2xl font-bold text-white">Enterprise Turbo Sales Machine</h2>
         <p className="text-gray-400">Premium enterprise-grade automation tools</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {enterpriseFeatures.map((feature, index) => (
           <FeatureCard key={`enterprise-${index}`} {...feature} />
         ))}
