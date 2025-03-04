@@ -33,16 +33,16 @@ const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise
   <Link href={href}>
     <a className="block">
       <Card className="bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
-        <div className="flex items-start space-x-3">
+        <div className="flex items-start space-x-3 p-6">
           <div className="p-2 bg-blue-500/10 rounded-lg">
             <Icon className="h-5 w-5 text-blue-500" />
           </div>
-          <div className="space-y-0.5 flex-1 pr-16">
+          <div className="space-y-2 flex-1 pr-20">
             <h3 className="text-sm font-medium text-gray-100 group-hover:text-blue-400 transition-colors">{title}</h3>
-            <p className="text-xs text-gray-400">{description}</p>
+            <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
           </div>
         </div>
-        <div className="absolute top-2 right-2 flex gap-2">
+        <div className="absolute top-4 right-4 flex gap-2">
           {isNew && (
             <span className="px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
               New
