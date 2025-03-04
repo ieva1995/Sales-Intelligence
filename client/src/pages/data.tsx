@@ -23,8 +23,8 @@ export default function DataManagement() {
         {dataItems.map((item) => (
           <Link key={item.label} href={item.href}>
             <a className={cn(
-              "block px-6 py-3 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
-              "text-sm font-medium"
+              "block px-6 py-4 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+              "text-sm font-medium border-b border-slate-700/50 last:border-0"
             )}>
               {item.label}
             </a>
