@@ -154,75 +154,79 @@ export default function EnterpriseTurbo() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {automationTools.map((tool) => (
-          <Card key={tool.title} className="overflow-hidden border-2 border-accent">
-            <CardHeader className="bg-accent/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <tool.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle>{tool.title}</CardTitle>
-                    <CardDescription>{tool.description}</CardDescription>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {Object.entries(tool.metrics).map(([key, value]) => (
-                  <div key={key} className="text-center p-3 bg-accent/10 rounded-lg">
-                    <div className="text-lg font-bold text-primary">{value}</div>
-                    <div className="text-sm text-muted-foreground capitalize">{key}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex items-center justify-between space-x-4">
-                <Link href={tool.route} className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Configure
-                  </Button>
-                </Link>
-                <Button
-                  className="flex-1"
-                  onClick={() => handleDeploy(tool.title)}
-                  disabled={activeTool === tool.title}
-                >
-                  {activeTool === tool.title ? (
-                    <>
-                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                      Deploying...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="mr-2 h-4 w-4" />
-                      Deploy Now
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="mt-16">
+      {/* Pricing Section - Moved up for visibility */}
+      <div className="py-12 bg-accent/5 rounded-lg">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold">Enterprise Pricing Plans</h2>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-muted-foreground mt-2 text-lg">
             Scale your sales automation with our enterprise-grade solutions
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
           {pricingPlans.map((plan) => (
             <PricingCard
               key={plan.title}
               {...plan}
               onSubscribe={handleSubscribe}
             />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-6">Available Automation Tools</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {automationTools.map((tool) => (
+            <Card key={tool.title} className="overflow-hidden border-2 border-accent">
+              <CardHeader className="bg-accent/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <tool.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle>{tool.title}</CardTitle>
+                      <CardDescription>{tool.description}</CardDescription>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  {Object.entries(tool.metrics).map(([key, value]) => (
+                    <div key={key} className="text-center p-3 bg-accent/10 rounded-lg">
+                      <div className="text-lg font-bold text-primary">{value}</div>
+                      <div className="text-sm text-muted-foreground capitalize">{key}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between space-x-4">
+                  <Link href={tool.route} className="flex-1">
+                    <Button variant="outline" className="w-full">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Configure
+                    </Button>
+                  </Link>
+                  <Button
+                    className="flex-1"
+                    onClick={() => handleDeploy(tool.title)}
+                    disabled={activeTool === tool.title}
+                  >
+                    {activeTool === tool.title ? (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                        Deploying...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="mr-2 h-4 w-4" />
+                        Deploy Now
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

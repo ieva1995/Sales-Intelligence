@@ -160,46 +160,50 @@ export default function SalesTools() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {salesTools.map((tool) => (
-          <Link key={tool.title} href={tool.route}>
-            <Card className="cursor-pointer hover:bg-accent transition-colors">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <tool.icon className="h-6 w-6 text-primary" />
-                  <CardTitle>{tool.title}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{tool.description}</p>
-                <div className="grid grid-cols-3 gap-2 text-sm">
-                  {Object.entries(tool.metrics).map(([key, value]) => (
-                    <div key={key} className="text-center p-2 bg-accent/50 rounded-lg">
-                      <div className="font-bold text-primary">{value}</div>
-                      <div className="text-xs text-muted-foreground">{key}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-16">
+      {/* Pricing Section - Moved up for better visibility */}
+      <div className="py-12 bg-accent/5 rounded-lg">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold">Flexible Pricing Plans</h2>
-          <p className="text-muted-foreground mt-2">
-            Choose the perfect plan for your business needs
+          <h2 className="text-3xl font-bold">Choose Your Plan</h2>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Get started with our flexible pricing plans
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
           {pricingPlans.map((plan) => (
             <PricingCard
               key={plan.title}
               {...plan}
               onSubscribe={handleSubscribe}
             />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-6">Available Tools & Features</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {salesTools.map((tool) => (
+            <Link key={tool.title} href={tool.route}>
+              <Card className="cursor-pointer hover:bg-accent transition-colors">
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <tool.icon className="h-6 w-6 text-primary" />
+                    <CardTitle>{tool.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">{tool.description}</p>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
+                    {Object.entries(tool.metrics).map(([key, value]) => (
+                      <div key={key} className="text-center p-2 bg-accent/50 rounded-lg">
+                        <div className="font-bold text-primary">{value}</div>
+                        <div className="text-xs text-muted-foreground">{key}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>
