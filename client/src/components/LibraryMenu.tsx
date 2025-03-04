@@ -32,7 +32,7 @@ export default function LibraryMenu() {
     <div className="relative">
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden flex items-center gap-2 px-4 py-3 text-white bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors w-full"
+        className="md:hidden flex items-center gap-2 px-4 py-3 text-black bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Menu className="h-5 w-5" />
