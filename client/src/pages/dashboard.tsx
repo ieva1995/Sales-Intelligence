@@ -7,6 +7,7 @@ import TrendChart from "@/components/TrendChart";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import DashboardFeatures from "@/components/DashboardFeatures";
 
 export default function Dashboard() {
   const [activeTask, setActiveTask] = useState<string | null>(null);
@@ -92,7 +93,7 @@ export default function Dashboard() {
             <CardTitle className="text-lg text-white">Performance Overview</CardTitle>
           </CardHeader>
           <CardContent className="p-4">
-            <div className="h-[300px] sm:h-[240px]"> {/* Adjusted height for mobile */}
+            <div className="h-[300px] sm:h-[240px]">
               {trendData && (
                 <TrendChart
                   data={trendData.timelineData}
@@ -171,6 +172,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI-Powered Features */}
+      <DashboardFeatures />
     </div>
   );
 }
