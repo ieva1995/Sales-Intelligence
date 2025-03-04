@@ -39,11 +39,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  // Initialize database tables
-  await createTables(); // Added database table initialization
+  try {
+    // Initialize database tables
+    console.log('Initializing database tables...');
+    await createTables();
+    console.log('Database tables initialized successfully');
 
-  // Seed initial users
-  await seedUsers();
+    // Seed initial users
+    console.log('Seeding initial users...');
+    await seedUsers();
+    console.log('Users seeded successfully');
+  } catch (error) {
+    console.error('Error during initialization:', error);
+  }
 
   const server = await registerRoutes(app);
 
