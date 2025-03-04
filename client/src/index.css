@@ -65,3 +65,133 @@
 .chart-container {
   @apply p-6 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden;
 }
+
+/* Login Form Rainbow Effects */
+.rainbow-glow-input:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  animation: rainbow-glow 2s linear infinite;
+}
+
+@keyframes rainbow-glow {
+  0% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+  20% { box-shadow: 0 0 5px rgba(111, 103, 252, 0.8), 0 0 10px rgba(111, 103, 252, 0.5), 0 0 15px rgba(111, 103, 252, 0.3); }
+  40% { box-shadow: 0 0 5px rgba(155, 89, 240, 0.8), 0 0 10px rgba(155, 89, 240, 0.5), 0 0 15px rgba(155, 89, 240, 0.3); }
+  60% { box-shadow: 0 0 5px rgba(215, 89, 203, 0.8), 0 0 10px rgba(215, 89, 203, 0.5), 0 0 15px rgba(215, 89, 203, 0.3); }
+  80% { box-shadow: 0 0 5px rgba(249, 92, 136, 0.8), 0 0 10px rgba(249, 92, 136, 0.5), 0 0 15px rgba(249, 92, 136, 0.3); }
+  100% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+}
+
+/* Add rainbow border to the main content card */
+.login-card {
+  position: relative;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+  background-size: 200% 200%;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-card:hover::before {
+  opacity: 0.7;
+  animation: rotate-rainbow 6s linear infinite;
+}
+
+@keyframes rotate-rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Button hover effect */
+.interactive-button {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactive-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.interactive-button:active {
+  transform: translateY(0);
+}
+
+.interactive-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.interactive-button:hover::after {
+  opacity: 0.2;
+  animation: rainbow-shift 2s linear infinite;
+}
+
+@keyframes rainbow-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Verification code input styling */
+.verification-input {
+  @apply w-12 h-12 text-center text-xl bg-slate-800 border border-slate-700 rounded-md text-white;
+  transition: all 0.2s ease;
+}
+
+.verification-input:focus {
+  @apply border-blue-500;
+  transform: scale(1.05);
+}
+
+/* Screen edges rainbow effect */
+.screen-edges-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-edges-glow::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.screen-edges-glow.active::before {
+  opacity: 1;
+  animation: edge-rainbow 3s linear infinite;
+}
+
+@keyframes edge-rainbow {
+  0% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+  20% { box-shadow: inset 0 0 30px rgba(111, 103, 252, 0.3); }
+  40% { box-shadow: inset 0 0 30px rgba(155, 89, 240, 0.3); }
+  60% { box-shadow: inset 0 0 30px rgba(215, 89, 203, 0.3); }
+  80% { box-shadow: inset 0 0 30px rgba(249, 92, 136, 0.3); }
+  100% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+}

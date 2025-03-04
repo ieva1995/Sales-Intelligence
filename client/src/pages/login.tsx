@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,15 @@ import {
   LineChart,
   PieChart,
   TrendingUp,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft,
+  Mail,
+  Lock,
+  GitHub,
+  Twitter,
+  Facebook,
+  X,
+  LogIn
 } from "lucide-react";
 
 interface LoginOptionProps {
@@ -362,15 +370,365 @@ const LandingPage = () => {
   );
 };
 
-// LoginForm component for when user clicks "Log In"
+// New enhanced login flow components
+const WelcomeBack = ({ onContinue, onBackToOptions, onSignUpWithEmail }) => {
+  return (
+    <div className="text-center space-y-4">
+      <h2 className="text-2xl font-bold mb-1">Welcome Back</h2>
+      <p className="text-sm text-gray-400 mb-6">Stay informed and explore the latest stories. Let's dive into the newest!</p>
+
+      <div className="space-y-3">
+        <Button 
+          className="w-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 h-12 interactive-button"
+          onClick={onContinue}
+        >
+          <Mail className="mr-2 h-4 w-4" />
+          Sign in with Email
+        </Button>
+
+        <Button 
+          className="w-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 h-12 interactive-button"
+        >
+          <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" /><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" /><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" /><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" /></svg>
+          Sign in with Google
+        </Button>
+
+        <Button 
+          className="w-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 h-12 interactive-button"
+        >
+          <Facebook className="mr-2 h-4 w-4" />
+          Sign in with Facebook
+        </Button>
+
+        <Button 
+          className="w-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 h-12 interactive-button"
+        >
+          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Sign in with Apple
+        </Button>
+
+        <Button 
+          className="w-full flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 h-12 interactive-button"
+        >
+          <X className="mr-2 h-4 w-4" />
+          Sign in with X
+        </Button>
+      </div>
+
+      <div className="mt-8 text-sm text-gray-400">
+        Don't have an account? <Button variant="link" className="p-0 text-blue-400 hover:text-blue-300" onClick={onSignUpWithEmail}>Sign up</Button>
+      </div>
+
+      <div className="text-xs text-gray-500 mt-6 pt-6 border-t border-slate-700">
+        By sign in, you agree to our <Button variant="link" className="p-0 text-xs text-gray-500 hover:text-gray-400">Terms of Service</Button> and 
+        acknowledge that our <Button variant="link" className="p-0 text-xs text-gray-500 hover:text-gray-400">Privacy Policy</Button> applies to you.
+      </div>
+    </div>
+  );
+};
+
+const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, password, setPassword }) => {
+  return (
+    <div className="space-y-4">
+      <button 
+        className="absolute top-4 left-4 text-gray-400 hover:text-white" 
+        onClick={onBack}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-1">Sign In With Email</h2>
+        <p className="text-sm text-gray-400">Enter your email account to send the verification code and sign in to SalesBoost.</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="relative">
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@domain.com"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+
+        <div className="relative">
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button variant="link" className="p-0 text-sm text-blue-400 hover:text-blue-300" onClick={onForgotPassword}>
+          Forgot Password?
+        </Button>
+      </div>
+
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
+        onClick={onContinue}
+      >
+        Continue
+      </Button>
+    </div>
+  );
+};
+
+const VerificationCode = ({ onVerify, onBack, onResend, email }) => {
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
+  const inputRefs = useRef([]);
+
+  const handleCodeChange = (index, value) => {
+    if (value.length <= 1) {
+      const newCode = [...verificationCode];
+      newCode[index] = value;
+      setVerificationCode(newCode);
+
+      // Move to next input if value is entered
+      if (value && index < 5) {
+        inputRefs.current[index + 1].focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (index, e) => {
+    // Move to previous input on backspace if current input is empty
+    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  useEffect(() => {
+    // Check if code is complete and verify
+    if (verificationCode.every(digit => digit !== '')) {
+      // Auto-submit after a short delay
+      const timer = setTimeout(() => {
+        onVerify(verificationCode.join(''));
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [verificationCode, onVerify]);
+
+  return (
+    <div className="space-y-4">
+      <button 
+        className="absolute top-4 left-4 text-gray-400 hover:text-white" 
+        onClick={onBack}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+
+      <div className="text-center mb-8">
+        <h2 className="text-2xl font-bold mb-1">Verification Code</h2>
+        <p className="text-sm text-gray-400">Verification code has been sent via email to <span className="text-blue-400">{email}</span></p>
+      </div>
+
+      <div className="flex justify-center space-x-3 mb-8">
+        {verificationCode.map((digit, index) => (
+          <Input
+            key={index}
+            type="text"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleCodeChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            ref={el => inputRefs.current[index] = el}
+            className="rainbow-glow-input w-12 h-12 text-center text-xl bg-slate-800/50 border-slate-700 text-white"
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
+        ))}
+      </div>
+
+      <div className="text-center">
+        <p className="text-sm text-gray-400">
+          Didn't receive it? <Button variant="link" className="p-0 text-blue-400 hover:text-blue-300" onClick={onResend}>Resend code</Button> in 00:59 (1/3)
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const ForgotPassword = ({ onSendReset, onBack, email, setEmail }) => {
+  return (
+    <div className="space-y-4">
+      <button 
+        className="absolute top-4 left-4 text-gray-400 hover:text-white" 
+        onClick={onBack}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-1">Forgot Password</h2>
+        <p className="text-sm text-gray-400">Please enter your email account to send the link verification to reset your password.</p>
+      </div>
+
+      <div className="relative">
+        <Input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="email@domain.com"
+          className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+          required
+        />
+        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+      </div>
+
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
+        onClick={onSendReset}
+      >
+        Send Email
+      </Button>
+    </div>
+  );
+};
+
+const ResetPassword = ({ onResetPassword, onBack }) => {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  return (
+    <div className="space-y-4">
+      <button 
+        className="absolute top-4 left-4 text-gray-400 hover:text-white" 
+        onClick={onBack}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-1">Reset Password</h2>
+        <p className="text-sm text-gray-400">Please enter a strong password for your SalesBoost account.</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="relative">
+          <Input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="New Password"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+
+        <div className="relative">
+          <Input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+      </div>
+
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
+        onClick={() => onResetPassword(newPassword, confirmPassword)}
+      >
+        Reset Password
+      </Button>
+    </div>
+  );
+};
+
+const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword }) => {
+  const [fullName, setFullName] = useState('');
+
+  return (
+    <div className="space-y-4">
+      <button 
+        className="absolute top-4 left-4 text-gray-400 hover:text-white" 
+        onClick={onBack}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </button>
+
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-1">Sign Up with Email</h2>
+        <p className="text-sm text-gray-400">Please create your account with email and explore the world of SalesBoost AI.</p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="relative">
+          <Input
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+
+        <div className="relative">
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email Address"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+
+        <div className="relative">
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            required
+          />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
+      </div>
+
+      <Button
+        className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
+        onClick={() => onSignUp(fullName, email, password)}
+      >
+        Create Account
+      </Button>
+
+      <div className="text-xs text-gray-500 mt-6 pt-6 border-t border-slate-700 text-center">
+        By clicking the 'Create Account' button, you agree to the SalesBoost AI
+        <br />
+        <Button variant="link" className="p-0 text-xs text-gray-500 hover:text-gray-400">Terms of Service</Button> and <Button variant="link" className="p-0 text-xs text-gray-500 hover:text-gray-400">Privacy Policy</Button>.
+      </div>
+    </div>
+  );
+};
+
+// Main Login Form with Multi-Step Flow
 const LoginForm = () => {
   const [, setLocation] = useLocation();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    rememberMe: false
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginStep, setLoginStep] = useState("welcome"); // welcome, email, verification, forgot, reset, signup
 
   const loginOptions: LoginOptionProps[] = [
     { title: "Enterprise", icon: Building2 },
@@ -378,112 +736,207 @@ const LoginForm = () => {
     { title: "IT", icon: Cog }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.email && formData.password) {
-      setLocation('/dashboard');
+  // Rainbow border effect CSS for input focus
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .rainbow-glow-input:focus {
+        border-color: transparent;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+        animation: rainbow-glow 2s linear infinite;
+      }
+
+      @keyframes rainbow-glow {
+        0% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+        20% { box-shadow: 0 0 5px rgba(111, 103, 252, 0.8), 0 0 10px rgba(111, 103, 252, 0.5), 0 0 15px rgba(111, 103, 252, 0.3); }
+        40% { box-shadow: 0 0 5px rgba(155, 89, 240, 0.8), 0 0 10px rgba(155, 89, 240, 0.5), 0 0 15px rgba(155, 89, 240, 0.3); }
+        60% { box-shadow: 0 0 5px rgba(215, 89, 203, 0.8), 0 0 10px rgba(215, 89, 203, 0.5), 0 0 15px rgba(215, 89, 203, 0.3); }
+        80% { box-shadow: 0 0 5px rgba(249, 92, 136, 0.8), 0 0 10px rgba(249, 92, 136, 0.5), 0 0 15px rgba(249, 92, 136, 0.3); }
+        100% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+      }
+
+      /* Add rainbow border to the main content card */
+      .login-card {
+        position: relative;
+      }
+
+      .login-card::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+        border-radius: inherit;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .login-card:hover::before {
+        opacity: 0.7;
+        animation: rotate-rainbow 6s linear infinite;
+      }
+
+      @keyframes rotate-rainbow {
+        0% { background-position: 0% 50%; }
+        100% { background-position: 100% 50%; }
+      }
+
+      /* Button hover effect */
+      .interactive-button {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .interactive-button::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .interactive-button:hover::after {
+        opacity: 0.2;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  // Mock authentication function
+  const handleLogin = () => {
+    // For demo purposes, simply navigate to dashboard
+    localStorage.setItem('auth_token', 'demo_token');
+    setLocation('/dashboard');
+  };
+
+  const handleSignUp = (name, email, password) => {
+    // For demo purposes, create account and navigate to verification
+    setLoginStep("verification");
+  };
+
+  const handleVerification = (code) => {
+    // For demo purposes, verify code and navigate to dashboard
+    handleLogin();
+  };
+
+  const handleResetPassword = (newPassword, confirmPassword) => {
+    // For demo purposes, reset password and return to login
+    if (newPassword === confirmPassword) {
+      setLoginStep("email");
+    }
+  };
+
+  const renderLoginStep = () => {
+    switch (loginStep) {
+      case "welcome":
+        return (
+          <WelcomeBack 
+            onContinue={() => setLoginStep("email")}
+            onBackToOptions={() => setSelectedRole(null)} 
+            onSignUpWithEmail={() => setLoginStep("signup")}
+          />
+        );
+
+      case "email":
+        return (
+          <EmailSignIn 
+            onContinue={() => setLoginStep("verification")}
+            onBack={() => setLoginStep("welcome")}
+            onForgotPassword={() => setLoginStep("forgot")}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+          />
+        );
+
+      case "verification":
+        return (
+          <VerificationCode 
+            onVerify={handleVerification}
+            onBack={() => setLoginStep("email")}
+            onResend={() => {}} // Mock function
+            email={email}
+          />
+        );
+
+      case "forgot":
+        return (
+          <ForgotPassword 
+            onSendReset={() => setLoginStep("reset")}
+            onBack={() => setLoginStep("email")}
+            email={email}
+            setEmail={setEmail}
+          />
+        );
+
+      case "reset":
+        return (
+          <ResetPassword 
+            onResetPassword={handleResetPassword}
+            onBack={() => setLoginStep("forgot")}
+          />
+        );
+
+      case "signup":
+        return (
+          <SignUp 
+            onSignUp={handleSignUp}
+            onBack={() => setLoginStep("welcome")}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+          />
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl">
-        <CardContent className="p-8 space-y-6">
-          <div className="text-center space-y-2 mb-8">
+      <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl login-card">
+        <CardContent className="p-8 space-y-6 relative">
+          <div className="text-center mb-4">
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
               SalesBoost AI
             </h1>
-            <p className="text-gray-400">
-              {selectedRole 
-                ? "Please enter your details to access dashboard" 
-                : "Please select your login type"
-              }
-            </p>
           </div>
 
           {!selectedRole ? (
-            <div className="grid gap-4">
-              {loginOptions.map((option) => (
-                <Button
-                  key={option.title}
-                  variant="outline"
-                  className="w-full bg-slate-800/50 hover:bg-slate-800 text-white border-slate-700 h-14"
-                  onClick={() => setSelectedRole(option.title)}
-                >
-                  <option.icon className="w-5 h-5 mr-2" />
-                  {option.title} Login
-                </Button>
-              ))}
+            <div className="space-y-6">
+              <div className="text-center">
+                <p className="text-gray-400">Please select your login type</p>
+              </div>
+
+              <div className="grid gap-4">
+                {loginOptions.map((option) => (
+                  <Button
+                    key={option.title}
+                    variant="outline"
+                    className="w-full bg-slate-800/50 hover:bg-slate-800 text-white border-slate-700 h-14 transform transition-transform hover:scale-105 interactive-button"
+                    onClick={() => setSelectedRole(option.title)}
+                  >
+                    <option.icon className="w-5 h-5 mr-2" />
+                    {option.title} Login
+                  </Button>
+                ))}
+              </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Input
-                  type="email"
-                  placeholder="E-mail Address *"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-11"
-                  required
-                />
-              </div>
-
-              <div>
-                <Input
-                  type="password"
-                  placeholder="Password *"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-11"
-                  required
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="remember"
-                    checked={formData.rememberMe}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, rememberMe: checked as boolean })
-                    }
-                    className="border-slate-700 data-[state=checked]:bg-blue-600"
-                  />
-                  <label htmlFor="remember" className="text-sm text-gray-400 cursor-pointer">
-                    Remember me
-                  </label>
-                </div>
-                <a href="#" className="text-sm text-blue-500 hover:text-blue-400">
-                  Forgot Password?
-                </a>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white h-11"
-              >
-                Sign In
-              </Button>
-
-              <div className="text-center text-sm">
-                <p className="text-gray-400">
-                  Don't have an account yet?{' '}
-                  <a href="#" className="text-blue-500 hover:text-blue-400">Sign Up</a>
-                </p>
-              </div>
-            </form>
-          )}
-
-          {selectedRole && (
-            <div className="absolute top-4 left-4">
-              <Button
-                variant="ghost"
-                className="text-gray-400 hover:text-white"
-                onClick={() => setSelectedRole(null)}
-              >
-                ← Back
-              </Button>
-            </div>
+            renderLoginStep()
           )}
         </CardContent>
       </Card>
