@@ -42,7 +42,8 @@ export default function Dashboard() {
         <p className="text-sm md:text-base text-muted-foreground">Welcome to your business overview.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 md:gap-6">
+      {/* First row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Tasks Section */}
         <Card className="overflow-hidden border-0 shadow-lg group">
           <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 relative overflow-hidden p-4 md:p-6">
@@ -108,7 +109,10 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      {/* Second row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Schedule Section */}
         <Card className="overflow-hidden border-0 shadow-lg group">
           <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 relative overflow-hidden p-4 md:p-6">
