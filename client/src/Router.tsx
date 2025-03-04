@@ -15,6 +15,7 @@ import Library from "@/pages/library";
 import TrendsExplorer from "@/pages/library/trends";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
+import SmartProposal from "@/pages/features/smart-proposal";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
 import { Menu } from "lucide-react";
@@ -55,6 +56,19 @@ export default function Router() {
             <Route path="/settings/login" component={Login} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
+
+            {/* AI-Powered Feature Routes */}
+            <Route path="/features/smart-proposal" component={SmartProposal} />
+            <Route path="/features/deal-predictor" component={() => <div>Deal Predictor - Coming Soon</div>} />
+            <Route path="/features/configurator" component={() => <div>Product Configurator - Coming Soon</div>} />
+            <Route path="/features/upsell" component={() => <div>Upsell Brain - Coming Soon</div>} />
+            <Route path="/features/heatmap" component={() => <div>Intent Heatmap - Coming Soon</div>} />
+            <Route path="/features/case-studies" component={() => <div>Case Study Finder - Coming Soon</div>} />
+            <Route path="/features/loyalty" component={() => <div>Loyalty Discounts - Coming Soon</div>} />
+            <Route path="/features/sales-agent" component={() => <div>Silent Sales Agent - Coming Soon</div>} />
+            <Route path="/features/simulator" component={() => <div>POC Simulator - Coming Soon</div>} />
+            <Route path="/features/reputation" component={() => <div>Digital Reputation Score - Coming Soon</div>} />
+
             <Route component={NotFound} />
           </Switch>
         </div>
