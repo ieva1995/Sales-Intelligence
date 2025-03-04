@@ -21,6 +21,7 @@ import Header from "./components/Header";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import DealPredictor from "@/pages/features/deal-predictor";
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +60,7 @@ export default function Router() {
 
             {/* AI-Powered Feature Routes */}
             <Route path="/features/smart-proposal" component={SmartProposal} />
-            <Route path="/features/deal-predictor" component={() => <div>Deal Predictor - Coming Soon</div>} />
+            <Route path="/features/deal-predictor" component={DealPredictor} />
             <Route path="/features/configurator" component={() => <div>Product Configurator - Coming Soon</div>} />
             <Route path="/features/upsell" component={() => <div>Upsell Brain - Coming Soon</div>} />
             <Route path="/features/heatmap" component={() => <div>Intent Heatmap - Coming Soon</div>} />
