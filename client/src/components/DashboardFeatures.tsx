@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
-import { 
-  FileText, 
-  Brain, 
-  Settings, 
-  TrendingUp, 
+import {
+  FileText,
+  Brain,
+  Settings,
+  TrendingUp,
   Activity,
   BookOpen,
   Gift,
@@ -42,16 +42,18 @@ const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise
             <p className="text-sm text-gray-400">{description}</p>
           </div>
         </div>
-        {isNew && (
-          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">
-            New
-          </span>
-        )}
-        {isEnterprise && (
-          <span className="absolute top-2 right-2 px-2 py-1 text-xs font-medium bg-purple-500/20 text-purple-400 rounded-full">
-            Enterprise
-          </span>
-        )}
+        <div className="absolute top-2 right-2 flex gap-2">
+          {isNew && (
+            <span className="px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">
+              New
+            </span>
+          )}
+          {isEnterprise && (
+            <span className="px-2 py-1 text-xs font-medium bg-purple-500/20 text-purple-400 rounded-full">
+              Enterprise
+            </span>
+          )}
+        </div>
       </Card>
     </a>
   </Link>
