@@ -8,6 +8,7 @@ import CRM from "@/pages/crm";
 import Content from "@/pages/content";
 import Commerce from "@/pages/commerce";
 import CommerceOverview from "@/pages/commerce/Overview";
+import ShopifyDashboard from "@/pages/commerce/shopify";
 import Automations from "@/pages/automations";
 import Reporting from "@/pages/reporting";
 import DataManagement from "@/pages/data";
@@ -35,11 +36,22 @@ import Analytics from "@/pages/analytics";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
 export default function Router() {
+  console.log("Router component mounting");
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("Router useEffect running - checking environment variables");
+    // Log available environment variables for debugging
+    const envPrefix = "VITE_";
+    const hasShopifyKeys = Object.keys(import.meta.env).some(key => 
+      key.startsWith(envPrefix) && key.includes("SHOPIFY")
+    );
+    console.log("Has Shopify environment variables:", hasShopifyKeys);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -65,6 +77,7 @@ export default function Router() {
             <Route path="/content" component={Content} />
             <Route path="/commerce" component={Commerce} />
             <Route path="/commerce/overview" component={CommerceOverview} />
+            <Route path="/commerce/shopify" component={ShopifyDashboard} />
             <Route path="/automations" component={Automations} />
             <Route path="/reporting" component={Reporting} />
             <Route path="/data" component={DataManagement} />

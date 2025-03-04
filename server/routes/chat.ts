@@ -34,12 +34,12 @@ router.post("/api/chat", async (req, res) => {
       reply: response.choices[0].message.content,
       status: 'success' 
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Chat API Error:', error);
     res.status(500).json({ 
       error: 'Failed to get response from AI',
       status: 'error',
-      details: error.message
+      details: error.message || 'Unknown error'
     });
   }
 });

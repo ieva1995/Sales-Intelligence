@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 
 const commerceItems = [
   { label: "Overview", href: "/commerce/overview" },
+  { label: "Shopify", href: "/commerce/shopify" },
   { label: "Payments", href: "/commerce/payments" },
   { label: "Invoices", href: "/commerce/invoices" },
   { label: "Payment Links", href: "/commerce/payment-links" },

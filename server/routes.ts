@@ -10,6 +10,7 @@ import {
 import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
 import stripeRouter from './routes/stripe';
+import shopifyRouter from './routes/shopify';
 import { newsService } from "./services/newsService";
 
 export async function registerRoutes(app: Express) {
@@ -26,6 +27,7 @@ export async function registerRoutes(app: Express) {
   // Register routers
   app.use(chatRouter);
   app.use(stripeRouter); // Add Stripe routes
+  app.use('/api/shopify', shopifyRouter); // Add Shopify routes
 
   // Existing routes
   app.get("/api/trends", async (_req, res) => {

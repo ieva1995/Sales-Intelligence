@@ -10,6 +10,7 @@ interface CommerceMenuItem {
 
 const menuItems: CommerceMenuItem[] = [
   { label: "Overview", href: "/commerce/overview", gradient: "from-blue-500 to-blue-600" },
+  { label: "Shopify", href: "/commerce/shopify", gradient: "from-teal-500 to-teal-600" },
   { label: "Payments", href: "/commerce/payments", gradient: "from-green-500 to-green-600" },
   { label: "Invoices", href: "/commerce/invoices", gradient: "from-purple-500 to-purple-600" },
   { label: "Payment Links", href: "/commerce/payment-links", gradient: "from-pink-500 to-pink-600" },
