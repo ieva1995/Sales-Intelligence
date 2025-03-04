@@ -42,7 +42,7 @@ export default function Sidebar() {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-4 left-4 md:hidden z-50 text-white"
+        className="fixed top-4 left-4 md:hidden z-50 text-black"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -94,19 +94,19 @@ export default function Sidebar() {
               </a>
             </Link>
           ))}
-
-          {/* Search Bar */}
-          <div className="px-3 py-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-300" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-10 h-9 rounded-full bg-green-500/20 border-green-600/20 text-white placeholder:text-green-300 focus:bg-green-500/30 focus:border-green-500/30 w-full"
-              />
-            </div>
-          </div>
         </nav>
+
+        {/* Search Bar */}
+        <div className="px-3 py-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-300" />
+            <Input
+              type="search"
+              placeholder="Search..."
+              className="pl-10 h-9 rounded-full bg-green-500/20 border-green-600/20 text-white placeholder:text-green-300 focus:bg-green-500/30 focus:border-green-500/30 w-full"
+            />
+          </div>
+        </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <Link href="/settings/login">
