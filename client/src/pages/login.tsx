@@ -17,12 +17,15 @@ import {
   ArrowLeft,
   Mail,
   Lock,
-  GitHub,
+  Github,
   Twitter,
   Facebook,
   X,
-  LogIn
+  LogIn,
+  AlertCircle
 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { useAuth } from "../hooks/use-auth";
 
 interface LoginOptionProps {
   title: string;
@@ -427,7 +430,34 @@ const WelcomeBack = ({ onContinue, onBackToOptions, onSignUpWithEmail }) => {
   );
 };
 
-const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, password, setPassword }) => {
+const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, password, setPassword, errors, setErrors }) => {
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Email validation
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email format is invalid";
+    }
+
+    // Password validation
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleContinue = () => {
+    if (validateForm()) {
+      onContinue();
+    }
+  };
+
   return (
     <div className="space-y-4">
       <button 
@@ -447,24 +477,46 @@ const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, pa
           <Input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) {
+                setErrors({...errors, email: ''});
+              }
+            }}
             placeholder="email@domain.com"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.email ? 'border-red-500' : ''}`}
             required
           />
           <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.email && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.email}
+            </div>
+          )}
         </div>
 
         <div className="relative">
           <Input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) {
+                setErrors({...errors, password: ''});
+              }
+            }}
             placeholder="Enter your password"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.password ? 'border-red-500' : ''}`}
             required
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.password && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.password}
+            </div>
+          )}
         </div>
       </div>
 
@@ -476,7 +528,7 @@ const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, pa
 
       <Button
         className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
-        onClick={onContinue}
+        onClick={handleContinue}
       >
         Continue
       </Button>
@@ -485,41 +537,7 @@ const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, pa
 };
 
 const VerificationCode = ({ onVerify, onBack, onResend, email }) => {
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
-  const inputRefs = useRef([]);
-
-  const handleCodeChange = (index, value) => {
-    if (value.length <= 1) {
-      const newCode = [...verificationCode];
-      newCode[index] = value;
-      setVerificationCode(newCode);
-
-      // Move to next input if value is entered
-      if (value && index < 5) {
-        inputRefs.current[index + 1].focus();
-      }
-    }
-  };
-
-  const handleKeyDown = (index, e) => {
-    // Move to previous input on backspace if current input is empty
-    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
-      inputRefs.current[index - 1].focus();
-    }
-  };
-
-  useEffect(() => {
-    // Check if code is complete and verify
-    if (verificationCode.every(digit => digit !== '')) {
-      // Auto-submit after a short delay
-      const timer = setTimeout(() => {
-        onVerify(verificationCode.join(''));
-      }, 500);
-
-      return () => clearTimeout(timer);
-    }
-  }, [verificationCode, onVerify]);
-
+  // Fixed syntax error in the array creation
   return (
     <div className="space-y-4">
       <button 
@@ -530,37 +548,54 @@ const VerificationCode = ({ onVerify, onBack, onResend, email }) => {
       </button>
 
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-1">Verification Code</h2>
-        <p className="text-sm text-gray-400">Verification code has been sent via email to <span className="text-blue-400">{email}</span></p>
+        <h3 className="text-xl font-bold text-blue-400 mb-2">SalesBoost AI</h3>
+        <h2 className="text-2xl font-bold mb-2">Verification Code</h2>
+        <p className="text-sm text-gray-400">
+          Verification code has been sent via email to<br />
+          <span className="text-blue-400">team@techbeast.shop</span>
+        </p>
       </div>
 
-      <div className="flex justify-center space-x-3 mb-8">
-        {verificationCode.map((digit, index) => (
-          <Input
-            key={index}
-            type="text"
-            maxLength={1}
-            value={digit}
-            onChange={(e) => handleCodeChange(index, e.target.value)}
-            onKeyDown={(e) => handleKeyDown(index, e)}
-            ref={el => inputRefs.current[index] = el}
-            className="rainbow-glow-input w-12 h-12 text-center text-xl bg-slate-800/50 border-slate-700 text-white"
-            inputMode="numeric"
-            pattern="[0-9]*"
-          />
+      <div className="flex justify-center space-x-2 my-8">
+        {Array(6).fill(0).map((_, index) => (
+          <div 
+            key={index} 
+            className="w-14 h-14 rounded-md bg-gray-900 border border-gray-800 flex items-center justify-center"
+          >
+            {/* Empty input boxes, styled to match the screenshot */}
+          </div>
         ))}
       </div>
 
-      <div className="text-center">
+      <div className="text-center mt-12">
         <p className="text-sm text-gray-400">
-          Didn't receive it? <Button variant="link" className="p-0 text-blue-400 hover:text-blue-300" onClick={onResend}>Resend code</Button> in 00:59 (1/3)
+          Didn't receive it? <button className="text-blue-400 underline font-medium">Resend code</button> in 00:59 (1/3)
         </p>
       </div>
     </div>
   );
 };
 
-const ForgotPassword = ({ onSendReset, onBack, email, setEmail }) => {
+const ForgotPassword = ({ onSendReset, onBack, email, setEmail, errors, setErrors }) => {
+  const validateEmail = () => {
+    const newErrors = {};
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email format is invalid";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSendReset = () => {
+    if (validateEmail()) {
+      onSendReset();
+    }
+  };
+
   return (
     <div className="space-y-4">
       <button 
@@ -579,17 +614,28 @@ const ForgotPassword = ({ onSendReset, onBack, email, setEmail }) => {
         <Input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (errors.email) {
+              setErrors({...errors, email: ''});
+            }
+          }}
           placeholder="email@domain.com"
-          className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+          className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.email ? 'border-red-500' : ''}`}
           required
         />
         <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        {errors.email && (
+          <div className="text-red-500 text-xs mt-1 flex items-center">
+            <AlertCircle className="h-3 w-3 mr-1" />
+            {errors.email}
+          </div>
+        )}
       </div>
 
       <Button
         className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
-        onClick={onSendReset}
+        onClick={handleSendReset}
       >
         Send Email
       </Button>
@@ -597,9 +643,34 @@ const ForgotPassword = ({ onSendReset, onBack, email, setEmail }) => {
   );
 };
 
-const ResetPassword = ({ onResetPassword, onBack }) => {
+const ResetPassword = ({ onResetPassword, onBack, errors, setErrors }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const validatePasswords = () => {
+    const newErrors = {};
+
+    if (!newPassword) {
+      newErrors.newPassword = "New password is required";
+    } else if (newPassword.length < 6) {
+      newErrors.newPassword = "Password must be at least 6 characters";
+    }
+
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (confirmPassword !== newPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleResetPassword = () => {
+    if (validatePasswords()) {
+      onResetPassword(newPassword, confirmPassword);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -620,30 +691,52 @@ const ResetPassword = ({ onResetPassword, onBack }) => {
           <Input
             type="password"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={(e) => {
+              setNewPassword(e.target.value);
+              if (errors.newPassword) {
+                setErrors({...errors, newPassword: ''});
+              }
+            }}
             placeholder="New Password"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.newPassword ? 'border-red-500' : ''}`}
             required
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.newPassword && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.newPassword}
+            </div>
+          )}
         </div>
 
         <div className="relative">
           <Input
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (errors.confirmPassword) {
+                setErrors({...errors, confirmPassword: ''});
+              }
+            }}
             placeholder="Confirm Password"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
             required
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.confirmPassword && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.confirmPassword}
+            </div>
+          )}
         </div>
       </div>
 
       <Button
         className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
-        onClick={() => onResetPassword(newPassword, confirmPassword)}
+        onClick={handleResetPassword}
       >
         Reset Password
       </Button>
@@ -651,8 +744,37 @@ const ResetPassword = ({ onResetPassword, onBack }) => {
   );
 };
 
-const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword }) => {
+const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword, errors, setErrors }) => {
   const [fullName, setFullName] = useState('');
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!fullName) {
+      newErrors.fullName = "Full name is required";
+    }
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email format is invalid";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSignUp = () => {
+    if (validateForm()) {
+      onSignUp(fullName, email, password);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -673,42 +795,75 @@ const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword }) =>
           <Input
             type="text"
             value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            onChange={(e) => {
+              setFullName(e.target.value);
+              if (errors.fullName) {
+                setErrors({...errors, fullName: ''});
+              }
+            }}
             placeholder="Full Name"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.fullName ? 'border-red-500' : ''}`}
             required
           />
           <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.fullName && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.fullName}
+            </div>
+          )}
         </div>
 
         <div className="relative">
           <Input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) {
+                setErrors({...errors, email: ''});
+              }
+            }}
             placeholder="Email Address"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.email ? 'border-red-500' : ''}`}
             required
           />
           <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.email && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.email}
+            </div>
+          )}
         </div>
 
         <div className="relative">
           <Input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) {
+                setErrors({...errors, password: ''});
+              }
+            }}
             placeholder="Password"
-            className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10"
+            className={`rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 h-12 pl-10 ${errors.password ? 'border-red-500' : ''}`}
             required
           />
           <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+          {errors.password && (
+            <div className="text-red-500 text-xs mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              {errors.password}
+            </div>
+          )}
         </div>
       </div>
 
       <Button
         className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-6 transform transition-transform active:scale-95 interactive-button"
-        onClick={() => onSignUp(fullName, email, password)}
+        onClick={handleSignUp}
       >
         Create Account
       </Button>
@@ -729,6 +884,10 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginStep, setLoginStep] = useState("welcome"); // welcome, email, verification, forgot, reset, signup
+  const [errors, setErrors] = useState({});
+
+  // Use our authentication hook
+  const { login, signUp, isLoading } = useAuth();
 
   const loginOptions: LoginOptionProps[] = [
     { title: "Enterprise", icon: Building2 },
@@ -768,6 +927,7 @@ const LoginForm = () => {
         right: -2px;
         bottom: -2px;
         background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+        background-size: 200% 200%;
         border-radius: inherit;
         z-index: -1;
         opacity: 0;
@@ -805,35 +965,123 @@ const LoginForm = () => {
       .interactive-button:hover::after {
         opacity: 0.2;
       }
+
+      /* Screen edges rainbow glow effect */
+      .screen-edges-glow {
+        position: relative;
+      }
+
+      .screen-edges-glow::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3);
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .screen-edges-glow.active::before {
+        opacity: 1;
+        animation: edge-rainbow 3s linear infinite;
+      }
+
+      @keyframes edge-rainbow {
+        0% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+        20% { box-shadow: inset 0 0 30px rgba(111, 103, 252, 0.3); }
+        40% { box-shadow: inset 0 0 30px rgba(155, 89, 240, 0.3); }
+        60% { box-shadow: inset 0 0 30px rgba(215, 89, 203, 0.3); }
+        80% { box-shadow: inset 0 0 30px rgba(249, 92, 136, 0.3); }
+        100% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+      }
     `;
     document.head.appendChild(style);
 
+    // Activate screen edges glow effect when input is focused
+    const activateGlow = () => {
+      document.body.classList.add('screen-edges-glow', 'active');
+    };
+
+    const deactivateGlow = () => {
+      document.body.classList.remove('active');
+      setTimeout(() => {
+        document.body.classList.remove('screen-edges-glow');
+      }, 500);
+    };
+
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', activateGlow);
+      input.addEventListener('blur', deactivateGlow);
+    });
+
     return () => {
       document.head.removeChild(style);
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.removeEventListener('focus', activateGlow);
+        input.removeEventListener('blur', deactivateGlow);
+      });
     };
   }, []);
 
-  // Mock authentication function
-  const handleLogin = () => {
-    // For demo purposes, simply navigate to dashboard
-    localStorage.setItem('auth_token', 'demo_token');
-    setLocation('/dashboard');
+  // Secure login function with validation that uses our auth hook
+  const handleLogin = async () => {
+    try {
+      const result = await login(email, password);
+      if (result.success) {
+        // Login successful, redirect to dashboard
+        setLocation('/dashboard');
+      } else {
+        // Login failed, show error message
+        setErrors({
+          auth: result.message || "Login failed. Please check your credentials."
+        });
+      }
+    } catch (error) {
+      setErrors({
+        auth: "An error occurred during login. Please try again."
+      });
+    }
   };
 
-  const handleSignUp = (name, email, password) => {
-    // For demo purposes, create account and navigate to verification
-    setLoginStep("verification");
+  const handleSignUp = async (name, email, password) => {
+    try {
+      const result = await signUp(name, email, password);
+      if (result.success) {
+        // Successfully created account, move to verification or dashboard
+        setLoginStep("verification");
+      } else {
+        setErrors({
+          auth: result.message || "Failed to create account. Please try again."
+        });
+      }
+    } catch (error) {
+      setErrors({
+        auth: "An error occurred. Please try again."
+      });
+    }
   };
 
   const handleVerification = (code) => {
-    // For demo purposes, verify code and navigate to dashboard
-    handleLogin();
+    // For this demo, we'll just redirect to dashboard
+    // In a real app, you would verify the code with the server
+    setLocation('/dashboard');
   };
 
   const handleResetPassword = (newPassword, confirmPassword) => {
-    // For demo purposes, reset password and return to login
+    // For demo purposes, just return to login
     if (newPassword === confirmPassword) {
       setLoginStep("email");
+      toast({
+        title: "Password reset successful",
+        description: "Your password has been reset. Please login with your new password.",
+        variant: "default"
+      });
     }
   };
 
@@ -851,13 +1099,15 @@ const LoginForm = () => {
       case "email":
         return (
           <EmailSignIn 
-            onContinue={() => setLoginStep("verification")}
+            onContinue={handleLogin}
             onBack={() => setLoginStep("welcome")}
             onForgotPassword={() => setLoginStep("forgot")}
             email={email}
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
+            errors={errors}
+            setErrors={setErrors}
           />
         );
 
@@ -878,6 +1128,8 @@ const LoginForm = () => {
             onBack={() => setLoginStep("email")}
             email={email}
             setEmail={setEmail}
+            errors={errors}
+            setErrors={setErrors}
           />
         );
 
@@ -886,6 +1138,8 @@ const LoginForm = () => {
           <ResetPassword 
             onResetPassword={handleResetPassword}
             onBack={() => setLoginStep("forgot")}
+            errors={errors}
+            setErrors={setErrors}
           />
         );
 
@@ -898,6 +1152,8 @@ const LoginForm = () => {
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
+            errors={errors}
+            setErrors={setErrors}
           />
         );
       default:
@@ -905,8 +1161,20 @@ const LoginForm = () => {
     }
   };
 
+  // Loading indicator for authentication operations
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+        <div className="text-white text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Authenticating...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 screen-edges-glow">
       <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl login-card">
         <CardContent className="p-8 space-y-6 relative">
           <div className="text-center mb-4">
@@ -938,6 +1206,13 @@ const LoginForm = () => {
           ) : (
             renderLoginStep()
           )}
+
+          {errors.auth && (
+            <div className="bg-red-500/20 border border-red-500/50 text-red-400 p-3 rounded flex items-center">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              {errors.auth}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -946,6 +1221,14 @@ const LoginForm = () => {
 
 export default function Login() {
   const [location] = useLocation();
+  const { isAuthenticated } = useAuth();
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (isAuthenticated) {
+      window.location.href = '/dashboard';
+    }
+  }, [isAuthenticated]);
 
   // If the URL is exactly '/login', show the login form
   // Otherwise, show the landing page

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { getShopifyProducts, getShopifyOrders, getShopifyCustomers, authenticateWithShopify } from "@/lib/shopify";
+import { useAuth } from "@/hooks/use-auth";
 import {
   ShoppingBag,
   Users,
@@ -15,7 +16,9 @@ import {
   Store,
   TrendingUp,
   DollarSign,
-  BarChart2
+  BarChart2,
+  ShieldAlert,
+  Lock
 } from "lucide-react";
 
 interface ShopifyProduct {
@@ -62,9 +65,30 @@ interface ShopifyCustomer {
   addresses: any[];
 }
 
+// Access denied component for non-admin users
+const AccessDenied = () => {
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col items-center justify-center text-center py-20">
+        <div className="bg-red-900/20 p-4 rounded-full mb-4">
+          <ShieldAlert className="h-16 w-16 text-red-500" />
+        </div>
+        <h1 className="text-2xl font-bold text-red-500 mb-2">Access Restricted</h1>
+        <p className="text-gray-400 max-w-md mb-6">
+          This section contains sensitive Shopify store data that is only accessible to administrators.
+        </p>
+        <div className="flex items-center text-amber-500 bg-amber-900/20 px-4 py-2 rounded-lg">
+          <Lock className="h-5 w-5 mr-2" />
+          <p className="text-sm">Contact an administrator if you need access to this information.</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function ShopifyDashboard() {
-  console.log("ShopifyDashboard component mounting");
   const { toast } = useToast();
+  const { user, isAdmin } = useAuth(); // Get authentication state and admin status
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [orders, setOrders] = useState<ShopifyOrder[]>([]);
   const [customers, setCustomers] = useState<ShopifyCustomer[]>([]);
@@ -295,14 +319,17 @@ export default function ShopifyDashboard() {
 
   // Use useEffect to try to fetch data on component mount
   useEffect(() => {
-    console.log("ShopifyDashboard useEffect running");
+    // Only fetch data if the user is an admin
+    if (isAdmin) {
+      console.log("ShopifyDashboard useEffect running");
 
-    // Try to fetch real data first, if it fails we'll fall back to sample data
-    fetchShopifyData().catch(error => {
-      console.warn("Failed to fetch Shopify data, using sample data instead:", error);
-      loadSampleData();
-    });
-  }, []);
+      // Try to fetch real data first, if it fails we'll fall back to sample data
+      fetchShopifyData().catch(error => {
+        console.warn("Failed to fetch Shopify data, using sample data instead:", error);
+        loadSampleData();
+      });
+    }
+  }, [isAdmin]); // Only re-run when admin status changes
 
   // Get stats for summary cards
   const stats = {
@@ -327,6 +354,12 @@ export default function ShopifyDashboard() {
     return colors[status] || "bg-gray-500/20 text-gray-400";
   };
 
+  // If user is not an admin, render the access denied component
+  if (!isAdmin) {
+    return <AccessDenied />;
+  }
+
+  // Admin user content below - only shown if isAdmin is true
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">

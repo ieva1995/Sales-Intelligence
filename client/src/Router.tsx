@@ -39,25 +39,11 @@ import Header from "./components/Header";
 import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "./hooks/use-auth";
 
 export default function Router() {
-  console.log("Router component mounting");
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    console.log("Router useEffect running - checking environment variables");
-    // Log available environment variables for debugging
-    const envPrefix = "VITE_";
-    const hasShopifyKeys = Object.keys(import.meta.env).some(key => 
-      key.startsWith(envPrefix) && key.includes("SHOPIFY")
-    );
-    console.log("Has Shopify environment variables:", hasShopifyKeys);
-
-    // For demo purposes, check if there's a stored auth token
-    const hasAuthToken = localStorage.getItem('auth_token');
-    setIsAuthenticated(!!hasAuthToken);
-  }, []);
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   // Check if the current path should display the app shell (sidebar and header)
   const shouldShowAppShell = () => {
@@ -67,12 +53,22 @@ export default function Router() {
   };
 
   // If the route requires authentication but user is not authenticated, redirect to login page
-  // This is simplified authentication for demo purposes
-  if (window.location.pathname !== '/' && window.location.pathname !== '/login' && !isAuthenticated) {
-    // Mock authentication for demo - in a real app, you would check actual auth state
-    // For demo, store a token so we can navigate through the app
-    localStorage.setItem('auth_token', 'demo_token');
-    setIsAuthenticated(true);
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && shouldShowAppShell()) {
+      window.location.href = '/login';
+    }
+  }, [isAuthenticated, isLoading]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-white text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading SalesBoost AI...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
