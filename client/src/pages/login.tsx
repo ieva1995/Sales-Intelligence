@@ -354,9 +354,7 @@ const LandingPage = () => {
 
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">© 2025 SalesBoost AI. All rights reserved.</p>
-            <div className="mt-4 md:mt-0">
-              <p className="text-gray-400 text-sm">Made with <span className="text-red-500">♥</span> Globally</p>
-            </div>
+            {/* Removed the "Made with ♥ Globally" text as requested */}
           </div>
         </div>
       </footer>
@@ -383,7 +381,7 @@ const LoginForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.email && formData.password) {
-      setLocation('/settings');
+      setLocation('/dashboard');
     }
   };
 
