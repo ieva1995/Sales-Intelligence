@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
 import { ChevronUp } from "lucide-react";
+import { SiGooglelens, SiGoogleanalytics } from "react-icons/si";
 
 interface LibraryMenuItem {
   label: string;
   href: string;
   hasSubmenu?: boolean;
   gradient?: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 const menuItems: LibraryMenuItem[] = [
@@ -15,6 +17,7 @@ const menuItems: LibraryMenuItem[] = [
   { label: "Meetings Scheduler", href: "/library/meetings", gradient: "from-green-500 to-green-600" },
   { label: "Files", href: "/library/files", gradient: "from-purple-500 to-purple-600" },
   { label: "Documents", href: "/library/documents", gradient: "from-pink-500 to-pink-600" },
+  { label: "Google Trends Explorer", href: "/library/trends", gradient: "from-orange-500 to-orange-600", icon: SiGoogleanalytics },
   { label: "Playbooks", href: "/library/playbooks", gradient: "from-amber-500 to-amber-600" },
   { label: "Snippets", href: "/library/snippets", gradient: "from-red-500 to-red-600" },
   { label: "Coaching Playlists", href: "/library/coaching", gradient: "from-cyan-500 to-cyan-600" },
@@ -67,7 +70,10 @@ export default function LibraryMenu() {
                   item.gradient,
                   (hoveredItem === item.label && location !== item.href) && "opacity-10"
                 )} />
-                <span className="relative z-10">{item.label}</span>
+                <div className="relative z-10 flex items-center gap-2">
+                  {item.icon && <item.icon className="h-4 w-4" />}
+                  <span>{item.label}</span>
+                </div>
                 {item.hasSubmenu && (
                   <ChevronUp 
                     className={cn(
