@@ -12,61 +12,6 @@ import {
   ShieldCheck
 } from "lucide-react";
 
-const pricingPlans = [
-  {
-    title: "Basic",
-    price: "$99",
-    description: "Essential tools for growing sales teams",
-    priceId: "price_basic_monthly",
-    features: [
-      { text: "Lead Scoring AI", included: true },
-      { text: "Basic Customer Insights", included: true },
-      { text: "Email Campaign Tools", included: true },
-      { text: "5 AI-Generated Proposals/month", included: true },
-      { text: "Standard Support (Email)", included: true },
-      { text: "Basic Analytics Dashboard", included: true },
-      { text: "Team Collaboration", included: false },
-      { text: "Advanced Analytics", included: false },
-      { text: "Custom Integrations", included: false },
-    ],
-  },
-  {
-    title: "Professional",
-    price: "$299",
-    description: "Advanced features for professional sales teams",
-    priceId: "price_pro_monthly",
-    popular: true,
-    features: [
-      { text: "All Basic Features", included: true },
-      { text: "Unlimited AI Proposals", included: true },
-      { text: "Advanced Analytics & Reports", included: true },
-      { text: "Custom Integrations", included: true },
-      { text: "Priority Support (24/7)", included: true },
-      { text: "Team Collaboration Tools", included: true },
-      { text: "API Access", included: true },
-      { text: "Custom Training Sessions", included: true },
-      { text: "Dedicated Account Manager", included: true },
-    ],
-  },
-  {
-    title: "Enterprise",
-    price: "Custom",
-    description: "Custom solutions for large organizations",
-    buttonText: "Contact Sales",
-    features: [
-      { text: "All Professional Features", included: true },
-      { text: "Custom Development", included: true },
-      { text: "White-Label Options", included: true },
-      { text: "Enterprise SLA", included: true },
-      { text: "Dedicated Support Team", included: true },
-      { text: "On-premise Deployment", included: true },
-      { text: "Custom AI Model Training", included: true },
-      { text: "Advanced Security Features", included: true },
-      { text: "Unlimited Users & Data", included: true },
-    ],
-  },
-];
-
 const salesTools = [
   {
     title: "Deal Predictor AI",
@@ -77,22 +22,6 @@ const salesTools = [
       accuracy: "94%",
       insight: "Real-time",
       success: "+45%"
-    }
-  },
-  // Keep other existing tools
-  ...salesTools.slice(1)
-];
-
-const salesTools_original = [
-  {
-    title: "Lead Scoring AI",
-    description: "Automatically score and prioritize leads based on behavior patterns and engagement metrics",
-    icon: Target,
-    route: "/features/smart-tools/lead-scoring",
-    metrics: {
-      accuracy: "94%",
-      timesSaved: "3.5h/day",
-      roi: "+28%"
     }
   },
   {
@@ -167,6 +96,61 @@ export default function SalesTools() {
     }
   };
 
+  const pricingPlans = [
+    {
+      title: "Basic",
+      price: "$99",
+      description: "Essential tools for growing sales teams",
+      priceId: "price_basic_monthly",
+      features: [
+        { text: "Lead Scoring AI", included: true },
+        { text: "Basic Customer Insights", included: true },
+        { text: "Email Campaign Tools", included: true },
+        { text: "5 AI-Generated Proposals/month", included: true },
+        { text: "Standard Support (Email)", included: true },
+        { text: "Basic Analytics Dashboard", included: true },
+        { text: "Team Collaboration", included: false },
+        { text: "Advanced Analytics", included: false },
+        { text: "Custom Integrations", included: false },
+      ],
+    },
+    {
+      title: "Professional",
+      price: "$299",
+      description: "Advanced features for professional sales teams",
+      priceId: "price_pro_monthly",
+      popular: true,
+      features: [
+        { text: "All Basic Features", included: true },
+        { text: "Unlimited AI Proposals", included: true },
+        { text: "Advanced Analytics & Reports", included: true },
+        { text: "Custom Integrations", included: true },
+        { text: "Priority Support (24/7)", included: true },
+        { text: "Team Collaboration Tools", included: true },
+        { text: "API Access", included: true },
+        { text: "Custom Training Sessions", included: true },
+        { text: "Dedicated Account Manager", included: true },
+      ],
+    },
+    {
+      title: "Enterprise",
+      price: "Custom",
+      description: "Custom solutions for large organizations",
+      buttonText: "Contact Sales",
+      features: [
+        { text: "All Professional Features", included: true },
+        { text: "Custom Development", included: true },
+        { text: "White-Label Options", included: true },
+        { text: "Enterprise SLA", included: true },
+        { text: "Dedicated Support Team", included: true },
+        { text: "On-premise Deployment", included: true },
+        { text: "Custom AI Model Training", included: true },
+        { text: "Advanced Security Features", included: true },
+        { text: "Unlimited Users & Data", included: true },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Header Section with Gradient Background */}
@@ -184,32 +168,11 @@ export default function SalesTools() {
         <div className="absolute inset-0 bg-grid-white/10 bg-[size:20px_20px]" />
       </div>
 
-      {/* Pricing Section */}
-      <div className="container mx-auto px-4 -mt-8">
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-4">Choose Your Plan</h2>
-            <p className="text-xl text-white/80">
-              Get started with our flexible pricing plans
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <PricingCard
-                key={plan.title}
-                {...plan}
-                onSubscribe={handleSubscribe}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Tools Section */}
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-white mb-8 text-center">Available Tools & Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {salesTools_original.map((tool) => (
+          {salesTools.map((tool) => (
             <Link key={tool.title} href={tool.route}>
               <Card className="cursor-pointer hover:bg-white/5 transition-colors bg-white/10 border-white/20">
                 <CardHeader>
@@ -232,6 +195,27 @@ export default function SalesTools() {
               </Card>
             </Link>
           ))}
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-4">Choose Your Plan</h2>
+            <p className="text-xl text-white/80">
+              Get started with our flexible pricing plans
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {pricingPlans.map((plan) => (
+              <PricingCard
+                key={plan.title}
+                {...plan}
+                onSubscribe={handleSubscribe}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>
