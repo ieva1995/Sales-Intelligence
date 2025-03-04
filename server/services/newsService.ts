@@ -1,9 +1,6 @@
-import OpenAI from "openai";
 import { WebSocket } from "ws";
 import { News, InsertNews } from "@shared/schema";
-
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { marketDataService } from "./marketDataService";
 
 interface NewsUpdate {
   company: string;
@@ -15,6 +12,7 @@ interface NewsUpdate {
 
 export class NewsService {
   private clients: Set<WebSocket> = new Set();
+  private watchlist: string[] = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']; // Example watchlist
 
   constructor() {
     this.startNewsPolling();
@@ -37,29 +35,21 @@ export class NewsService {
   }
 
   private async fetchLatestNews(): Promise<NewsUpdate[]> {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "You are a market intelligence AI that analyzes companies and generates real-time insights. Generate 3 recent company insights with business opportunities in JSON format.",
-        }
-      ],
-      response_format: { type: "json_object" },
-    });
+    try {
+      // Fetch insights for companies in watchlist
+      const allInsights = await Promise.all(
+        this.watchlist.map(symbol => marketDataService.getCompanyInsights(symbol))
+      );
 
-    if (!response.choices[0].message.content) {
-      throw new Error("No content in OpenAI response");
+      // Flatten and sort by date
+      return allInsights
+        .flat()
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5); // Get latest 5 insights
+    } catch (error) {
+      console.error("Error fetching market news:", error);
+      throw error;
     }
-
-    const result = JSON.parse(response.choices[0].message.content);
-    return result.insights.map((insight: any) => ({
-      company: insight.company,
-      insight: insight.announcement,
-      opportunity: insight.opportunity,
-      priority: insight.priority as "high" | "medium" | "low",
-      date: new Date().toISOString()
-    }));
   }
 
   private broadcastNews(news: NewsUpdate[]) {
