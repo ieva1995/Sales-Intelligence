@@ -6,11 +6,14 @@ import {
   insertTransactionSchema, insertProductSchema, insertSaleSchema,
   insertEmployeeSchema, insertCustomerSchema
 } from "@shared/schema";
-import * as googleTrends from './googleTrends'; // Assuming this module exists and exports necessary functions
-
+import * as googleTrends from './googleTrends';
+import chatRouter from './routes/chat';
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
+
+  // Register chat router
+  app.use(chatRouter);
 
   // Existing routes
   app.get("/api/trends", async (_req, res) => {

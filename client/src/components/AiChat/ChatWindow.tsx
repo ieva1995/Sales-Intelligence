@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Message {
   content: string;
@@ -30,8 +32,27 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   ]);
   const [input, setInput] = useState("");
 
+  const chatMutation = useMutation({
+    mutationFn: async (message: string) => {
+      const res = await apiRequest("POST", "/api/chat", { message });
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      if (data.status === 'success') {
+        setMessages((prev) => [
+          ...prev,
+          {
+            content: data.reply,
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    },
+  });
+
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || chatMutation.isPending) return;
 
     // Add user message
     const userMessage: Message = {
@@ -41,16 +62,8 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
     };
     setMessages((prev) => [...prev, userMessage]);
 
-    // Simulate AI response (this will be replaced with actual API call)
-    setTimeout(() => {
-      const aiMessage: Message = {
-        content: "I understand your question. Let me help you with that...",
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-    }, 1000);
-
+    // Send to API
+    chatMutation.mutate(input);
     setInput("");
   };
 
@@ -100,10 +113,12 @@ export default function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
             onKeyPress={(e) => e.key === "Enter" && handleSend()}
             placeholder="Type your message..."
             className="flex-1"
+            disabled={chatMutation.isPending}
           />
           <Button
             className="bg-green-500 hover:bg-green-600 text-white"
             onClick={handleSend}
+            disabled={chatMutation.isPending}
           >
             <Send className="h-4 w-4" />
           </Button>
