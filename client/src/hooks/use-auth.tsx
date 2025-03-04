@@ -17,7 +17,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   isAdmin: boolean;
-  requestLoginToken: (email: string) => Promise<{ success: boolean; message?: string; expiresAt?: Date }>;
+  requestLoginToken: (email: string) => Promise<{ success: boolean; message?: string; expiresAt?: Date; _devToken?: string }>;
   validateLoginToken: (email: string, token: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   checkPermission: (requiredRole: string) => boolean;
@@ -138,7 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { 
           success: true, 
           message: response.data.message,
-          expiresAt: new Date(response.data.expiresAt)
+          expiresAt: new Date(response.data.expiresAt),
+          _devToken: response.data._devToken //Added _devToken
         };
       } else {
         return { 

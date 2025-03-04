@@ -33,6 +33,32 @@ interface LoginOptionProps {
 // Component for the landing page before login
 const LandingPage = () => {
   const [, setLocation] = useLocation();
+  const [marketTrends, setMarketTrends] = useState([
+    { id: 1, trend: "Ecommerce Growth", change: "+12%", icon: TrendingUp },
+    { id: 2, trend: "Mobile Shopping", change: "+24%", icon: BarChart2 },
+    { id: 3, trend: "Social Commerce", change: "+18%", icon: LineChart },
+  ]);
+
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // Update date every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 60000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format date for display
+  const formatDate = () => {
+    return currentDate.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
@@ -48,10 +74,10 @@ const LandingPage = () => {
             </h1>
             <nav className="hidden md:block">
               <ul className="flex space-x-8">
-                <li><a href="#" className="text-gray-300 hover:text-white">Features</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white">Solutions</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white">Pricing</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white">Resources</a></li>
+                <li><a href="/features" className="text-gray-300 hover:text-white">Features</a></li>
+                <li><a href="/solutions" className="text-gray-300 hover:text-white">Solutions</a></li>
+                <li><a href="/pricing" className="text-gray-300 hover:text-white">Pricing</a></li>
+                <li><a href="/resources" className="text-gray-300 hover:text-white">Resources</a></li>
               </ul>
             </nav>
           </div>
@@ -78,6 +104,9 @@ const LandingPage = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
+              <div className="text-blue-400 text-sm font-medium mb-3">
+                {formatDate()} - Latest Commerce Intelligence
+              </div>
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-6">
                 Maximize <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">Sales Success</span> Through Data Insights
               </h1>
@@ -123,27 +152,28 @@ const LandingPage = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <div className="rounded overflow-hidden">
-                    <img
-                      src="/attached_assets/Screenshot 2025-03-04 at 7.44.33 PM.png"
-                      alt="Dashboard Preview"
-                      className="w-full"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                        // Fallback to colored div with chart icons
-                        const parent = e.currentTarget.parentElement;
-                        if (parent) {
-                          const div = document.createElement('div');
-                          div.className = 'bg-slate-800 h-72 flex items-center justify-center space-x-4';
-                          div.innerHTML = `
-                            <div class="p-4 bg-slate-700 rounded-lg"><BarChart2 class="h-8 w-8 text-blue-500" /></div>
-                            <div class="p-4 bg-slate-700 rounded-lg"><LineChart class="h-8 w-8 text-green-500" /></div>
-                            <div class="p-4 bg-slate-700 rounded-lg"><PieChart class="h-8 w-8 text-purple-500" /></div>
-                          `;
-                          parent.appendChild(div);
-                        }
-                      }}
-                    />
+                  <div className="rounded overflow-hidden p-4">
+                    <h3 className="text-white text-lg font-medium mb-4">Latest Market Trends</h3>
+                    <div className="space-y-4">
+                      {marketTrends.map((trend) => (
+                        <div key={trend.id} className="bg-slate-700 rounded-lg p-3 flex items-center justify-between">
+                          <div className="flex items-center">
+                            <div className="bg-blue-600/30 p-2 rounded-md mr-3">
+                              <trend.icon className="h-5 w-5 text-blue-400" />
+                            </div>
+                            <span>{trend.trend}</span>
+                          </div>
+                          <span className="text-green-400 font-medium">{trend.change}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 pt-4 border-t border-slate-600">
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-sm font-medium text-slate-300">Real-time Updates</h4>
+                        <span className="text-xs text-slate-400">Last updated: {currentDate.toLocaleTimeString()}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -152,7 +182,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Skipping other landing page sections to focus on the login functionality */}
+      {/* Other sections removed to focus on login functionality */}
 
       {/* Footer */}
       <footer className="bg-slate-900 py-12 border-t border-slate-800 relative z-10">
@@ -171,40 +201,40 @@ const LandingPage = () => {
               <div>
                 <h3 className="font-medium mb-4">Company</h3>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white">About</a></li>
-                  <li><a href="#" className="hover:text-white">Careers</a></li>
-                  <li><a href="#" className="hover:text-white">Blog</a></li>
-                  <li><a href="#" className="hover:text-white">Press</a></li>
+                  <li><a href="/about" className="hover:text-white">About</a></li>
+                  <li><a href="/careers" className="hover:text-white">Careers</a></li>
+                  <li><a href="/blog" className="hover:text-white">Blog</a></li>
+                  <li><a href="/press" className="hover:text-white">Press</a></li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-4">Legal</h3>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white">Privacy</a></li>
-                  <li><a href="#" className="hover:text-white">Terms</a></li>
-                  <li><a href="#" className="hover:text-white">Cookie Policy</a></li>
-                  <li><a href="#" className="hover:text-white">Contact</a></li>
+                  <li><a href="/privacy" className="hover:text-white">Privacy</a></li>
+                  <li><a href="/terms" className="hover:text-white">Terms</a></li>
+                  <li><a href="/cookies" className="hover:text-white">Cookie Policy</a></li>
+                  <li><a href="/contact" className="hover:text-white">Contact</a></li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-4">Features</h3>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white">Analytics</a></li>
-                  <li><a href="#" className="hover:text-white">Forecasting</a></li>
-                  <li><a href="#" className="hover:text-white">Reporting</a></li>
-                  <li><a href="#" className="hover:text-white">Integrations</a></li>
+                  <li><a href="/analytics" className="hover:text-white">Analytics</a></li>
+                  <li><a href="/forecasting" className="hover:text-white">Forecasting</a></li>
+                  <li><a href="/reporting" className="hover:text-white">Reporting</a></li>
+                  <li><a href="/integrations" className="hover:text-white">Integrations</a></li>
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-4">Social</h3>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="#" className="hover:text-white">Twitter</a></li>
-                  <li><a href="#" className="hover:text-white">LinkedIn</a></li>
-                  <li><a href="#" className="hover:text-white">Facebook</a></li>
-                  <li><a href="#" className="hover:text-white">Instagram</a></li>
+                  <li><a href="https://twitter.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Twitter</a></li>
+                  <li><a href="https://linkedin.com/company/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">LinkedIn</a></li>
+                  <li><a href="https://facebook.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Facebook</a></li>
+                  <li><a href="https://instagram.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a></li>
                 </ul>
               </div>
             </div>
