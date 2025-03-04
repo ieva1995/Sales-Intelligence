@@ -33,12 +33,12 @@ function Header() {
           <div className="relative w-[240px]">
             <div className="relative z-[60]">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
-                isSearchFocused ? 'text-white' : 'text-gray-500'
+                isSearchFocused ? 'text-white' : 'text-green-300'
               }`} />
               <Input
                 type="search"
                 placeholder="Search..."
-                className="pl-10 h-9 rounded-full bg-black/20 border-gray-800 text-white placeholder:text-gray-500"
+                className="pl-10 h-9 rounded-full bg-green-500/20 border-green-600/20 text-white placeholder:text-green-300 focus:bg-green-500/30 focus:border-green-500/30"
                 onFocus={() => setIsSearchFocused(true)}
                 onBlur={() => setIsSearchFocused(false)}
               />
