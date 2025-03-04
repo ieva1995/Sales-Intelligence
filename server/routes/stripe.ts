@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16', // Using stable version
+  apiVersion: '2023-10-16',
   typescript: true,
 });
 
@@ -29,6 +29,8 @@ router.post('/api/create-checkout-session', async (req, res) => {
       success_url: `${req.headers.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/payment/cancelled`,
       customer_creation: 'always',
+      allow_promotion_codes: true,
+      billing_address_collection: 'required',
     });
 
     console.log('Checkout session created:', session.id);

@@ -81,27 +81,12 @@ const salesTools = [
   }
 ];
 
-export default function SalesTools() {
-  const { toast } = useToast();
-
-  const handleSubscribe = async (priceId: string) => {
-    try {
-      await createCheckoutSession(priceId);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to process subscription. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const pricingPlans = [
+const pricingPlans = [
     {
       title: "Basic",
       price: "$99",
       description: "Essential tools for growing sales teams",
-      priceId: "price_1OrMkLHmFWvEpNp2Y8jK9N2x",
+      priceId: "price_1NXCWTHmFWvEpNp2Z0kM1N4z", 
       features: [
         { text: "Lead Scoring AI", included: true },
         { text: "Basic Customer Insights", included: true },
@@ -118,7 +103,7 @@ export default function SalesTools() {
       title: "Professional",
       price: "$299",
       description: "Advanced features for professional sales teams",
-      priceId: "price_1OrMkMHmFWvEpNp2X9jL0M3y",
+      priceId: "price_1NXCWUHmFWvEpNp2W1lN2O5x", 
       popular: true,
       features: [
         { text: "All Basic Features", included: true },
@@ -150,6 +135,23 @@ export default function SalesTools() {
       ],
     },
   ];
+
+  const handleSubscribe = async (priceId: string) => {
+    try {
+      console.log('Starting subscription process for price:', priceId);
+      await createCheckoutSession(priceId);
+    } catch (error: any) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to process subscription. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  export default function SalesTools() {
+  const { toast } = useToast();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
