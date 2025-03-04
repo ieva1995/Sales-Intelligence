@@ -49,17 +49,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 md:space-y-8">
-      <div>
+    <div className="p-4 md:p-8 space-y-6">
+      {/* Header */}
+      <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-sm md:text-base text-muted-foreground">Welcome to your business overview.</p>
+        <p className="text-muted-foreground">Welcome to your business overview.</p>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric, i) => (
           <Card key={i} className="overflow-hidden border-0 shadow-lg">
-            <CardHeader className="p-4 md:p-6">
+            <CardHeader className="p-4">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm text-muted-foreground">{metric.title}</p>
@@ -71,9 +72,8 @@ export default function Dashboard() {
               </div>
             </CardHeader>
             <CardContent className="p-0">
-              {/* Mini graph area */}
-              <div className={`h-[80px] w-full bg-gradient-to-t from-${metric.color}-500/10 to-transparent`} />
-              <div className="px-4 py-3 bg-muted/5">
+              <div className={`h-[60px] w-full bg-gradient-to-t from-${metric.color}-500/10 to-transparent`} />
+              <div className="px-4 py-2 bg-muted/5">
                 <p className={`text-xs text-${metric.color}-500 flex items-center`}>
                   <ArrowUp className="h-3 w-3 mr-1" />
                   {metric.change}
@@ -84,14 +84,15 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Performance Metrics and Trend Analysis */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      {/* Performance Overview and Task Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Performance Overview */}
         <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 md:p-6">
-            <CardTitle className="text-lg md:text-xl text-white">Performance Overview</CardTitle>
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
+            <CardTitle className="text-lg text-white">Performance Overview</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 md:p-6">
-            <div className="h-[300px]">
+          <CardContent className="p-4">
+            <div className="h-[240px] w-full">
               {trendData && (
                 <TrendChart
                   data={trendData.timelineData}
@@ -99,23 +100,24 @@ export default function Dashboard() {
                 />
               )}
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-3 gap-4 mt-6">
               {performanceMetrics.map((metric, i) => (
                 <div key={i} className="text-center">
-                  <p className="text-2xl font-bold">{metric.value}</p>
-                  <p className="text-sm text-muted-foreground">{metric.title}</p>
-                  <p className="text-xs text-green-500">{metric.change}</p>
+                  <p className="text-xl font-bold">{metric.value}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{metric.title}</p>
+                  <p className="text-xs text-green-500 mt-1">{metric.change}</p>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
+        {/* Task Distribution */}
         <Card className="overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 md:p-6">
-            <CardTitle className="text-lg md:text-xl text-white">Task Distribution</CardTitle>
+          <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 p-4">
+            <CardTitle className="text-lg text-white">Task Distribution</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 md:p-6">
+          <CardContent className="p-4">
             <div className="space-y-4">
               {taskTypes.map((task) => (
                 <div key={task.label} className="flex items-center justify-between">
@@ -124,10 +126,13 @@ export default function Dashboard() {
                     <span className="text-sm">{task.label}</span>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-32 h-2 bg-gray-200 rounded-full mr-2">
-                      <div className={`h-full bg-${task.color}-500 rounded-full`} style={{ width: '30%' }} />
+                    <div className="w-24 md:w-32 h-2 bg-gray-200 rounded-full mr-2">
+                      <div 
+                        className={`h-full bg-${task.color}-500 rounded-full`} 
+                        style={{ width: '30%' }} 
+                      />
                     </div>
-                    <span className="text-sm font-medium">{task.count}</span>
+                    <span className="text-sm font-medium min-w-[2ch]">{task.count}</span>
                   </div>
                 </div>
               ))}
@@ -137,30 +142,33 @@ export default function Dashboard() {
       </div>
 
       {/* Activity and Trends */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Recent Activity */}
         <Card className="overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 p-4 md:p-6">
-            <CardTitle className="text-lg md:text-xl text-white">Recent Activity</CardTitle>
+          <CardHeader className="bg-gradient-to-r from-green-500 to-green-600 p-4">
+            <CardTitle className="text-lg text-white">Recent Activity</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 md:p-6">
+          <CardContent className="p-4">
             <div className="space-y-4">
-              {/* Placeholder for activity items */}
               <p className="text-sm text-muted-foreground">No recent activities to display</p>
             </div>
           </CardContent>
         </Card>
 
+        {/* Trend Analysis */}
         <Card className="overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-amber-500 to-amber-600 p-4 md:p-6">
-            <CardTitle className="text-lg md:text-xl text-white">Trend Analysis</CardTitle>
+          <CardHeader className="bg-gradient-to-r from-amber-500 to-amber-600 p-4">
+            <CardTitle className="text-lg text-white">Trend Analysis</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 md:p-6">
-            {trendData && (
-              <TrendChart
-                data={trendData.timelineData}
-                title=""
-              />
-            )}
+          <CardContent className="p-4">
+            <div className="h-[200px] w-full">
+              {trendData && (
+                <TrendChart
+                  data={trendData.timelineData}
+                  title=""
+                />
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
