@@ -1,8 +1,63 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, Send, TrendingUp, MessageSquare, FileText, Activity, Globe, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function WhisperBot() {
+  const { toast } = useToast();
+  const [insights, setInsights] = useState([
+    {
+      company: "Tech Innovators Inc",
+      insight: "Announced digital transformation initiative",
+      opportunity: "Cloud migration solutions",
+      date: "2 hours ago",
+      priority: "high"
+    },
+    {
+      company: "Global Systems Ltd",
+      insight: "Published report on security challenges",
+      opportunity: "Security assessment services",
+      date: "5 hours ago",
+      priority: "medium"
+    },
+    {
+      company: "Future Dynamics",
+      insight: "Expanding operations in APAC",
+      opportunity: "Regional scaling solutions",
+      date: "1 day ago",
+      priority: "high"
+    }
+  ]);
+
+  const handleQuickAction = (action: string) => {
+    toast({
+      title: `${action} Initiated`,
+      description: `Starting ${action.toLowerCase()} process...`,
+    });
+  };
+
+  const handleConfigure = () => {
+    toast({
+      title: "Configure Sources",
+      description: "Opening source configuration panel...",
+    });
+  };
+
+  const handleAdjustAlerts = () => {
+    toast({
+      title: "Alert Settings",
+      description: "Opening alert configuration panel...",
+    });
+  };
+
+  const handleInsightClick = (company: string, opportunity: string) => {
+    toast({
+      title: `Opportunity: ${company}`,
+      description: `Preparing ${opportunity} proposal...`,
+    });
+  };
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="mb-6">
@@ -12,7 +67,8 @@ export default function WhisperBot() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-blue-500/10 border-0">
+        <Card className="bg-blue-500/10 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors"
+          onClick={() => handleQuickAction("News Analysis")}>
           <CardContent className="p-4 flex items-center space-x-4">
             <Bot className="h-8 w-8 text-blue-500" />
             <div>
@@ -22,7 +78,8 @@ export default function WhisperBot() {
           </CardContent>
         </Card>
 
-        <Card className="bg-green-500/10 border-0">
+        <Card className="bg-green-500/10 border-0 cursor-pointer hover:bg-green-500/20 transition-colors"
+          onClick={() => handleQuickAction("Opportunity Detection")}>
           <CardContent className="p-4 flex items-center space-x-4">
             <TrendingUp className="h-8 w-8 text-green-500" />
             <div>
@@ -32,7 +89,8 @@ export default function WhisperBot() {
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-500/10 border-0">
+        <Card className="bg-purple-500/10 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors"
+          onClick={() => handleQuickAction("Auto Response")}>
           <CardContent className="p-4 flex items-center space-x-4">
             <Send className="h-8 w-8 text-purple-500" />
             <div>
@@ -62,7 +120,7 @@ export default function WhisperBot() {
                     <p className="text-sm text-gray-400">148 sources</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={handleConfigure}>
                   Configure
                 </Button>
               </div>
@@ -75,7 +133,7 @@ export default function WhisperBot() {
                     <p className="text-sm text-gray-400">Priority: High</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={handleAdjustAlerts}>
                   Adjust
                 </Button>
               </div>
@@ -90,19 +148,23 @@ export default function WhisperBot() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-blue-500/10 rounded-lg text-center">
+              <div className="p-4 bg-blue-500/10 rounded-lg text-center cursor-pointer hover:bg-blue-500/20 transition-colors"
+                onClick={() => toast({ title: "Accuracy Analytics", description: "Viewing accuracy metrics..." })}>
                 <h3 className="text-2xl font-bold text-blue-400">97%</h3>
                 <p className="text-sm text-gray-400">Accuracy Rate</p>
               </div>
-              <div className="p-4 bg-green-500/10 rounded-lg text-center">
+              <div className="p-4 bg-green-500/10 rounded-lg text-center cursor-pointer hover:bg-green-500/20 transition-colors"
+                onClick={() => toast({ title: "Analysis Volume", description: "Viewing analysis statistics..." })}>
                 <h3 className="text-2xl font-bold text-green-400">2.3m</h3>
                 <p className="text-sm text-gray-400">Articles Analyzed</p>
               </div>
-              <div className="p-4 bg-purple-500/10 rounded-lg text-center">
+              <div className="p-4 bg-purple-500/10 rounded-lg text-center cursor-pointer hover:bg-purple-500/20 transition-colors"
+                onClick={() => toast({ title: "Opportunity Metrics", description: "Viewing opportunity data..." })}>
                 <h3 className="text-2xl font-bold text-purple-400">5.2k</h3>
                 <p className="text-sm text-gray-400">Opportunities Found</p>
               </div>
-              <div className="p-4 bg-amber-500/10 rounded-lg text-center">
+              <div className="p-4 bg-amber-500/10 rounded-lg text-center cursor-pointer hover:bg-amber-500/20 transition-colors"
+                onClick={() => toast({ title: "Response Analytics", description: "Viewing response time data..." })}>
                 <h3 className="text-2xl font-bold text-amber-400">1.8s</h3>
                 <p className="text-sm text-gray-400">Response Time</p>
               </div>
@@ -118,30 +180,12 @@ export default function WhisperBot() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              {
-                company: "Tech Innovators Inc",
-                insight: "Announced digital transformation initiative",
-                opportunity: "Cloud migration solutions",
-                date: "2 hours ago",
-                priority: "high"
-              },
-              {
-                company: "Global Systems Ltd",
-                insight: "Published report on security challenges",
-                opportunity: "Security assessment services",
-                date: "5 hours ago",
-                priority: "medium"
-              },
-              {
-                company: "Future Dynamics",
-                insight: "Expanding operations in APAC",
-                opportunity: "Regional scaling solutions",
-                date: "1 day ago",
-                priority: "high"
-              }
-            ].map((item, i) => (
-              <div key={i} className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+            {insights.map((item, i) => (
+              <div 
+                key={i} 
+                className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
+                onClick={() => handleInsightClick(item.company, item.opportunity)}
+              >
                 <div className="flex items-center space-x-4">
                   <MessageSquare className="h-5 w-5 text-blue-400" />
                   <div>

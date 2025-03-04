@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FileText, Send, Clock, CheckCircle } from "lucide-react";
+import { FileText, Send, Clock, CheckCircle, TrendingUp, Users, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function SmartProposalGenerator() {

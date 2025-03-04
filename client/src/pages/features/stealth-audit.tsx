@@ -1,8 +1,78 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Search, AlertTriangle, CheckCircle, ArrowRight, RefreshCw, Shield, Settings, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function StealthAudit() {
+  const { toast } = useToast();
+  const [scans, setScans] = useState([
+    {
+      target: "enterprise-systems.com",
+      progress: 78,
+      status: "Scanning",
+      issues: 12
+    },
+    {
+      target: "cloudtech-solutions.net",
+      progress: 45,
+      status: "In Progress",
+      issues: 8
+    },
+    {
+      target: "digital-fortress.org",
+      progress: 92,
+      status: "Completing",
+      issues: 15
+    }
+  ]);
+
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+
+  // Simulate progress updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setScans(prevScans => 
+        prevScans.map(scan => ({
+          ...scan,
+          progress: scan.progress < 100 ? scan.progress + 1 : scan.progress,
+          status: scan.progress >= 99 ? "Complete" : scan.status
+        }))
+      );
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleRefresh = () => {
+    setLastRefresh(new Date());
+    toast({
+      title: "Scans Refreshed",
+      description: "Latest scan data has been loaded.",
+    });
+  };
+
+  const handleConfigure = (setting: string) => {
+    toast({
+      title: `Configuring ${setting}`,
+      description: "Opening configuration panel...",
+    });
+  };
+
+  const handleScanDepthUpdate = () => {
+    toast({
+      title: "Scan Depth Updated",
+      description: "Analysis depth has been adjusted.",
+    });
+  };
+
+  const handleSecurityRulesUpdate = () => {
+    toast({
+      title: "Security Rules Updated",
+      description: "Enterprise security rules have been updated.",
+    });
+  };
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="mb-6">
@@ -12,7 +82,8 @@ export default function StealthAudit() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-blue-500/10 border-0">
+        <Card className="bg-blue-500/10 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors"
+          onClick={() => toast({ title: "Systems Analysis", description: "Viewing detailed analysis reports..." })}>
           <CardContent className="p-4">
             <div className="flex flex-col items-center text-center">
               <Search className="h-8 w-8 text-blue-500 mb-2" />
@@ -22,7 +93,8 @@ export default function StealthAudit() {
           </CardContent>
         </Card>
 
-        <Card className="bg-red-500/10 border-0">
+        <Card className="bg-red-500/10 border-0 cursor-pointer hover:bg-red-500/20 transition-colors"
+          onClick={() => toast({ title: "Detection Metrics", description: "Viewing issue detection statistics..." })}>
           <CardContent className="p-4">
             <div className="flex flex-col items-center text-center">
               <AlertTriangle className="h-8 w-8 text-red-500 mb-2" />
@@ -32,7 +104,8 @@ export default function StealthAudit() {
           </CardContent>
         </Card>
 
-        <Card className="bg-green-500/10 border-0">
+        <Card className="bg-green-500/10 border-0 cursor-pointer hover:bg-green-500/20 transition-colors"
+          onClick={() => toast({ title: "Success Metrics", description: "Viewing success rate analytics..." })}>
           <CardContent className="p-4">
             <div className="flex flex-col items-center text-center">
               <CheckCircle className="h-8 w-8 text-green-500 mb-2" />
@@ -42,7 +115,8 @@ export default function StealthAudit() {
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-500/10 border-0">
+        <Card className="bg-purple-500/10 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors"
+          onClick={() => toast({ title: "Performance Metrics", description: "Viewing scan performance data..." })}>
           <CardContent className="p-4">
             <div className="flex flex-col items-center text-center">
               <Zap className="h-8 w-8 text-purple-500 mb-2" />
@@ -58,7 +132,7 @@ export default function StealthAudit() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Active Scans</CardTitle>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={handleRefresh}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
@@ -66,34 +140,19 @@ export default function StealthAudit() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {[
-              {
-                target: "enterprise-systems.com",
-                progress: 78,
-                status: "Scanning",
-                issues: 12
-              },
-              {
-                target: "cloudtech-solutions.net",
-                progress: 45,
-                status: "In Progress",
-                issues: 8
-              },
-              {
-                target: "digital-fortress.org",
-                progress: 92,
-                status: "Completing",
-                issues: 15
-              }
-            ].map((scan, i) => (
-              <div key={i} className="p-4 bg-slate-700/50 rounded-lg">
+            {scans.map((scan, i) => (
+              <div key={i} className="p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
+                onClick={() => toast({ 
+                  title: `Viewing ${scan.target}`, 
+                  description: `Opening detailed scan report...`
+                })}>
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-medium">{scan.target}</h4>
                   <span className="text-sm text-blue-400">{scan.status}</span>
                 </div>
                 <div className="w-full h-2 bg-slate-600 rounded-full mb-2">
                   <div 
-                    className="h-full bg-blue-500 rounded-full"
+                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
                     style={{ width: `${scan.progress}%` }}
                   />
                 </div>
@@ -115,7 +174,11 @@ export default function StealthAudit() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-4 bg-red-500/10 rounded-lg">
+              <div className="p-4 bg-red-500/10 rounded-lg cursor-pointer hover:bg-red-500/20 transition-colors"
+                onClick={() => toast({ 
+                  title: "Critical Vulnerabilities", 
+                  description: "Opening vulnerability report..." 
+                })}>
                 <div className="flex items-center space-x-3 mb-3">
                   <Shield className="h-5 w-5 text-red-400" />
                   <h4 className="font-medium">Critical Vulnerabilities</h4>
@@ -132,7 +195,11 @@ export default function StealthAudit() {
                 </div>
               </div>
 
-              <div className="p-4 bg-yellow-500/10 rounded-lg">
+              <div className="p-4 bg-yellow-500/10 rounded-lg cursor-pointer hover:bg-yellow-500/20 transition-colors"
+                onClick={() => toast({ 
+                  title: "Performance Issues", 
+                  description: "Opening performance analysis..." 
+                })}>
                 <div className="flex items-center space-x-3 mb-3">
                   <AlertTriangle className="h-5 w-5 text-yellow-400" />
                   <h4 className="font-medium">Performance Issues</h4>
@@ -166,7 +233,7 @@ export default function StealthAudit() {
                     <p className="text-sm text-gray-400">Deep Analysis</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => handleConfigure("Scan Depth")}>
                   Configure
                 </Button>
               </div>
@@ -179,7 +246,7 @@ export default function StealthAudit() {
                     <p className="text-sm text-gray-400">Enterprise Grade</p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => handleConfigure("Security Rules")}>
                   Update
                 </Button>
               </div>
