@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchTrendData } from "@/lib/trends";
 import { Trend } from "@shared/schema";
-import { ArrowUp, DollarSign, Package, Users, Mail, Phone, MessageSquare, Calendar, TrendingUp, BarChart2 } from "lucide-react";
+import { ArrowUp, Package, Users, Mail, Phone, MessageSquare, TrendingUp } from "lucide-react";
 import TrendChart from "@/components/TrendChart";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -34,10 +34,10 @@ export default function Dashboard() {
   ];
 
   const taskTypes = [
-    { icon: Mail, label: 'To-dos', count: 0, color: 'blue' },
-    { icon: Phone, label: 'Calls', count: 0, color: 'green' },
-    { icon: MessageSquare, label: 'Emails', count: 0, color: 'purple' },
-    { icon: Users, label: 'LinkedIn', count: 0, color: 'orange' }
+    { icon: Mail, label: 'To-dos', count: 0, color: 'gray' },
+    { icon: Phone, label: 'Calls', count: 0, color: 'gray' },
+    { icon: MessageSquare, label: 'Emails', count: 0, color: 'gray' },
+    { icon: Users, label: 'LinkedIn', count: 0, color: 'gray' }
   ];
 
   if (isLoading) {
@@ -49,7 +49,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-8 space-y-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -85,13 +85,13 @@ export default function Dashboard() {
       </div>
 
       {/* Performance Overview and Task Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Overview */}
         <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
+          <CardHeader className="bg-blue-500 p-4">
             <CardTitle className="text-lg text-white">Performance Overview</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <div className="h-[240px] w-full">
               {trendData && (
                 <TrendChart
@@ -100,12 +100,14 @@ export default function Dashboard() {
                 />
               )}
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="grid grid-cols-3 gap-4 mt-8 border-t pt-6">
               {performanceMetrics.map((metric, i) => (
                 <div key={i} className="text-center">
-                  <p className="text-xl font-bold">{metric.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{metric.title}</p>
-                  <p className="text-xs text-green-500 mt-1">{metric.change}</p>
+                  <h3 className="text-2xl font-bold mb-1">{metric.value}</h3>
+                  <p className="text-sm text-gray-500">{metric.title}</p>
+                  <p className={`text-xs ${metric.change.includes('-') ? 'text-red-500' : 'text-green-500'} mt-1`}>
+                    {metric.change}
+                  </p>
                 </div>
               ))}
             </div>
@@ -114,25 +116,22 @@ export default function Dashboard() {
 
         {/* Task Distribution */}
         <Card className="overflow-hidden border-0 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-purple-500 to-purple-600 p-4">
+          <CardHeader className="bg-purple-500 p-4">
             <CardTitle className="text-lg text-white">Task Distribution</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
-            <div className="space-y-4">
+          <CardContent className="p-6">
+            <div className="space-y-6">
               {taskTypes.map((task) => (
-                <div key={task.label} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <task.icon className={`h-4 w-4 mr-2 text-${task.color}-500`} />
-                    <span className="text-sm">{task.label}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-24 md:w-32 h-2 bg-gray-200 rounded-full mr-2">
-                      <div 
-                        className={`h-full bg-${task.color}-500 rounded-full`} 
-                        style={{ width: '30%' }} 
-                      />
+                <div key={task.label} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <task.icon className="h-4 w-4 text-gray-400" />
+                      <span>{task.label}</span>
                     </div>
-                    <span className="text-sm font-medium min-w-[2ch]">{task.count}</span>
+                    <span className="font-medium">{task.count}</span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-gray-300 rounded-full" style={{ width: '0%' }} />
                   </div>
                 </div>
               ))}
