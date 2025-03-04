@@ -31,12 +31,14 @@ export default function LibraryMenu() {
   return (
     <div className="relative">
       {/* Mobile Menu Button */}
-      <button
-        className="md:hidden inline-flex items-center justify-center p-2 text-black bg-transparent hover:bg-gray-100 rounded-md"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Menu className="h-6 w-6" />
-      </button>
+      <div className="block md:hidden p-2">
+        <button
+          className="flex items-center justify-center w-10 h-10 text-black"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <Menu className="h-6 w-6" />
+        </button>
+      </div>
 
       {/* Menu Items */}
       <nav
