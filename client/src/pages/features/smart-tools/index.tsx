@@ -69,6 +69,22 @@ const pricingPlans = [
 
 const salesTools = [
   {
+    title: "Deal Predictor AI",
+    description: "Predict deal success rates and get intelligent follow-up suggestions",
+    icon: Target,
+    route: "/features/deal-predictor",
+    metrics: {
+      accuracy: "94%",
+      insight: "Real-time",
+      success: "+45%"
+    }
+  },
+  // Keep other existing tools
+  ...salesTools.slice(1)
+];
+
+const salesTools_original = [
+  {
     title: "Lead Scoring AI",
     description: "Automatically score and prioritize leads based on behavior patterns and engagement metrics",
     icon: Target,
@@ -193,7 +209,7 @@ export default function SalesTools() {
       <div className="container mx-auto px-4 py-16">
         <h2 className="text-3xl font-bold text-white mb-8 text-center">Available Tools & Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {salesTools.map((tool) => (
+          {salesTools_original.map((tool) => (
             <Link key={tool.title} href={tool.route}>
               <Card className="cursor-pointer hover:bg-white/5 transition-colors bg-white/10 border-white/20">
                 <CardHeader>

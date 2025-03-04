@@ -66,9 +66,9 @@ export default function Router() {
             <Route path="/features/smart-tools" component={SmartTools} />
             <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
 
-            {/* AI-Powered Feature Routes */}
-            <Route path="/features/smart-proposal" component={SmartProposal} />
+            {/* AI-Powered Features */}
             <Route path="/features/deal-predictor" component={DealPredictor} />
+            <Route path="/features/smart-proposal" component={SmartProposal} />
             <Route path="/features/whisper-bot" component={WhisperBot} />
             <Route path="/features/stealth-audit" component={StealthAudit} />
 
