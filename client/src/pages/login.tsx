@@ -11,7 +11,16 @@ import {
   Copy,
   AlertCircle,
   Info,
-  LogIn
+  LogIn,
+  ArrowRight,
+  ChevronRight,
+  Check,
+  Users,
+  BarChart2,
+  LineChart,
+  PieChart,
+  TrendingUp,
+  Zap
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../hooks/use-auth";
@@ -54,10 +63,10 @@ const LandingPage = () => {
             </h1>
             <nav className="hidden md:block">
               <ul className="flex space-x-8">
-                <li><a href="/features" className="text-gray-300 hover:text-white">Features</a></li>
-                <li><a href="/solutions" className="text-gray-300 hover:text-white">Solutions</a></li>
-                <li><a href="/pricing" className="text-gray-300 hover:text-white">Pricing</a></li>
-                <li><a href="/resources" className="text-gray-300 hover:text-white">Resources</a></li>
+                <li><a href="#features" className="text-gray-300 hover:text-white">Features</a></li>
+                <li><a href="#solutions" className="text-gray-300 hover:text-white">Solutions</a></li>
+                <li><a href="#pricing" className="text-gray-300 hover:text-white">Pricing</a></li>
+                <li><a href="#resources" className="text-gray-300 hover:text-white">Resources</a></li>
               </ul>
             </nav>
           </div>
@@ -107,6 +116,260 @@ const LandingPage = () => {
                   Learn More
                 </Button>
               </div>
+              <div className="flex items-center mt-8">
+                <div className="flex -space-x-2">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-950 bg-slate-700 flex items-center justify-center overflow-hidden">
+                      <span className="text-xs font-medium text-white">{i}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium">Trusted by 1000+ sales teams</p>
+                  <div className="flex items-center">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                      </svg>
+                    ))}
+                    <span className="ml-2 text-sm text-gray-300">4.9/5 (2.3k reviews)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="hidden lg:flex justify-end">
+              <div className="relative w-full max-w-md">
+                <div className="absolute -top-12 -left-12 w-40 h-40 bg-blue-500/20 rounded-full filter blur-2xl"></div>
+                <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-purple-500/20 rounded-full filter blur-2xl"></div>
+                <div className="rounded-lg overflow-hidden border border-slate-700 bg-slate-800/50 backdrop-blur-sm">
+                  <div className="p-2 bg-slate-900/70 border-b border-slate-700">
+                    <div className="flex space-x-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-slate-900/50 rounded-md p-3 border border-slate-700">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <BarChart2 className="h-4 w-4 text-blue-400" />
+                          <span className="text-xs font-medium">Sales Metrics</span>
+                        </div>
+                        <div className="h-16 w-full bg-slate-800/70 rounded-md"></div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-md p-3 border border-slate-700">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <LineChart className="h-4 w-4 text-green-400" />
+                          <span className="text-xs font-medium">Growth</span>
+                        </div>
+                        <div className="h-16 w-full bg-slate-800/70 rounded-md"></div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-md p-3 border border-slate-700">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <PieChart className="h-4 w-4 text-purple-400" />
+                          <span className="text-xs font-medium">Distribution</span>
+                        </div>
+                        <div className="h-16 w-full bg-slate-800/70 rounded-md"></div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-md p-3 border border-slate-700">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <TrendingUp className="h-4 w-4 text-orange-400" />
+                          <span className="text-xs font-medium">Forecast</span>
+                        </div>
+                        <div className="h-16 w-full bg-slate-800/70 rounded-md"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 bg-slate-900/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Innovative Approach To <span className="text-blue-400">Fuel Your Sales Success</span></h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">Our platform combines data insights, AI-powered analytics, and enterprise-grade tools to maximize your sales performance.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { 
+                title: "AI-Powered Analytics", 
+                desc: "Get real-time insights into your sales performance with our advanced analytics engine.",
+                icon: BarChart2
+              },
+              { 
+                title: "Shopify Integration", 
+                desc: "Seamlessly connect your Shopify store for real-time commerce data synchronization.",
+                icon: Zap
+              },
+              { 
+                title: "Team Collaboration", 
+                desc: "Enable your entire team to work together with role-based permissions and shared insights.",
+                icon: Users
+              },
+            ].map((feature, idx) => (
+              <div key={idx} className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 hover:bg-slate-800 transition duration-300">
+                <div className="bg-blue-600/20 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                  <feature.icon className="h-6 w-6 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-400">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ticket Sales View Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="text-blue-400 text-sm font-medium mb-3">Sales Performance</div>
+              <h2 className="text-3xl font-bold mb-4">Ticket Sales View of <br />Sales Progress to Date</h2>
+              <p className="text-gray-400 mb-6">Get a comprehensive view of your sales progress with our intuitive ticket sales dashboard. Track conversions, monitor performance, and identify opportunities for growth.</p>
+
+              <div className="flex items-center space-x-4">
+                <Button variant="outline" className="border-gray-700 rounded-full">
+                  Learn More
+                </Button>
+                <Button className="bg-blue-600 hover:bg-blue-500 rounded-full">
+                  See Demo
+                </Button>
+              </div>
+            </div>
+
+            <div className="rounded-lg overflow-hidden border border-slate-700 bg-slate-800/30">
+              <img src="https://placehold.co/600x400/2a3c56/FFFFFF/png?text=Sales+Dashboard" alt="Sales Dashboard" className="w-full h-auto" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Creative Approach Section */}
+      <section className="py-20 bg-slate-900/50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div className="order-2 md:order-1 rounded-lg overflow-hidden border border-slate-700 bg-slate-800/30">
+              <img src="https://placehold.co/600x400/2a3c56/FFFFFF/png?text=Strategy+Visualization" alt="Strategy Visualization" className="w-full h-auto" />
+            </div>
+
+            <div className="order-1 md:order-2">
+              <div className="text-blue-400 text-sm font-medium mb-3">Growth Strategy</div>
+              <h2 className="text-3xl font-bold mb-4">A Creative Approach To <br />Drive Sales Success</h2>
+              <p className="text-gray-400 mb-6">Our platform helps you develop innovative strategies to drive sales growth. Leverage AI-powered insights to identify trends, optimize campaigns, and maximize ROI.</p>
+
+              <div className="flex flex-wrap -mx-2 mb-6">
+                {['Data-Driven', 'AI-Powered', 'Team-Focused'].map((tag, idx) => (
+                  <span key={idx} className="m-2 px-4 py-2 bg-slate-800 text-sm rounded-full text-gray-300">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex items-center">
+                <div className="flex -space-x-2 mr-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center overflow-hidden">
+                      <span className="text-xs">{i}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-lg text-sm font-medium">
+                  30k+ Users
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial Section */}
+      <section className="py-20 bg-orange-500/10">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-2">Globally Preferred By 1200+ World-<br />Class Brands.</h2>
+          </div>
+
+          <div className="max-w-3xl mx-auto bg-slate-800/50 border border-slate-700 rounded-lg p-8">
+            <div className="flex flex-col md:flex-row items-start gap-8">
+              <div className="text-orange-400 text-6xl">"</div>
+              <div>
+                <p className="text-xl text-gray-300 mb-6">SalesBoost has transformed how we approach sales analytics. The AI-powered insights have helped us identify opportunities we would have otherwise missed.</p>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-slate-700 mr-4"></div>
+                  <div>
+                    <p className="font-medium">Jennifer Chen</p>
+                    <p className="text-sm text-gray-400">VP Sales, TechCorp Inc.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <div className="flex justify-center mb-8">
+              <div className="flex items-center space-x-8">
+                <div><span className="text-4xl font-bold">+120</span><span className="text-gray-400 ml-2">Daily Active Users</span></div>
+                <div className="h-12 w-px bg-slate-700"></div>
+                <div><span className="text-4xl font-bold">4.9</span><span className="text-gray-400 ml-2">Average User Rating</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Steps Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold mb-2 text-center">Revolutionizing Your <br />Innovative Sales Strategy</h2>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            {[
+              "Signup for free account",
+              "Transforming Your Sales Approach",
+              "Accessing Your Top Data Stats",
+              "Reviewing Your Sales Goals Plan"
+            ].map((step, idx) => (
+              <div key={idx} className="border-b border-slate-800 py-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm font-medium mr-4">
+                      {idx + 1}
+                    </div>
+                    <h3 className="font-medium">{step}</h3>
+                  </div>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-slate-900/50">
+        <div className="container mx-auto px-4 text-center">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4">Are you interested with SrategLine?</h2>
+            <p className="text-gray-400 mb-8">Join thousands of sales professionals who've transformed their sales approach with our platform.</p>
+            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Button className="bg-blue-600 hover:bg-blue-500 h-12 px-6 text-base">
+                Sign Up Now
+              </Button>
+              <Button variant="outline" className="border-gray-700 text-white hover:bg-slate-800 h-12 px-6 text-base">
+                Schedule Demo
+              </Button>
             </div>
           </div>
         </div>
@@ -123,6 +386,44 @@ const LandingPage = () => {
               <p className="text-gray-400 max-w-xs">
                 Enterprise-grade AI-powered sales analytics and performance tools.
               </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div>
+                <h3 className="font-medium mb-4">Company</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#about" className="hover:text-white">About</a></li>
+                  <li><a href="#careers" className="hover:text-white">Careers</a></li>
+                  <li><a href="#blog" className="hover:text-white">Blog</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Legal</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#privacy" className="hover:text-white">Privacy</a></li>
+                  <li><a href="#terms" className="hover:text-white">Terms</a></li>
+                  <li><a href="#cookies" className="hover:text-white">Cookies</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Features</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#analytics" className="hover:text-white">Analytics</a></li>
+                  <li><a href="#forecasting" className="hover:text-white">Forecasting</a></li>
+                  <li><a href="#reporting" className="hover:text-white">Reporting</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-4">Social</h3>
+                <ul className="space-y-2 text-gray-400">
+                  <li><a href="#twitter" className="hover:text-white">Twitter</a></li>
+                  <li><a href="#linkedin" className="hover:text-white">LinkedIn</a></li>
+                  <li><a href="#facebook" className="hover:text-white">Facebook</a></li>
+                </ul>
+              </div>
             </div>
           </div>
 
@@ -146,6 +447,7 @@ const TokenLogin = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [tokenExpiry, setTokenExpiry] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
+  const [activeTab, setActiveTab] = useState<"email" | "token">("email");
 
   // Use our secure authentication hook
   const { requestLoginToken, validateLoginToken, isLoading } = useAuth();
@@ -172,6 +474,7 @@ const TokenLogin = () => {
             variant: "destructive",
           });
           setStep("email");
+          setActiveTab("email");
         }
       }, 1000);
 
@@ -354,6 +657,7 @@ const TokenLogin = () => {
 
       // CRITICAL: This explicitly transitions to the token step
       setStep("token");
+      setActiveTab("token");
       console.log("Set step to token:", step);
 
     } catch (error) {
@@ -369,6 +673,7 @@ const TokenLogin = () => {
   // Handler for returning to the email step
   const handleBackToEmail = () => {
     setStep("email");
+    setActiveTab("email");
     setToken("");
   };
 
@@ -412,6 +717,17 @@ const TokenLogin = () => {
   // Resend token handler
   const handleResendToken = () => {
     handleRequestToken();
+  };
+
+  // Handle tab changes
+  const handleTabChange = (tabName: "email" | "token") => {
+    if (tabName === "token" && !email) {
+      // Can't go to token tab without email
+      return;
+    }
+
+    setActiveTab(tabName);
+    setStep(tabName);
   };
 
   // Redirect if already logged in
@@ -506,8 +822,8 @@ const TokenLogin = () => {
           {/* Login Tabs */}
           <div className="flex mb-6 border-b border-slate-700">
             <button
-              className={`flex-1 ${step === "email" ? "tab-active" : "tab-inactive"}`}
-              onClick={() => setStep("email")}
+              className={`flex-1 ${activeTab === "email" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => handleTabChange("email")}
             >
               <div className="flex justify-center items-center">
                 <Mail className="h-4 w-4 mr-2" />
@@ -515,8 +831,8 @@ const TokenLogin = () => {
               </div>
             </button>
             <button
-              className={`flex-1 ${step === "token" ? "tab-active" : "tab-inactive"}`}
-              onClick={() => email ? setStep("token") : null}
+              className={`flex-1 ${activeTab === "token" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => handleTabChange("token")}
               disabled={!email}
             >
               <div className="flex justify-center items-center">
