@@ -12,6 +12,7 @@ import Automations from "@/pages/automations";
 import Reporting from "@/pages/reporting";
 import DataManagement from "@/pages/data";
 import Library from "@/pages/library";
+import TrendsExplorer from "@/pages/library/trends";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import Sidebar from "@/components/Sidebar";
@@ -35,6 +36,7 @@ export default function Router() {
             <Route path="/reporting" component={Reporting} />
             <Route path="/data" component={DataManagement} />
             <Route path="/library" component={Library} />
+            <Route path="/library/trends" component={TrendsExplorer} />
             <Route path="/settings" component={Settings} />
             <Route path="/settings/login" component={Login} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
