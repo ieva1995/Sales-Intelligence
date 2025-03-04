@@ -32,24 +32,24 @@ interface FeatureCardProps {
 const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise }: FeatureCardProps) => (
   <Link href={href}>
     <a className="block">
-      <Card className="p-6 bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
-        <div className="flex items-start space-x-4">
+      <Card className="p-4 bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
+        <div className="flex items-start space-x-3">
           <div className="p-2 bg-blue-500/10 rounded-lg">
-            <Icon className="h-6 w-6 text-blue-500" />
+            <Icon className="h-5 w-5 text-blue-500" />
           </div>
-          <div className="space-y-1">
-            <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors">{title}</h3>
-            <p className="text-sm text-gray-400">{description}</p>
+          <div className="space-y-0.5 flex-1 pr-16">
+            <h3 className="font-semibold text-sm text-white group-hover:text-blue-400 transition-colors">{title}</h3>
+            <p className="text-xs text-gray-400">{description}</p>
           </div>
         </div>
         <div className="absolute top-2 right-2 flex gap-2">
           {isNew && (
-            <span className="px-2 py-1 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">
+            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
               New
             </span>
           )}
           {isEnterprise && (
-            <span className="px-2 py-1 text-xs font-medium bg-purple-500/20 text-purple-400 rounded-full">
+            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-purple-500/20 text-purple-400 rounded-full">
               Enterprise
             </span>
           )}
