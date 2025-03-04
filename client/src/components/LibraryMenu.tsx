@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
-import { ChevronDown, Menu } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { SiGooglelens, SiGoogleanalytics } from "react-icons/si";
 
 interface LibraryMenuItem {
@@ -25,78 +25,49 @@ const menuItems: LibraryMenuItem[] = [
 
 export default function LibraryMenu() {
   const [location] = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
   return (
-    <div className="relative">
-      {/* Mobile Menu Button */}
-      <div className="block md:hidden p-2">
-        <button
-          className="flex items-center justify-center w-10 h-10 text-black"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-      </div>
-
-      {/* Menu Items */}
-      <nav
-        className={cn(
-          "fixed inset-y-0 left-0 w-64 bg-slate-800 text-white shadow-xl transform transition-transform duration-300 ease-in-out z-50",
-          "md:relative md:transform-none md:shadow-none",
-          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        )}
-      >
-        <div className="py-2">
-          {menuItems.map((item) => (
-            <Link 
-              key={item.label} 
-              href={item.href}
-              onClick={() => setIsOpen(false)}
+    <nav className="bg-slate-800 text-white rounded-lg overflow-hidden">
+      <div className="py-2">
+        {menuItems.map((item) => (
+          <Link 
+            key={item.label} 
+            href={item.href}
+          >
+            <a 
+              className={cn(
+                "block px-6 py-3 text-gray-100 transition-all duration-200",
+                "relative group flex items-center justify-between",
+                "hover:scale-105 transform",
+                location === item.href
+                  ? `bg-gradient-to-r ${item.gradient} text-white`
+                  : "hover:text-white"
+              )}
+              onMouseEnter={() => setHoveredItem(item.label)}
+              onMouseLeave={() => setHoveredItem(null)}
             >
-              <a 
-                className={cn(
-                  "block px-6 py-3 text-gray-100 transition-all duration-200",
-                  "relative group flex items-center justify-between",
-                  "hover:scale-105 transform",
-                  location === item.href
-                    ? `bg-gradient-to-r ${item.gradient} text-white`
-                    : "hover:text-white"
-                )}
-                onMouseEnter={() => setHoveredItem(item.label)}
-                onMouseLeave={() => setHoveredItem(null)}
-              >
-                <div className={cn(
-                  "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
-                  item.gradient,
-                  (hoveredItem === item.label && location !== item.href) && "opacity-10"
-                )} />
-                <div className="relative z-10 flex items-center gap-2">
-                  {item.icon && <item.icon className="h-4 w-4" />}
-                  <span>{item.label}</span>
-                </div>
-                {item.hasSubmenu && (
-                  <ChevronDown 
-                    className={cn(
-                      "h-4 w-4 text-gray-400 transition-all duration-200",
-                      hoveredItem === item.label ? "rotate-180" : ""
-                    )}
-                  />
-                )}
-              </a>
-            </Link>
-          ))}
-        </div>
-      </nav>
-
-      {/* Mobile Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 z-30 md:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-    </div>
+              <div className={cn(
+                "absolute inset-0 bg-gradient-to-r opacity-0 transition-opacity duration-200",
+                item.gradient,
+                (hoveredItem === item.label && location !== item.href) && "opacity-10"
+              )} />
+              <div className="relative z-10 flex items-center gap-2">
+                {item.icon && <item.icon className="h-4 w-4" />}
+                <span>{item.label}</span>
+              </div>
+              {item.hasSubmenu && (
+                <ChevronDown 
+                  className={cn(
+                    "h-4 w-4 text-gray-400 transition-all duration-200",
+                    hoveredItem === item.label ? "rotate-180" : ""
+                  )}
+                />
+              )}
+            </a>
+          </Link>
+        ))}
+      </div>
+    </nav>
   );
 }

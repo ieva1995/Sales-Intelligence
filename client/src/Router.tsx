@@ -17,11 +17,39 @@ import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
+import { Menu } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export default function Router() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar />
+      {/* Mobile Menu Button */}
+      <button
+        className="fixed top-4 left-4 z-50 md:hidden flex items-center justify-center w-10 h-10 text-black"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        <Menu className="h-6 w-6" />
+      </button>
+
+      {/* Sidebar with mobile responsiveness */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 transform transition-transform duration-300 ease-in-out z-40 md:relative md:transform-none",
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      )}>
+        <Sidebar />
+      </div>
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/20 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       <Header />
       <main className="main-content">
         <div className="page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8">
