@@ -40,6 +40,7 @@ import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./hooks/use-auth";
+import PageTransition from "./components/PageTransition";
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -91,50 +92,52 @@ export default function Router() {
 
       <main className={shouldShowAppShell() ? "main-content" : ""}>
         <div className={shouldShowAppShell() ? "page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8" : ""}>
-          <Switch>
-            <Route path="/" component={Login} />
-            <Route path="/login" component={Login} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/trend-analysis" component={TrendAnalysis} />
-            <Route path="/predictions" component={Predictions} />
-            <Route path="/crm" component={CRM} />
-            <Route path="/marketing" component={Marketing} />
-            <Route path="/content" component={Content} />
-            <Route path="/commerce" component={Commerce} />
-            <Route path="/commerce/overview" component={CommerceOverview} />
-            <Route path="/commerce/shopify" component={ShopifyDashboard} />
-            <Route path="/commerce/performance" component={ShopifyPerformance} />
-            <Route path="/automations" component={Automations} />
-            <Route path="/reporting" component={Reporting} />
-            <Route path="/data" component={DataManagement} />
+          <PageTransition>
+            <Switch>
+              <Route path="/" component={Login} />
+              <Route path="/login" component={Login} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/trend-analysis" component={TrendAnalysis} />
+              <Route path="/predictions" component={Predictions} />
+              <Route path="/crm" component={CRM} />
+              <Route path="/marketing" component={Marketing} />
+              <Route path="/content" component={Content} />
+              <Route path="/commerce" component={Commerce} />
+              <Route path="/commerce/overview" component={CommerceOverview} />
+              <Route path="/commerce/shopify" component={ShopifyDashboard} />
+              <Route path="/commerce/performance" component={ShopifyPerformance} />
+              <Route path="/automations" component={Automations} />
+              <Route path="/reporting" component={Reporting} />
+              <Route path="/data" component={DataManagement} />
 
-            {/* Library Routes */}
-            <Route path="/library" component={Library} />
-            <Route path="/library/templates" component={Templates} />
-            <Route path="/library/meetings" component={Meetings} />
-            <Route path="/library/files" component={Files} />
-            <Route path="/library/documents" component={Documents} />
-            <Route path="/library/trends" component={TrendsExplorer} />
-            <Route path="/library/playbooks" component={Playbooks} />
-            <Route path="/library/snippets" component={Snippets} />
-            <Route path="/library/coaching" component={Coaching} />
+              {/* Library Routes */}
+              <Route path="/library" component={Library} />
+              <Route path="/library/templates" component={Templates} />
+              <Route path="/library/meetings" component={Meetings} />
+              <Route path="/library/files" component={Files} />
+              <Route path="/library/documents" component={Documents} />
+              <Route path="/library/trends" component={TrendsExplorer} />
+              <Route path="/library/playbooks" component={Playbooks} />
+              <Route path="/library/snippets" component={Snippets} />
+              <Route path="/library/coaching" component={Coaching} />
 
-            <Route path="/settings" component={Settings} />
-            <Route path="/contacts" component={Contacts} />
-            <Route path="/workflows" component={Workflows} />
-            <Route path="/reports" component={Reports} />
-            <Route path="/analytics" component={Analytics} />
+              <Route path="/settings" component={Settings} />
+              <Route path="/contacts" component={Contacts} />
+              <Route path="/workflows" component={Workflows} />
+              <Route path="/reports" component={Reports} />
+              <Route path="/analytics" component={Analytics} />
 
-            {/* Premium Features */}
-            <Route path="/features/smart-tools" component={SmartTools} />
-            <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
-            <Route path="/features/deal-predictor" component={DealPredictor} />
-            <Route path="/features/smart-proposal" component={SmartProposal} />
-            <Route path="/features/whisper-bot" component={WhisperBot} />
-            <Route path="/features/stealth-audit" component={StealthAudit} />
+              {/* Premium Features */}
+              <Route path="/features/smart-tools" component={SmartTools} />
+              <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
+              <Route path="/features/deal-predictor" component={DealPredictor} />
+              <Route path="/features/smart-proposal" component={SmartProposal} />
+              <Route path="/features/whisper-bot" component={WhisperBot} />
+              <Route path="/features/stealth-audit" component={StealthAudit} />
 
-            <Route component={NotFound} />
-          </Switch>
+              <Route component={NotFound} />
+            </Switch>
+          </PageTransition>
         </div>
       </main>
     </div>

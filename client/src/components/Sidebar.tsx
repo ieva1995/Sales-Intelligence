@@ -15,6 +15,7 @@ import {
   Sparkles,
   Rocket,
 } from "lucide-react";
+import NavigationPreview from "./NavigationPreview";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -40,6 +41,27 @@ const premiumFeatures = [
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [location] = useLocation();
+  const [activePreview, setActivePreview] = useState<string | null>(null);
+  const [previewPosition, setPreviewPosition] = useState<{ x: number; y: number } | null>(null);
+
+  // Handle mouse enter on navigation item
+  const handleMouseEnter = (path: string, e: React.MouseEvent) => {
+    setActivePreview(path);
+    setPreviewPosition({ x: e.clientX, y: e.clientY });
+  };
+
+  // Handle mouse leave on navigation item
+  const handleMouseLeave = () => {
+    setActivePreview(null);
+    setPreviewPosition(null);
+  };
+
+  // Handle mouse move to update preview position
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (activePreview) {
+      setPreviewPosition({ x: e.clientX, y: e.clientY });
+    }
+  };
 
   return (
     <>
@@ -48,6 +70,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           "fixed top-0 left-0 h-full w-64 bg-slate-800 shadow-lg z-40 transition-transform duration-200 ease-in-out",
           isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
+        onMouseMove={handleMouseMove}
       >
         <div className="p-6">
           <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
@@ -62,12 +85,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <Link key={item.label} href={item.href}>
                 <a
                   className={cn(
-                    "flex items-center px-6 py-3 text-sm font-medium",
+                    "flex items-center px-6 py-3 text-sm font-medium transition-all duration-200",
                     location === item.href
                       ? "text-white bg-slate-700"
                       : "text-gray-300 hover:text-white hover:bg-slate-700/50"
                   )}
                   onClick={onClose}
+                  onMouseEnter={(e) => handleMouseEnter(item.href, e)}
+                  onMouseLeave={handleMouseLeave}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   <span>{item.label}</span>
@@ -88,12 +113,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Link key={item.label} href={item.href}>
                   <a
                     className={cn(
-                      "flex items-center px-6 py-3 text-sm font-medium",
+                      "flex items-center px-6 py-3 text-sm font-medium transition-all duration-200",
                       location === item.href
                         ? "text-white bg-gradient-to-r from-blue-600 to-purple-600"
                         : "text-gray-300 hover:text-white hover:bg-slate-700/50"
                     )}
                     onClick={onClose}
+                    onMouseEnter={(e) => handleMouseEnter(item.href, e)}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <item.icon className="mr-3 h-5 w-5" />
                     <span>{item.label}</span>
@@ -106,13 +133,24 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <Link href="/settings">
-            <a className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-700 hover:text-white rounded-md cursor-pointer">
+            <a 
+              className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-700 hover:text-white rounded-md cursor-pointer transition-all duration-200"
+              onMouseEnter={(e) => handleMouseEnter("/settings", e)}
+              onMouseLeave={handleMouseLeave}
+            >
               <Settings className="mr-3 h-5 w-5" />
               Settings
             </a>
           </Link>
         </div>
       </div>
+
+      {/* Navigation Preview */}
+      <NavigationPreview 
+        path={activePreview || ""}
+        isVisible={!!activePreview}
+        position={previewPosition || undefined}
+      />
 
       {/* Mobile Overlay */}
       {isOpen && (
