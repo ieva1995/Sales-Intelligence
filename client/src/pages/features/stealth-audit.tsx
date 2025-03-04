@@ -17,6 +17,13 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 
+type SecurityOption = 'deepPacket' | 'threatDetection' | 'zeroTrust' | 'auditLogging';
+
+interface SecurityConfig {
+  level: string;
+  options: Record<SecurityOption, boolean>;
+}
+
 export default function StealthAudit() {
   const { toast } = useToast();
   const [scans, setScans] = useState([
@@ -47,12 +54,14 @@ export default function StealthAudit() {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [scanDialogOpen, setScanDialogOpen] = useState(false);
   const [securityDialogOpen, setSecurityDialogOpen] = useState(false);
+
   const [tempScanConfig, setTempScanConfig] = useState({
     depth: "Deep Analysis",
     timeout: 30,
     autoRefresh: true
   });
-  const [tempSecurityConfig, setTempSecurityConfig] = useState({
+
+  const [tempSecurityConfig, setTempSecurityConfig] = useState<SecurityConfig>({
     level: "Enterprise Grade",
     options: {
       deepPacket: false,
@@ -65,15 +74,24 @@ export default function StealthAudit() {
   // Simulate progress updates
   useEffect(() => {
     const interval = setInterval(() => {
-      setScans(prevScans => 
+      setScans(prevScans =>
         prevScans.map(scan => {
-          const newProgress = scan.progress < 100 ? scan.progress + 1 : scan.progress;
-          const newIssues = newProgress > scan.progress ? scan.issues + Math.floor(Math.random() * 2) : scan.issues;
+          if (scan.progress >= 100) return scan;
+
+          const progressIncrease = Math.floor(Math.random() * 5) + 1;
+          const newProgress = Math.min(100, scan.progress + progressIncrease);
+          const newIssues = newProgress > scan.progress ?
+            scan.issues + Math.floor(Math.random() * 2) :
+            scan.issues;
+
           return {
             ...scan,
             progress: newProgress,
             issues: newIssues,
-            status: newProgress >= 99 ? "Complete" : scan.status
+            status: newProgress >= 100 ? "Complete" :
+              newProgress > 75 ? "Finalizing" :
+                newProgress > 50 ? "Analyzing" :
+                  newProgress > 25 ? "In Progress" : "Starting"
           };
         })
       );
@@ -137,6 +155,13 @@ export default function StealthAudit() {
       description: "Detailed scan report being generated...",
     });
   };
+
+  const securityOptions: Array<{ id: SecurityOption; label: string }> = [
+    { id: "deepPacket", label: "Enable Deep Packet Inspection" },
+    { id: "threatDetection", label: "Use Advanced Threat Detection" },
+    { id: "zeroTrust", label: "Apply Zero Trust Policy" },
+    { id: "auditLogging", label: "Enable Audit Logging" }
+  ];
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -204,18 +229,26 @@ export default function StealthAudit() {
         <CardContent>
           <div className="space-y-4">
             {scans.map((scan, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
                 onClick={() => handleScanClick(scan.target)}
               >
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-medium">{scan.target}</h4>
-                  <span className="text-sm text-blue-400">{scan.status}</span>
+                  <span className={`text-sm ${
+                    scan.status === "Complete" ? "text-green-400" :
+                      scan.status === "Finalizing" ? "text-blue-400" :
+                        "text-yellow-400"
+                  }`}>{scan.status}</span>
                 </div>
                 <div className="w-full h-2 bg-slate-600 rounded-full mb-2">
-                  <div 
-                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      scan.status === "Complete" ? "bg-green-500" :
+                        scan.status === "Finalizing" ? "bg-blue-500" :
+                          "bg-yellow-500"
+                    }`}
                     style={{ width: `${scan.progress}%` }}
                   />
                 </div>
@@ -237,9 +270,9 @@ export default function StealthAudit() {
           <CardContent>
             <div className="space-y-4">
               <div className="p-4 bg-red-500/10 rounded-lg cursor-pointer hover:bg-red-500/20 transition-colors"
-                onClick={() => toast({ 
-                  title: "Critical Vulnerabilities", 
-                  description: "Opening vulnerability report..." 
+                onClick={() => toast({
+                  title: "Critical Vulnerabilities",
+                  description: "Opening vulnerability report..."
                 })}>
                 <div className="flex items-center space-x-3 mb-3">
                   <Shield className="h-5 w-5 text-red-400" />
@@ -258,9 +291,9 @@ export default function StealthAudit() {
               </div>
 
               <div className="p-4 bg-yellow-500/10 rounded-lg cursor-pointer hover:bg-yellow-500/20 transition-colors"
-                onClick={() => toast({ 
-                  title: "Performance Issues", 
-                  description: "Opening performance analysis..." 
+                onClick={() => toast({
+                  title: "Performance Issues",
+                  description: "Opening performance analysis..."
                 })}>
                 <div className="flex items-center space-x-3 mb-3">
                   <AlertTriangle className="h-5 w-5 text-yellow-400" />
@@ -312,7 +345,7 @@ export default function StealthAudit() {
                   <div className="space-y-6 py-4">
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Scan Depth</h4>
-                      <RadioGroup 
+                      <RadioGroup
                         value={tempScanConfig.depth}
                         onValueChange={(value) => setTempScanConfig(prev => ({ ...prev, depth: value }))}
                       >
@@ -382,7 +415,7 @@ export default function StealthAudit() {
                   <div className="space-y-6 py-4">
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Security Level</h4>
-                      <RadioGroup 
+                      <RadioGroup
                         value={tempSecurityConfig.level}
                         onValueChange={(value) => setTempSecurityConfig(prev => ({ ...prev, level: value }))}
                       >
@@ -397,18 +430,13 @@ export default function StealthAudit() {
                     <div className="space-y-4">
                       <h4 className="font-medium text-sm">Additional Security Options</h4>
                       <div className="space-y-2">
-                        {[
-                          { id: "deepPacket", label: "Enable Deep Packet Inspection" },
-                          { id: "threatDetection", label: "Use Advanced Threat Detection" },
-                          { id: "zeroTrust", label: "Apply Zero Trust Policy" },
-                          { id: "auditLogging", label: "Enable Audit Logging" }
-                        ].map((option) => (
+                        {securityOptions.map((option) => (
                           <div key={option.id} className="flex items-center justify-between">
                             <Label htmlFor={option.id}>{option.label}</Label>
                             <Switch
                               id={option.id}
                               checked={tempSecurityConfig.options[option.id]}
-                              onCheckedChange={(checked) => 
+                              onCheckedChange={(checked) =>
                                 setTempSecurityConfig(prev => ({
                                   ...prev,
                                   options: { ...prev.options, [option.id]: checked }
