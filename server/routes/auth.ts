@@ -2,7 +2,6 @@ import express from 'express';
 import { storage } from '../storage';
 import { z } from 'zod';
 import crypto from 'crypto';
-import { createSession, generateJWT, verifyJWT } from '../utils/auth';
 
 const router = express.Router();
 
@@ -220,10 +219,20 @@ router.post('/api/auth/logout', async (req, res) => {
     }
 
     const token = authHeader.substring(7);
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    // Delete the session
-    await storage.revokeAllUserSessions(tokenHash);
+    // Extract user ID from session token
+    const deviceFingerprint = req.headers['x-device-fingerprint'] as string | undefined;
+    const user = await storage.validateSession(token, deviceFingerprint);
+
+    if (user) {
+      // Revoke all sessions for this user
+      await storage.revokeAllUserSessions(user.id);
+    } else {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid or expired session"
+      });
+    }
 
     return res.json({
       success: true,
