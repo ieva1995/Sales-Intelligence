@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { predictTrend } from "@/lib/trends";
+import { LoadingAnimation } from "@/components/LoadingAnimation";
 
 export default function Predictions() {
   const [keyword, setKeyword] = useState("");
 
-  const { data: prediction, refetch } = useQuery({
+  const { data: prediction, refetch, isFetching } = useQuery({
     queryKey: ["prediction", keyword],
     queryFn: () => predictTrend(keyword),
     enabled: false
@@ -27,7 +28,9 @@ export default function Predictions() {
         <Button onClick={() => refetch()}>Predict</Button>
       </div>
 
-      {prediction && (
+      {isFetching && <LoadingAnimation />}
+
+      {prediction && !isFetching && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
