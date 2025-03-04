@@ -1,36 +1,105 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PieChart, MessageSquare, CalendarClock, TrendingUp } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { PieChart, MessageSquare, CalendarClock, TrendingUp, Calendar, Calculator, FileText } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 
 export default function DealPredictor() {
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState({
     demo: false,
     roi: false,
     cases: false
   });
 
-  const handleAction = async (action: 'demo' | 'roi' | 'cases') => {
-    setIsLoading(prev => ({ ...prev, [action]: true }));
+  const [activeDialog, setActiveDialog] = useState<'demo' | 'roi' | 'cases' | null>(null);
 
-    const messages = {
-      demo: "Technical demo has been scheduled. You'll receive an email confirmation shortly.",
-      roi: "ROI Calculator has been generated and will be sent to your email.",
-      cases: "Relevant case studies have been shared with you."
-    };
+  // Demo scheduling content
+  const DemoScheduler = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-blue-500/10 rounded-lg">
+        <Calendar className="h-5 w-5 text-blue-400" />
+        <div>
+          <h4 className="font-medium text-white">Available Time Slots</h4>
+          <p className="text-sm text-gray-400">Select a convenient time for your demo</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Button variant="outline" className="w-full">Tomorrow 10:00 AM</Button>
+        <Button variant="outline" className="w-full">Tomorrow 2:00 PM</Button>
+        <Button variant="outline" className="w-full">Wednesday 11:00 AM</Button>
+        <Button variant="outline" className="w-full">Thursday 3:00 PM</Button>
+      </div>
+    </div>
+  );
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  // ROI Calculator content
+  const ROICalculator = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-green-500/10 rounded-lg">
+        <Calculator className="h-5 w-5 text-green-400" />
+        <div>
+          <h4 className="font-medium text-white">ROI Analysis</h4>
+          <p className="text-sm text-gray-400">Estimated return on investment</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4 p-4 bg-white/5 rounded-lg">
+        <div>
+          <h5 className="text-sm text-gray-400">Current Revenue</h5>
+          <p className="text-xl font-bold text-white">$100,000</p>
+        </div>
+        <div>
+          <h5 className="text-sm text-gray-400">Projected Growth</h5>
+          <p className="text-xl font-bold text-green-400">+45%</p>
+        </div>
+        <div>
+          <h5 className="text-sm text-gray-400">Time to ROI</h5>
+          <p className="text-xl font-bold text-white">3 months</p>
+        </div>
+        <div>
+          <h5 className="text-sm text-gray-400">Annual Savings</h5>
+          <p className="text-xl font-bold text-green-400">$50,000</p>
+        </div>
+      </div>
+    </div>
+  );
 
-    toast({
-      title: "Success",
-      description: messages[action]
-    });
-
-    setIsLoading(prev => ({ ...prev, [action]: false }));
-  };
+  // Case Studies content
+  const CaseStudies = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-purple-500/10 rounded-lg">
+        <FileText className="h-5 w-5 text-purple-400" />
+        <div>
+          <h4 className="font-medium text-white">Success Stories</h4>
+          <p className="text-sm text-gray-400">Real results from our clients</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {[
+          {
+            company: "TechCorp Inc.",
+            metric: "2.5x Revenue Growth",
+            description: "Achieved 150% growth in sales pipeline within 6 months"
+          },
+          {
+            company: "Global Solutions Ltd.",
+            metric: "40% Cost Reduction",
+            description: "Streamlined sales process resulting in significant cost savings"
+          },
+          {
+            company: "Innovation Labs",
+            metric: "90% Close Rate",
+            description: "Dramatically improved deal closure rate with AI insights"
+          }
+        ].map((study, index) => (
+          <div key={index} className="p-4 bg-white/5 rounded-lg">
+            <h5 className="font-medium text-white">{study.company}</h5>
+            <p className="text-sm text-purple-400">{study.metric}</p>
+            <p className="text-sm text-gray-400">{study.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
@@ -103,30 +172,61 @@ export default function DealPredictor() {
               <div className="space-y-2">
                 <Button 
                   className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
-                  onClick={() => handleAction('demo')}
+                  onClick={() => setActiveDialog('demo')}
                   disabled={isLoading.demo}
                 >
-                  {isLoading.demo ? "Scheduling..." : "Schedule Technical Demo"}
+                  Schedule Technical Demo
                 </Button>
                 <Button 
                   className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
-                  onClick={() => handleAction('roi')}
+                  onClick={() => setActiveDialog('roi')}
                   disabled={isLoading.roi}
                 >
-                  {isLoading.roi ? "Generating..." : "Send ROI Calculator"}
+                  View ROI Calculator
                 </Button>
                 <Button 
                   className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
-                  onClick={() => handleAction('cases')}
+                  onClick={() => setActiveDialog('cases')}
                   disabled={isLoading.cases}
                 >
-                  {isLoading.cases ? "Sharing..." : "Share Case Studies"}
+                  View Case Studies
                 </Button>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialogs */}
+      <Dialog open={activeDialog === 'demo'} onOpenChange={() => setActiveDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Schedule Technical Demo</DialogTitle>
+            <DialogDescription>Select a time slot for your technical demonstration</DialogDescription>
+          </DialogHeader>
+          <DemoScheduler />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeDialog === 'roi'} onOpenChange={() => setActiveDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ROI Calculator</DialogTitle>
+            <DialogDescription>Analyze potential return on investment</DialogDescription>
+          </DialogHeader>
+          <ROICalculator />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeDialog === 'cases'} onOpenChange={() => setActiveDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Case Studies</DialogTitle>
+            <DialogDescription>Learn from our success stories</DialogDescription>
+          </DialogHeader>
+          <CaseStudies />
+        </DialogContent>
+      </Dialog>
 
       {/* Engagement Timeline */}
       <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
