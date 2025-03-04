@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchTrendData } from "@/lib/trends";
 import { Trend } from "@shared/schema";
-import { ArrowUp, DollarSign, Package, Users, Mail, Phone, MessageSquare, Calendar } from "lucide-react";
+import { ArrowUp, DollarSign, Package, Users, Mail, Phone, MessageSquare, Calendar, TrendingUp } from "lucide-react";
 import TrendChart from "@/components/TrendChart";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -19,6 +19,13 @@ export default function Dashboard() {
     queryKey: ["trend-data"],
     queryFn: () => fetchTrendData("example"),
   });
+
+  const metrics = [
+    { title: "Total Revenue", value: "$45,231.89", change: "+20.1% from last month", trend: "up" },
+    { title: "Subscriptions", value: "2,350", change: "+180.1% from last month", trend: "up" },
+    { title: "Active Now", value: "573", change: "+201 since last hour", trend: "up" },
+    { title: "Sales Growth", value: "+12.5%", change: "+2.4% from last week", trend: "up" },
+  ];
 
   if (isLoading) {
     return (
@@ -40,6 +47,35 @@ export default function Dashboard() {
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-sm md:text-base text-muted-foreground">Welcome to your business overview.</p>
+      </div>
+
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {metrics.map((metric, i) => (
+          <Card key={i} className="overflow-hidden border-0 shadow-lg">
+            <CardHeader className="p-4 md:p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm text-muted-foreground">{metric.title}</p>
+                  <h3 className="text-2xl font-bold mt-2">{metric.value}</h3>
+                </div>
+                <div className="p-2 bg-green-500/10 rounded-full">
+                  <TrendingUp className="h-4 w-4 text-green-500" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {/* Mini graph area */}
+              <div className="h-[80px] w-full bg-gradient-to-t from-green-500/10 to-transparent" />
+              <div className="px-4 py-3 bg-muted/5">
+                <p className="text-xs text-green-500 flex items-center">
+                  <ArrowUp className="h-3 w-3 mr-1" />
+                  {metric.change}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* First row */}
