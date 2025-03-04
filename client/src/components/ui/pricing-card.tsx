@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface PricingFeature {
   text: string;
@@ -16,7 +17,7 @@ interface PricingCardProps {
   popular?: boolean;
   buttonText?: string;
   priceId?: string;
-  onSubscribe: (priceId: string) => void;
+  onSubscribe: (priceId: string) => Promise<void>;
 }
 
 export function PricingCard({
@@ -30,13 +31,27 @@ export function PricingCard({
   onSubscribe
 }: PricingCardProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleSubscribe = async () => {
+    if (!priceId) {
+      toast({
+        title: "Error",
+        description: "Invalid subscription plan",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       setIsLoading(true);
       await onSubscribe(priceId);
-    } catch (error) {
-      console.error('Subscription error:', error);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to process subscription",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

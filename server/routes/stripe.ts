@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-02-24',
+  apiVersion: '2023-10-16', // Using stable version
   typescript: true,
 });
 
@@ -28,6 +28,7 @@ router.post('/api/create-checkout-session', async (req, res) => {
       ],
       success_url: `${req.headers.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin}/payment/cancelled`,
+      customer_creation: 'always',
     });
 
     console.log('Checkout session created:', session.id);
@@ -36,7 +37,8 @@ router.post('/api/create-checkout-session', async (req, res) => {
     console.error('Error creating checkout session:', error.message);
     res.status(500).json({ 
       error: 'Failed to create checkout session',
-      details: error.message 
+      details: error.message,
+      code: error.code
     });
   }
 });
@@ -59,7 +61,8 @@ router.post('/api/create-portal-session', async (req, res) => {
     console.error('Error creating portal session:', error.message);
     res.status(500).json({ 
       error: 'Failed to create portal session',
-      details: error.message 
+      details: error.message,
+      code: error.code
     });
   }
 });

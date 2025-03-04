@@ -12,20 +12,19 @@ const createCheckoutSession = async (priceId: string) => {
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.details || 'Failed to create checkout session');
+      throw new Error(data.details || data.error || 'Failed to create checkout session');
     }
 
-    const session = await response.json();
-
-    if (!session.url) {
+    if (!data.url) {
       throw new Error('Invalid session response from server');
     }
 
-    console.log('Redirecting to Stripe checkout:', session.url);
-    window.location.href = session.url;
-  } catch (error) {
+    console.log('Redirecting to Stripe checkout:', data.url);
+    window.location.href = data.url;
+  } catch (error: any) {
     console.error('Error creating checkout session:', error);
     throw error;
   }
@@ -40,19 +39,18 @@ const createCustomerPortalSession = async () => {
       }
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.details || 'Failed to create portal session');
+      throw new Error(data.details || data.error || 'Failed to create portal session');
     }
 
-    const session = await response.json();
-
-    if (!session.url) {
+    if (!data.url) {
       throw new Error('Invalid portal session response from server');
     }
 
-    window.location.href = session.url;
-  } catch (error) {
+    window.location.href = data.url;
+  } catch (error: any) {
     console.error('Error creating portal session:', error);
     throw error;
   }
