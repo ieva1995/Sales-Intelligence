@@ -1,13 +1,16 @@
 import { db } from './db';
 import { users } from '@shared/schema';
+import { sql } from 'drizzle-orm';
 
 // Create initial users for testing
 export async function seedUsers() {
   try {
-    // Check if users already exist
-    const existingUsers = await db.select({ count: { value: db.fn.count() } }).from(users);
-    
-    if (existingUsers[0].count.value > 0) {
+    // Check if users already exist using SQL count
+    const existingUsersResult = await db.select({
+      count: sql<number>`count(*)`
+    }).from(users);
+
+    if (existingUsersResult[0].count > 0) {
       console.log('Users already exist, skipping seeding');
       return;
     }
