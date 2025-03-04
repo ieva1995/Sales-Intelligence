@@ -17,10 +17,24 @@ import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
+import { Menu } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Router() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="fixed top-4 left-4 md:hidden z-50 text-black"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+
       <Sidebar />
       <Header />
       <main className="main-content">
