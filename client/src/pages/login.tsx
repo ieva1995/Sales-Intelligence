@@ -20,15 +20,18 @@ import {
   LineChart,
   PieChart,
   TrendingUp,
-  Zap
+  Zap,
+  Menu
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../hooks/use-auth";
+import MobileMenu from "../components/MobileMenu";
 
 // Component for the landing page before login
 const LandingPage = () => {
   const [, setLocation] = useLocation();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Update date every minute
   useEffect(() => {
@@ -49,10 +52,17 @@ const LandingPage = () => {
     });
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
       {/* Grid Pattern Background */}
       <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:30px_30px] pointer-events-none"></div>
+
+      {/* Mobile Menu */}
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Header */}
       <header className="relative z-10 border-b border-slate-800">
@@ -70,7 +80,20 @@ const LandingPage = () => {
               </ul>
             </nav>
           </div>
-          <div className="flex items-center space-x-4">
+
+          {/* Mobile menu toggle button - only visible on small screens */}
+          <div className="md:hidden">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-gray-300 hover:text-white"
+              onClick={toggleMobileMenu}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="ghost"
               className="text-gray-300 hover:text-white"
@@ -636,8 +659,7 @@ const TokenLogin = () => {
         title: "DEMO MODE: Login Token",
         description: (
           <div className="flex items-center justify-between">
-            <span>Token: {demoToken}</span>
-            <Button
+            <span>Token: {demoToken}</span>            <Button
               variant="outline"
               size="icon"
               className="h-5 w-5 ml-2"
