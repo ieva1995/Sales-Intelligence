@@ -27,12 +27,12 @@ function Header() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
-    <header className="header relative z-50">
+    <header className="header relative z-40">
       <div className="flex items-center justify-between h-full px-4 md:pl-72">
         {/* Hide search on mobile by default */}
         <div className="hidden md:flex items-center">
           <div className="relative w-[240px]">
-            <div className="relative z-[60]">
+            <div className="relative">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
                 isSearchFocused ? 'text-white' : 'text-green-300'
               }`} />
@@ -70,8 +70,11 @@ function Header() {
       {/* Mobile search overlay */}
       {isSearchFocused && (
         <>
-          <div className="fixed inset-0 bg-white/5 backdrop-blur-sm z-50" onClick={() => setIsSearchFocused(false)} />
-          <div className="fixed inset-x-4 top-4 z-[60] md:hidden">
+          <div 
+            className="fixed inset-0 bg-white/5 backdrop-blur-sm z-30" 
+            onClick={() => setIsSearchFocused(false)} 
+          />
+          <div className="fixed inset-x-4 top-20 z-40 md:hidden">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-300" />
               <Input
