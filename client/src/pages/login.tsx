@@ -203,6 +203,107 @@ const TokenLogin = () => {
     });
   };
 
+  // Rainbow border effect CSS for input focus
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes rainbow-border {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .rainbow-glow-input:focus {
+        border-color: transparent !important;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        animation: rainbow-border 4s ease infinite;
+      }
+
+      .rainbow-glow-input {
+        position: relative;
+        transition: all 0.2s;
+      }
+
+      .rainbow-glow-input:focus::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+        background-size: 200% 200%;
+        border-radius: inherit;
+        z-index: -1;
+        opacity: 1;
+        animation: rainbow-border 4s ease infinite;
+      }
+
+      .interactive-button {
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .interactive-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .interactive-button:active {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+
+      .login-card {
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .login-card:hover {
+        box-shadow: 0 0 50px rgba(59, 130, 246, 0.15);
+      }
+
+      .screen-edges-glow {
+        position: relative;
+      }
+
+      .screen-edges-glow::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
+                  radial-gradient(circle at 85% 30%, rgba(109, 40, 217, 0.08) 0%, transparent 25%);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .tab-active {
+        color: white;
+        border-bottom: 2px solid #3b82f6;
+      }
+
+      .tab-inactive {
+        color: #94a3b8;
+        border-bottom: 2px solid transparent;
+      }
+
+      .tab-active, .tab-inactive {
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .tab-inactive:hover {
+        color: #e2e8f0;
+        border-bottom-color: #4b5563;
+      }
+    `;
+    document.head.appendChild(style);
+
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   // Login token request handler
   const handleRequestToken = async () => {
     // Validate email
@@ -343,8 +444,8 @@ const TokenLogin = () => {
   console.log("Token:", token);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 screen-edges-glow">
+      <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl login-card">
         <CardContent className="p-6">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-white mb-2">
@@ -443,7 +544,7 @@ const TokenLogin = () => {
                         }
                       }}
                       placeholder="email@company.com"
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-gray-500 pl-10"
+                      className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 pl-10"
                     />
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.email && (
@@ -456,7 +557,7 @@ const TokenLogin = () => {
                 </div>
 
                 <Button
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
                   onClick={handleRequestToken}
                   disabled={isLoading}
                 >
@@ -501,7 +602,7 @@ const TokenLogin = () => {
                         }
                       }}
                       placeholder="Enter the token from your email"
-                      className="bg-slate-800 border-slate-700 text-white placeholder:text-gray-500 pl-10"
+                      className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 pl-10"
                     />
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.token && (
@@ -514,7 +615,7 @@ const TokenLogin = () => {
                 </div>
 
                 <Button
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
                   onClick={handleValidateToken}
                   disabled={isLoading}
                 >
