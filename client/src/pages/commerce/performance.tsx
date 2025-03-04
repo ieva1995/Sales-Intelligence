@@ -26,7 +26,8 @@ import {
   BarChart2,
   Package,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Check
 } from "lucide-react";
 import { getShopifyPerformance } from "@/lib/shopify";
 
@@ -172,12 +173,9 @@ export default function ShopifyPerformance() {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="bg-slate-900 text-white space-y-8 p-6"> {/* Dark background and padding */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Store Performance Dashboard</h1>
-          <p className="text-muted-foreground">Monitor your Shopify store performance and sales metrics</p>
-        </div>
+        <h1 className="text-3xl font-bold tracking-tight">Store Performance Dashboard</h1>
         <Button onClick={fetchPerformanceData} disabled={loading}>
           {loading ? (
             <>
@@ -204,66 +202,31 @@ export default function ShopifyPerformance() {
       )}
 
       {/* Key Metrics Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-blue-50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="text-blue-500 bg-blue-100 dark:bg-blue-900/20 p-2 rounded-full">
-                <DollarSign className="h-6 w-6" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8"> {/* Increased gap */}
+        {[
+          { title: "Total Revenue", value: `$${metrics.totalRevenue}`, icon: <DollarSign />, bg: "blue" },
+          { title: "Orders", value: metrics.orderCount.toString(), icon: <ShoppingBag />, bg: "green" },
+          { title: "Customers", value: metrics.customerCount.toString(), icon: <Users />, bg: "purple" },
+          { title: "Average Order Value", value: `$${metrics.averageOrderValue}`, icon: <TrendingUp />, bg: "amber" },
+        ].map((item, index) => (
+          <Card key={index} className={`bg-${item.bg}-50 dark:bg-${item.bg}-500/5 border border-${item.bg}-100 dark:border-${item.bg}-500/10`}>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-4">
+                <div className={`text-${item.bg}-500 bg-${item.bg}-100 dark:bg-${item.bg}-900/20 p-2 rounded-full`}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{item.title}</p>
+                  <h3 className="text-2xl font-bold">{item.value}</h3>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-                <h3 className="text-2xl font-bold">${metrics.totalRevenue}</h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-green-50 dark:bg-green-500/5 border border-green-100 dark:border-green-500/10">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="text-green-500 bg-green-100 dark:bg-green-900/20 p-2 rounded-full">
-                <ShoppingBag className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Orders</p>
-                <h3 className="text-2xl font-bold">{metrics.orderCount}</h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-purple-50 dark:bg-purple-500/5 border border-purple-100 dark:border-purple-500/10">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="text-purple-500 bg-purple-100 dark:bg-purple-900/20 p-2 rounded-full">
-                <Users className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Customers</p>
-                <h3 className="text-2xl font-bold">{metrics.customerCount}</h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-amber-50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10">
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-4">
-              <div className="text-amber-500 bg-amber-100 dark:bg-amber-900/20 p-2 rounded-full">
-                <TrendingUp className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Average Order</p>
-                <h3 className="text-2xl font-bold">${metrics.averageOrderValue}</h3>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Main Dashboard Content */}
-      <Tabs defaultValue="overview" className="space-y-4">
+      <Tabs defaultValue="overview" className="space-y-8">
         <TabsList className="border dark:border-gray-800 px-2 h-12">
           <TabsTrigger value="overview" onClick={() => setActiveTab("overview")} className="h-10">
             <BarChart2 className="mr-2 h-4 w-4" />
@@ -284,9 +247,9 @@ export default function ShopifyPerformance() {
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="bg-gray-900 text-gray-100 border-0">
+        <TabsContent value="overview" className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="bg-slate-800 text-white border-0"> {/* Darker card background */}
               <CardHeader className="pb-2">
                 <CardTitle>Sales Trend (30 Days)</CardTitle>
               </CardHeader>
@@ -298,16 +261,16 @@ export default function ShopifyPerformance() {
                       margin={{ top: 15, right: 10, left: 10, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                      <XAxis 
-                        dataKey="date" 
-                        stroke="#888" 
+                      <XAxis
+                        dataKey="date"
+                        stroke="#888"
                         tickFormatter={(value) => {
                           const date = new Date(value);
-                          return `${date.getDate()}/${date.getMonth() + 1}`;
+                          return `${date.getMonth() + 1}/${date.getDate()}`;
                         }}
                       />
                       <YAxis stroke="#888" />
-                      <Tooltip 
+                      <Tooltip
                         formatter={(value) => [`$${value}`, 'Revenue']}
                         labelFormatter={(label) => {
                           const date = new Date(label);
@@ -315,12 +278,12 @@ export default function ShopifyPerformance() {
                         }}
                       />
                       <Legend />
-                      <Line 
-                        type="monotone" 
-                        dataKey="sales" 
-                        name="Revenue" 
-                        stroke="#4CAF50" 
-                        activeDot={{ r: 8 }} 
+                      <Line
+                        type="monotone"
+                        dataKey="sales"
+                        name="Revenue"
+                        stroke="#4CAF50"
+                        activeDot={{ r: 8 }}
                         strokeWidth={2}
                       />
                     </LineChart>
@@ -329,8 +292,8 @@ export default function ShopifyPerformance() {
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 gap-4">
-              <Card className="bg-gray-900 text-gray-100 border-0">
+            <div className="grid grid-cols-1 gap-8">
+              <Card className="bg-slate-800 text-white border-0">
                 <CardHeader className="pb-2">
                   <CardTitle>Sales Distribution by Channel</CardTitle>
                 </CardHeader>
@@ -360,7 +323,7 @@ export default function ShopifyPerformance() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900 text-gray-100 border-0">
+              <Card className="bg-slate-800 text-white border-0">
                 <CardHeader className="pb-2">
                   <CardTitle>Inventory Status</CardTitle>
                 </CardHeader>
@@ -392,16 +355,16 @@ export default function ShopifyPerformance() {
             </div>
           </div>
 
-          <Card className="bg-gray-900 text-gray-100 border-0">
+          <Card className="bg-slate-800 text-white border-0">
             <CardHeader className="pb-2">
               <CardTitle>Top Selling Products</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="space-y-4">
                 {metrics.topProducts.map((product) => (
-                  <div 
+                  <div
                     key={product.id}
-                    className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
+                    className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
                   >
                     <div>
                       <h4 className="font-medium text-white">{product.name}</h4>
@@ -421,9 +384,10 @@ export default function ShopifyPerformance() {
           </Card>
         </TabsContent>
 
+
         {/* Sales Tab */}
-        <TabsContent value="sales" className="space-y-4">
-          <Card className="bg-gray-900 text-gray-100 border-0">
+        <TabsContent value="sales" className="space-y-8">
+          <Card className="bg-slate-800 text-white border-0">
             <CardHeader className="pb-2">
               <CardTitle>Monthly Sales (12 Months)</CardTitle>
             </CardHeader>
@@ -446,8 +410,8 @@ export default function ShopifyPerformance() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="bg-gray-900 text-gray-100 border-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Sales Performance Metrics</CardTitle>
               </CardHeader>
@@ -459,8 +423,8 @@ export default function ShopifyPerformance() {
                       <span className="font-medium">{metrics.conversionRate}%</span>
                     </div>
                     <div className="w-full h-2 bg-gray-800 rounded-full">
-                      <div 
-                        className="h-full bg-blue-500 rounded-full" 
+                      <div
+                        className="h-full bg-blue-500 rounded-full"
                         style={{ width: `${Math.min(parseFloat(metrics.conversionRate) * 5, 100)}%` }}
                       ></div>
                     </div>
@@ -472,8 +436,8 @@ export default function ShopifyPerformance() {
                       <span className="font-medium">${metrics.averageOrderValue}</span>
                     </div>
                     <div className="w-full h-2 bg-gray-800 rounded-full">
-                      <div 
-                        className="h-full bg-green-500 rounded-full" 
+                      <div
+                        className="h-full bg-green-500 rounded-full"
                         style={{ width: `${Math.min((parseFloat(metrics.averageOrderValue) / 100) * 20, 100)}%` }}
                       ></div>
                     </div>
@@ -485,8 +449,8 @@ export default function ShopifyPerformance() {
                       <span className="font-medium">28%</span>
                     </div>
                     <div className="w-full h-2 bg-gray-800 rounded-full">
-                      <div 
-                        className="h-full bg-purple-500 rounded-full" 
+                      <div
+                        className="h-full bg-purple-500 rounded-full"
                         style={{ width: '28%' }}
                       ></div>
                     </div>
@@ -498,8 +462,8 @@ export default function ShopifyPerformance() {
                       <span className="font-medium">64%</span>
                     </div>
                     <div className="w-full h-2 bg-gray-800 rounded-full">
-                      <div 
-                        className="h-full bg-red-500 rounded-full" 
+                      <div
+                        className="h-full bg-red-500 rounded-full"
                         style={{ width: '64%' }}
                       ></div>
                     </div>
@@ -508,7 +472,7 @@ export default function ShopifyPerformance() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 text-gray-100 border-0">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Sales by Channel</CardTitle>
               </CardHeader>
@@ -538,8 +502,8 @@ export default function ShopifyPerformance() {
         </TabsContent>
 
         {/* Products Tab */}
-        <TabsContent value="products" className="space-y-4">
-          <Card className="bg-gray-900 text-gray-100 border-0">
+        <TabsContent value="products" className="space-y-8">
+          <Card className="bg-slate-800 text-white border-0">
             <CardHeader className="pb-2">
               <CardTitle>Product Performance</CardTitle>
             </CardHeader>
@@ -548,7 +512,7 @@ export default function ShopifyPerformance() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-800">
+                      <tr className="border-b border-gray-700">
                         <th className="text-left py-3 px-4">Product</th>
                         <th className="text-right py-3 px-4">Sales</th>
                         <th className="text-right py-3 px-4">Orders</th>
@@ -558,23 +522,23 @@ export default function ShopifyPerformance() {
                     </thead>
                     <tbody>
                       {metrics.topProducts.map((product) => (
-                        <tr key={product.id} className="border-b border-gray-800 hover:bg-gray-800">
+                        <tr key={product.id} className="border-b border-gray-700 hover:bg-gray-700">
                           <td className="py-3 px-4">{product.name}</td>
                           <td className="py-3 px-4 text-right text-green-400">${product.sales.toFixed(2)}</td>
                           <td className="py-3 px-4 text-right">{product.orders}</td>
                           <td className="py-3 px-4 text-right">{product.inventory}</td>
                           <td className="py-3 px-4 text-right">
                             <span className={`px-2 py-1 rounded text-xs ${
-                              product.inventory > 10 
-                                ? 'bg-green-500/20 text-green-400' 
-                                : product.inventory > 5 
-                                  ? 'bg-yellow-500/20 text-yellow-400' 
+                              product.inventory > 10
+                                ? 'bg-green-500/20 text-green-400'
+                                : product.inventory > 5
+                                  ? 'bg-yellow-500/20 text-yellow-400'
                                   : 'bg-red-500/20 text-red-400'
                             }`}>
-                              {product.inventory > 10 
-                                ? 'In Stock' 
-                                : product.inventory > 5 
-                                  ? 'Low Stock' 
+                              {product.inventory > 10
+                                ? 'In Stock'
+                                : product.inventory > 5
+                                  ? 'Low Stock'
                                   : 'Critical Stock'}
                             </span>
                           </td>
@@ -587,8 +551,8 @@ export default function ShopifyPerformance() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="bg-gray-900 text-gray-100 border-0">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Inventory Status</CardTitle>
               </CardHeader>
@@ -618,13 +582,13 @@ export default function ShopifyPerformance() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 text-gray-100 border-0">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Inventory Insights</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-4">
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Inventory Turnover</h4>
                     <p className="text-sm text-gray-300 mb-2">How quickly products are selling relative to average inventory</p>
                     <div className="flex items-center">
@@ -634,7 +598,7 @@ export default function ShopifyPerformance() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Days of Inventory</h4>
                     <p className="text-sm text-gray-300 mb-2">Average time to sell through current inventory</p>
                     <div className="flex items-center">
@@ -644,7 +608,7 @@ export default function ShopifyPerformance() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Stockout Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of products currently out of stock</p>
                     <div className="flex items-center">
@@ -660,9 +624,9 @@ export default function ShopifyPerformance() {
         </TabsContent>
 
         {/* Customers Tab */}
-        <TabsContent value="customers" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card className="bg-gray-900 text-gray-100 border-0">
+        <TabsContent value="customers" className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Customer Acquisition Channels</CardTitle>
               </CardHeader>
@@ -691,13 +655,13 @@ export default function ShopifyPerformance() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 text-gray-100 border-0">
+            <Card className="bg-slate-800 text-white border-0">
               <CardHeader className="pb-2">
                 <CardTitle>Customer Metrics</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-4">
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Customer Lifetime Value</h4>
                     <p className="text-sm text-gray-300 mb-2">Average revenue generated by a customer over their relationship</p>
                     <div className="flex items-center">
@@ -707,7 +671,7 @@ export default function ShopifyPerformance() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Repeat Purchase Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of customers who make more than one purchase</p>
                     <div className="flex items-center">
@@ -717,7 +681,7 @@ export default function ShopifyPerformance() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Customer Acquisition Cost</h4>
                     <p className="text-sm text-gray-300 mb-2">Average cost to acquire a new customer</p>
                     <div className="flex items-center">
@@ -727,7 +691,7 @@ export default function ShopifyPerformance() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-800 rounded-lg">
+                  <div className="p-4 bg-gray-700 rounded-lg">
                     <h4 className="font-medium text-white mb-1">Customer Retention Rate</h4>
                     <p className="text-sm text-gray-300 mb-2">Percentage of customers who remain active</p>
                     <div className="flex items-center">
