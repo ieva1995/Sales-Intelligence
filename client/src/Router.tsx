@@ -16,12 +16,14 @@ import TrendsExplorer from "@/pages/library/trends";
 import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import SmartProposal from "@/pages/features/smart-proposal";
+import DealPredictor from "@/pages/features/deal-predictor";
+import WhisperBot from "@/pages/features/whisper-bot";
+import StealthAudit from "@/pages/features/stealth-audit";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import DealPredictor from "@/pages/features/deal-predictor";
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,23 +63,23 @@ export default function Router() {
             {/* AI-Powered Feature Routes */}
             <Route path="/features/smart-proposal" component={SmartProposal} />
             <Route path="/features/deal-predictor" component={DealPredictor} />
-            <Route path="/features/configurator" component={() => <div>Product Configurator - Coming Soon</div>} />
-            <Route path="/features/upsell" component={() => <div>Upsell Brain - Coming Soon</div>} />
-            <Route path="/features/heatmap" component={() => <div>Intent Heatmap - Coming Soon</div>} />
-            <Route path="/features/case-studies" component={() => <div>Case Study Finder - Coming Soon</div>} />
-            <Route path="/features/loyalty" component={() => <div>Loyalty Discounts - Coming Soon</div>} />
-            <Route path="/features/sales-agent" component={() => <div>Silent Sales Agent - Coming Soon</div>} />
-            <Route path="/features/simulator" component={() => <div>POC Simulator - Coming Soon</div>} />
-            <Route path="/features/reputation" component={() => <div>Digital Reputation Score - Coming Soon</div>} />
+            <Route path="/features/whisper-bot" component={WhisperBot} />
+            <Route path="/features/stealth-audit" component={StealthAudit} />
 
-            {/* Enterprise Feature Routes */}
-            <Route path="/features/whisper-bot" component={() => <div>AI Whisper Bot - Coming Soon</div>} />
-            <Route path="/features/stealth-audit" component={() => <div>Stealth Audit Tool - Coming Soon</div>} />
-            <Route path="/features/warm-up" component={() => <div>Auto Warm-Up Campaign - Coming Soon</div>} />
-            <Route path="/features/corporate-leech" component={() => <div>Corporate Leech System™ - Coming Soon</div>} />
-            <Route path="/features/champion-hunter" component={() => <div>Secret Champion Hunter - Coming Soon</div>} />
-            <Route path="/features/roi-calculator" component={() => <div>Instant ROI Calculator - Coming Soon</div>} />
-            <Route path="/features/beta-system" component={() => <div>Private BETA System - Coming Soon</div>} />
+            {/* Placeholder routes for features in development */}
+            <Route path="/features/configurator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Product Configurator - Coming Soon</h1></div>} />
+            <Route path="/features/upsell" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Upsell Brain - Coming Soon</h1></div>} />
+            <Route path="/features/heatmap" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Intent Heatmap - Coming Soon</h1></div>} />
+            <Route path="/features/case-studies" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Case Study Finder - Coming Soon</h1></div>} />
+            <Route path="/features/loyalty" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Loyalty Discounts - Coming Soon</h1></div>} />
+            <Route path="/features/sales-agent" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Silent Sales Agent - Coming Soon</h1></div>} />
+            <Route path="/features/simulator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">POC Simulator - Coming Soon</h1></div>} />
+            <Route path="/features/reputation" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Digital Reputation Score - Coming Soon</h1></div>} />
+            <Route path="/features/warm-up" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Auto Warm-Up Campaign - Coming Soon</h1></div>} />
+            <Route path="/features/corporate-leech" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Corporate Leech System™ - Coming Soon</h1></div>} />
+            <Route path="/features/champion-hunter" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Secret Champion Hunter - Coming Soon</h1></div>} />
+            <Route path="/features/roi-calculator" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Instant ROI Calculator - Coming Soon</h1></div>} />
+            <Route path="/features/beta-system" component={() => <div className="p-6"><h1 className="text-2xl font-bold">Private BETA System - Coming Soon</h1></div>} />
 
             <Route component={NotFound} />
           </Switch>
