@@ -1,8 +1,18 @@
-import { Bell, User, Settings, Search } from "lucide-react";
+import { Bell, User, Settings, Search, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
 
 export default function Header() {
+  const { logout } = useAuth();
+  const [, navigate] = useLocation();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <header className="header relative z-40">
       <div className="flex items-center justify-between h-full px-4 md:px-8">
@@ -24,6 +34,16 @@ export default function Header() {
           >
             <Bell className="h-4 w-4" />
             <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <LogOut className="h-4 w-4" />
           </Button>
 
           <div className="flex items-center gap-2">
