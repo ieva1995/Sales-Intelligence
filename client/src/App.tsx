@@ -29,7 +29,8 @@ function Header() {
   return (
     <header className="header relative z-50">
       <div className="flex items-center justify-between h-full px-4 md:pl-72">
-        <div className="flex items-center">
+        {/* Hide search on mobile by default */}
+        <div className="hidden md:flex items-center">
           <div className="relative w-[240px]">
             <div className="relative z-[60]">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
@@ -46,6 +47,14 @@ function Header() {
           </div>
         </div>
 
+        {/* Mobile search button */}
+        <button
+          className="md:hidden text-gray-400 hover:text-white"
+          onClick={() => setIsSearchFocused(true)}
+        >
+          <Search className="h-5 w-5" />
+        </button>
+
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -58,12 +67,22 @@ function Header() {
         </div>
       </div>
 
-      {/* Backdrop overlay when search is focused */}
+      {/* Mobile search overlay */}
       {isSearchFocused && (
-        <div 
-          className="fixed inset-0 bg-white/5 backdrop-blur-sm z-50"
-          onClick={() => setIsSearchFocused(false)}
-        />
+        <>
+          <div className="fixed inset-0 bg-white/5 backdrop-blur-sm z-50" onClick={() => setIsSearchFocused(false)} />
+          <div className="fixed inset-x-4 top-4 z-[60] md:hidden">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-300" />
+              <Input
+                type="search"
+                placeholder="Search..."
+                className="w-full pl-10 h-9 rounded-full bg-green-500/20 border-green-600/20 text-white placeholder:text-green-300 focus:bg-green-500/30 focus:border-green-500/30"
+                autoFocus
+              />
+            </div>
+          </div>
+        </>
       )}
     </header>
   );
