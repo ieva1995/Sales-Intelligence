@@ -10,8 +10,15 @@ router.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
 
+    if (!message) {
+      return res.status(400).json({ 
+        status: 'error',
+        error: 'Message is required' 
+      });
+    }
+
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", 
+      model: "gpt-4", 
       messages: [
         {
           role: "system",
@@ -31,7 +38,8 @@ router.post("/api/chat", async (req, res) => {
     console.error('Chat API Error:', error);
     res.status(500).json({ 
       error: 'Failed to get response from AI',
-      status: 'error'
+      status: 'error',
+      details: error.message
     });
   }
 });
