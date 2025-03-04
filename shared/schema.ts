@@ -121,6 +121,46 @@ export const news = pgTable("news", {
   metadata: jsonb("metadata")
 });
 
+// Authentication System - Users
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  role: text("role").notNull().default("user"), // 'admin', 'manager', 'rep', 'user'
+  avatar: text("avatar"),
+  lastLogin: timestamp("last_login"),
+  status: text("status").notNull().default("active"), // 'active', 'inactive', 'locked'
+  deviceFingerprint: text("device_fingerprint"),
+  lastIpAddress: text("last_ip_address"),
+  created: timestamp("created").notNull().defaultNow(),
+  updated: timestamp("updated").notNull().defaultNow()
+});
+
+// Authentication System - One-time Login Tokens
+export const loginTokens = pgTable("login_tokens", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull(),
+  tokenHash: text("token_hash").notNull().unique(),
+  deviceFingerprint: text("device_fingerprint"),
+  ipAddress: text("ip_address"),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  created: timestamp("created").notNull().defaultNow()
+});
+
+// Authentication System - Active Sessions
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull(),
+  tokenHash: text("token_hash").notNull(),
+  deviceFingerprint: text("device_fingerprint"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  expiresAt: timestamp("expires_at").notNull(),
+  lastActivity: timestamp("last_activity").notNull(),
+  created: timestamp("created").notNull().defaultNow()
+});
+
 // Create insert schemas for all tables
 export const insertTrendSchema = createInsertSchema(trends).omit({ id: true });
 export const insertPredictionSchema = createInsertSchema(predictions).omit({ id: true });
@@ -132,6 +172,27 @@ export const insertSaleItemSchema = createInsertSchema(saleItems).omit({ id: tru
 export const insertEmployeeSchema = createInsertSchema(employees).omit({ id: true });
 export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true });
 export const insertNewsSchema = createInsertSchema(news).omit({ id: true });
+
+// Create insert schemas for authentication tables
+export const insertUserSchema = createInsertSchema(users).omit({ 
+  id: true, 
+  lastLogin: true, 
+  deviceFingerprint: true, 
+  lastIpAddress: true, 
+  created: true, 
+  updated: true 
+});
+
+export const insertLoginTokenSchema = createInsertSchema(loginTokens).omit({ 
+  id: true, 
+  usedAt: true, 
+  created: true 
+});
+
+export const insertSessionSchema = createInsertSchema(sessions).omit({ 
+  id: true, 
+  created: true 
+});
 
 // Export types
 export type Trend = typeof trends.$inferSelect;
@@ -145,6 +206,11 @@ export type Employee = typeof employees.$inferSelect;
 export type Customer = typeof customers.$inferSelect;
 export type News = typeof news.$inferSelect;
 
+// Authentication types
+export type User = typeof users.$inferSelect;
+export type LoginToken = typeof loginTokens.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+
 // Export insert types
 export type InsertTrend = z.infer<typeof insertTrendSchema>;
 export type InsertPrediction = z.infer<typeof insertPredictionSchema>;
@@ -156,3 +222,8 @@ export type InsertSaleItem = z.infer<typeof insertSaleItemSchema>;
 export type InsertEmployee = z.infer<typeof insertEmployeeSchema>;
 export type InsertCustomer = z.infer<typeof insertCustomerSchema>;
 export type InsertNews = z.infer<typeof insertNewsSchema>;
+
+// Auth insert types
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertLoginToken = z.infer<typeof insertLoginTokenSchema>;
+export type InsertSession = z.infer<typeof insertSessionSchema>;

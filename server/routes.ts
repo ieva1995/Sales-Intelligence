@@ -11,6 +11,7 @@ import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
 import stripeRouter from './routes/stripe';
 import shopifyRouter from './routes/shopify';
+import authRouter from './routes/auth'; // Add this line
 import { newsService } from "./services/newsService";
 
 export async function registerRoutes(app: Express) {
@@ -28,6 +29,21 @@ export async function registerRoutes(app: Express) {
   app.use(chatRouter);
   app.use(stripeRouter); // Add Stripe routes
   app.use('/api/shopify', shopifyRouter); // Add Shopify routes
+  app.use(authRouter); // Add auth routes
+
+  // Middleware to handle database maintenance
+  app.use(async (req, res, next) => {
+    // Clean up expired tokens and sessions periodically
+    if (Math.random() < 0.1) { // 10% chance on each request
+      try {
+        await storage.clearExpiredTokens();
+        await storage.cleanupSessions();
+      } catch (error) {
+        console.error('Error during database maintenance:', error);
+      }
+    }
+    next();
+  });
 
   // Existing routes
   app.get("/api/trends", async (_req, res) => {

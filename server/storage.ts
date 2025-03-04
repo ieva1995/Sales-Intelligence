@@ -3,6 +3,7 @@ import {
   trends, predictions, alerts,
   transactions, products, sales,
   saleItems, employees, customers,
+  users, loginTokens, sessions,
   type Trend, type InsertTrend,
   type Prediction, type InsertPrediction,
   type Alert, type InsertAlert,
@@ -11,9 +12,13 @@ import {
   type Sale, type InsertSale,
   type SaleItem, type InsertSaleItem,
   type Employee, type InsertEmployee,
-  type Customer, type InsertCustomer
+  type Customer, type InsertCustomer,
+  type User, type InsertUser,
+  type LoginToken, type InsertLoginToken,
+  type Session, type InsertSession
 } from "@shared/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, lt, isNull, or } from "drizzle-orm";
+import crypto from 'crypto';
 
 export interface IStorage {
   // Existing methods
@@ -57,6 +62,18 @@ export interface IStorage {
   updateCustomer(id: string, updates: Partial<InsertCustomer>): Promise<Customer | undefined>;
   getCustomerById(id: string): Promise<Customer | undefined>;
   getTopCustomers(limit?: number): Promise<Customer[]>;
+
+  // Authentication System
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
+  generateLoginToken(userId: string, deviceFingerprint?: string, ipAddress?: string): Promise<{token: string, expiresAt: Date}>;
+  validateLoginToken(token: string, deviceFingerprint?: string): Promise<User | undefined>;
+  createSession(userId: string, deviceFingerprint?: string, ipAddress?: string, userAgent?: string): Promise<{sessionId: string, token: string}>;
+  validateSession(token: string, deviceFingerprint?: string): Promise<User | undefined>;
+  clearExpiredTokens(): Promise<void>;
+  revokeAllUserSessions(userId: string): Promise<void>;
+  cleanupSessions(): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -404,6 +421,266 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error fetching top customers:', error);
       return [];
+    }
+  }
+
+  // Authentication System
+
+  // Generate a secure random token
+  private generateSecureToken(): string {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  // Hash a token for storage
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    try {
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      return user;
+    } catch (error) {
+      console.error('Error fetching user by email:', error);
+      return undefined;
+    }
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    try {
+      const [newUser] = await db.insert(users).values(user).returning();
+      return newUser;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw new Error('Failed to create user');
+    }
+  }
+
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined> {
+    try {
+      const [updatedUser] = await db
+        .update(users)
+        .set({
+          ...updates,
+          updated: new Date()
+        })
+        .where(eq(users.id, id))
+        .returning();
+      return updatedUser;
+    } catch (error) {
+      console.error('Error updating user:', error);
+      return undefined;
+    }
+  }
+
+  async generateLoginToken(userId: string, deviceFingerprint?: string, ipAddress?: string): Promise<{token: string, expiresAt: Date}> {
+    try {
+      // Clean up expired tokens first
+      await this.clearExpiredTokens();
+
+      // Generate a secure random token
+      const token = this.generateSecureToken();
+      const tokenHash = this.hashToken(token);
+
+      // Set token expiry (15 minutes from now)
+      const expiresAt = new Date();
+      expiresAt.setMinutes(expiresAt.getMinutes() + 15);
+
+      // Store the token hash in the database
+      await db.insert(loginTokens).values({
+        userId,
+        tokenHash,
+        deviceFingerprint,
+        ipAddress,
+        expiresAt
+      });
+
+      return { token, expiresAt };
+    } catch (error) {
+      console.error('Error generating login token:', error);
+      throw new Error('Failed to generate login token');
+    }
+  }
+
+  async validateLoginToken(token: string, deviceFingerprint?: string): Promise<User | undefined> {
+    try {
+      const tokenHash = this.hashToken(token);
+
+      // Find the token and make sure it's not expired
+      const [foundToken] = await db
+        .select()
+        .from(loginTokens)
+        .where(
+          and(
+            eq(loginTokens.tokenHash, tokenHash),
+            isNull(loginTokens.usedAt),
+            sql`expires_at > NOW()`
+          )
+        );
+
+      if (!foundToken) {
+        return undefined;
+      }
+
+      // Check device fingerprint if provided and required
+      if (deviceFingerprint && foundToken.deviceFingerprint && 
+          deviceFingerprint !== foundToken.deviceFingerprint) {
+        console.warn('Device fingerprint mismatch for token:', tokenHash);
+        return undefined;
+      }
+
+      // Mark the token as used
+      await db
+        .update(loginTokens)
+        .set({ usedAt: new Date() })
+        .where(eq(loginTokens.id, foundToken.id));
+
+      // Get the user
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, foundToken.userId));
+
+      if (user) {
+        // Update user's last login time
+        await db
+          .update(users)
+          .set({
+            lastLogin: new Date(),
+            deviceFingerprint: deviceFingerprint || user.deviceFingerprint,
+            lastIpAddress: foundToken.ipAddress || user.lastIpAddress,
+            updated: new Date()
+          })
+          .where(eq(users.id, user.id));
+      }
+
+      return user;
+    } catch (error) {
+      console.error('Error validating login token:', error);
+      return undefined;
+    }
+  }
+
+  async createSession(userId: string, deviceFingerprint?: string, ipAddress?: string, userAgent?: string): Promise<{sessionId: string, token: string}> {
+    try {
+      // Generate a secure session token
+      const token = this.generateSecureToken();
+      const tokenHash = this.hashToken(token);
+
+      // Set session expiry (30 days from now)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 30);
+
+      // Store the session in the database
+      const [session] = await db
+        .insert(sessions)
+        .values({
+          userId,
+          tokenHash,
+          deviceFingerprint,
+          ipAddress,
+          userAgent,
+          expiresAt,
+          lastActivity: new Date()
+        })
+        .returning();
+
+      return {
+        sessionId: session.id,
+        token
+      };
+    } catch (error) {
+      console.error('Error creating session:', error);
+      throw new Error('Failed to create session');
+    }
+  }
+
+  async validateSession(token: string, deviceFingerprint?: string): Promise<User | undefined> {
+    try {
+      const tokenHash = this.hashToken(token);
+
+      // Find the session and make sure it's not expired
+      const [session] = await db
+        .select()
+        .from(sessions)
+        .where(
+          and(
+            eq(sessions.tokenHash, tokenHash),
+            sql`expires_at > NOW()`
+          )
+        );
+
+      if (!session) {
+        return undefined;
+      }
+
+      // Check device fingerprint if provided and required
+      if (deviceFingerprint && session.deviceFingerprint && 
+          deviceFingerprint !== session.deviceFingerprint) {
+        console.warn('Device fingerprint mismatch for session:', session.id);
+        return undefined;
+      }
+
+      // Update session last activity
+      await db
+        .update(sessions)
+        .set({ lastActivity: new Date() })
+        .where(eq(sessions.id, session.id));
+
+      // Get the user
+      const [user] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, session.userId));
+
+      return user;
+    } catch (error) {
+      console.error('Error validating session:', error);
+      return undefined;
+    }
+  }
+
+  async clearExpiredTokens(): Promise<void> {
+    try {
+      await db
+        .delete(loginTokens)
+        .where(
+          or(
+            sql`expires_at < NOW()`,
+            sql`used_at IS NOT NULL`
+          )
+        );
+    } catch (error) {
+      console.error('Error clearing expired tokens:', error);
+    }
+  }
+
+  async revokeAllUserSessions(userId: string): Promise<void> {
+    try {
+      await db
+        .delete(sessions)
+        .where(eq(sessions.userId, userId));
+    } catch (error) {
+      console.error('Error revoking user sessions:', error);
+    }
+  }
+
+  async cleanupSessions(): Promise<void> {
+    try {
+      // Delete expired sessions
+      await db
+        .delete(sessions)
+        .where(sql`expires_at < NOW()`);
+
+      // Delete inactive sessions (no activity for 30 days)
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      await db
+        .delete(sessions)
+        .where(lt(sessions.lastActivity, thirtyDaysAgo));
+    } catch (error) {
+      console.error('Error cleaning up sessions:', error);
     }
   }
 }
