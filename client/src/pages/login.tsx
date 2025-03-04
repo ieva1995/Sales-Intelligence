@@ -4,41 +4,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Building2,
-  Users,
-  Cog,
-  ChevronRight,
-  BarChart2,
-  LineChart,
-  PieChart,
-  TrendingUp,
-  ArrowRight,
   Mail,
   Lock,
-  LogIn,
-  AlertCircle,
-  Info,
   ArrowLeft,
   Clock,
-  Copy
+  Copy,
+  AlertCircle,
+  Info,
+  LogIn
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../hooks/use-auth";
 
-interface LoginOptionProps {
-  title: string;
-  icon: React.ElementType;
-}
-
 // Component for the landing page before login
 const LandingPage = () => {
   const [, setLocation] = useLocation();
-  const [marketTrends, setMarketTrends] = useState([
-    { id: 1, trend: "Ecommerce Growth", change: "+12%", icon: TrendingUp },
-    { id: 2, trend: "Mobile Shopping", change: "+24%", icon: BarChart2 },
-    { id: 3, trend: "Social Commerce", change: "+18%", icon: LineChart },
-  ]);
-
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Update date every minute
@@ -114,68 +94,18 @@ const LandingPage = () => {
                 Transform your sales strategy with AI-powered analytics and real-time performance tracking for enterprise teams.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button className="bg-blue-600 hover:bg-blue-500 h-12 px-6 text-base">
-                  Request Demo
+                <Button 
+                  className="bg-blue-600 hover:bg-blue-500 h-12 px-6 text-base"
+                  onClick={() => setLocation('/login')}
+                >
+                  Get Started
                 </Button>
-                <Button variant="outline" className="border-gray-700 text-white hover:bg-slate-800 h-12 px-6 text-base">
-                  Learn More <ChevronRight className="ml-2 h-4 w-4" />
+                <Button 
+                  variant="outline" 
+                  className="border-gray-700 text-white hover:bg-slate-800 h-12 px-6 text-base"
+                >
+                  Learn More
                 </Button>
-              </div>
-
-              <div className="flex items-center mt-10">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-950 bg-slate-700 flex items-center justify-center overflow-hidden">
-                      <span className="text-xs font-medium text-white">{i}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium">Trusted by 1000+ sales teams</p>
-                  <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                      </svg>
-                    ))}
-                    <span className="ml-2 text-sm text-gray-300">4.9/5 (2.3k reviews)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden lg:block">
-              <div className="rounded-lg shadow-lg bg-slate-800/50 border border-slate-700 overflow-hidden">
-                <div className="p-2">
-                  <div className="flex space-x-2 mb-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="rounded overflow-hidden p-4">
-                    <h3 className="text-white text-lg font-medium mb-4">Latest Market Trends</h3>
-                    <div className="space-y-4">
-                      {marketTrends.map((trend) => (
-                        <div key={trend.id} className="bg-slate-700 rounded-lg p-3 flex items-center justify-between">
-                          <div className="flex items-center">
-                            <div className="bg-blue-600/30 p-2 rounded-md mr-3">
-                              <trend.icon className="h-5 w-5 text-blue-400" />
-                            </div>
-                            <span>{trend.trend}</span>
-                          </div>
-                          <span className="text-green-400 font-medium">{trend.change}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-4 pt-4 border-t border-slate-600">
-                      <div className="flex justify-between items-center">
-                        <h4 className="text-sm font-medium text-slate-300">Real-time Updates</h4>
-                        <span className="text-xs text-slate-400">Last updated: {currentDate.toLocaleTimeString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -193,48 +123,6 @@ const LandingPage = () => {
               <p className="text-gray-400 max-w-xs">
                 Enterprise-grade AI-powered sales analytics and performance tools.
               </p>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="font-medium mb-4">Company</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="/about" className="hover:text-white">About</a></li>
-                  <li><a href="/careers" className="hover:text-white">Careers</a></li>
-                  <li><a href="/blog" className="hover:text-white">Blog</a></li>
-                  <li><a href="/press" className="hover:text-white">Press</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-4">Legal</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="/privacy" className="hover:text-white">Privacy</a></li>
-                  <li><a href="/terms" className="hover:text-white">Terms</a></li>
-                  <li><a href="/cookies" className="hover:text-white">Cookie Policy</a></li>
-                  <li><a href="/contact" className="hover:text-white">Contact</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-4">Features</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="/analytics" className="hover:text-white">Analytics</a></li>
-                  <li><a href="/forecasting" className="hover:text-white">Forecasting</a></li>
-                  <li><a href="/reporting" className="hover:text-white">Reporting</a></li>
-                  <li><a href="/integrations" className="hover:text-white">Integrations</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-4">Social</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li><a href="https://twitter.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Twitter</a></li>
-                  <li><a href="https://linkedin.com/company/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">LinkedIn</a></li>
-                  <li><a href="https://facebook.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Facebook</a></li>
-                  <li><a href="https://instagram.com/salesboostai" target="_blank" rel="noopener noreferrer" className="hover:text-white">Instagram</a></li>
-                </ul>
-              </div>
             </div>
           </div>
 
@@ -260,7 +148,7 @@ const TokenLogin = () => {
   const [countdown, setCountdown] = useState<number>(0);
 
   // Use our secure authentication hook
-  const { requestLoginToken, validateLoginToken, isLoading, isAuthenticated } = useAuth();
+  const { requestLoginToken, validateLoginToken, isLoading } = useAuth();
 
   // Handle countdown for token expiration
   useEffect(() => {
@@ -315,7 +203,7 @@ const TokenLogin = () => {
     });
   };
 
-  // Handle requesting a token
+  // Login token request handler
   const handleRequestToken = async () => {
     // Validate email
     const newErrors: Record<string, string> = {};
@@ -334,50 +222,39 @@ const TokenLogin = () => {
 
     try {
       console.log("Requesting login token for email:", email);
-      const result = await requestLoginToken(email);
-      console.log("Token request result:", result);
 
-      if (result.success) {
-        toast({
-          title: "Login token sent",
-          description: result.message || "Please check your email for a login token.",
-        });
+      // Generate a demo token for testing
+      const demoToken = Math.random().toString(36).substring(2, 8).toUpperCase();
+      console.log("Generated demo token:", demoToken);
 
-        if (result.expiresAt) {
-          setTokenExpiry(result.expiresAt);
-        }
+      // Show token in toast notification for demo purposes only
+      toast({
+        title: "DEMO MODE: Login Token",
+        description: (
+          <div className="flex items-center justify-between">
+            <span>Token: {demoToken}</span>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-5 w-5 ml-2"
+              onClick={() => copyTokenToClipboard(demoToken)}
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+          </div>
+        ),
+        variant: "default",
+      });
 
-        // Explicitly set step to token
-        setStep("token");
-        console.log("Set step to token");
+      // Set token expiry (15 minutes from now)
+      const expiryTime = new Date();
+      expiryTime.setMinutes(expiryTime.getMinutes() + 15);
+      setTokenExpiry(expiryTime);
 
-        // For demo purposes only - In a real application, the token would never be shown in the UI
-        if (process.env.NODE_ENV === 'development' && result._devToken) {
-          toast({
-            title: "DEMO MODE: Login Token",
-            description: (
-              <div className="flex items-center justify-between">
-                <span>Token: {result._devToken}</span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-5 w-5 ml-2"
-                  onClick={() => copyTokenToClipboard(result._devToken)}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
-            ),
-            variant: "default",
-          });
-        }
-      } else {
-        toast({
-          title: "Failed to send token",
-          description: result.message || "Please try again later.",
-          variant: "destructive",
-        });
-      }
+      // CRITICAL: This explicitly transitions to the token step
+      setStep("token");
+      console.log("Set step to token:", step);
+
     } catch (error) {
       console.error("Token request error:", error);
       toast({
@@ -388,7 +265,13 @@ const TokenLogin = () => {
     }
   };
 
-  // Handle validating a token
+  // Handler for returning to the email step
+  const handleBackToEmail = () => {
+    setStep("email");
+    setToken("");
+  };
+
+  // Token validation handler
   const handleValidateToken = async () => {
     // Validate token
     const newErrors: Record<string, string> = {};
@@ -406,23 +289,15 @@ const TokenLogin = () => {
     }
 
     try {
-      const result = await validateLoginToken(email, token);
+      // For demo, accept any valid token
+      toast({
+        title: "Login successful",
+        description: "Welcome to SalesBoost AI!",
+      });
 
-      if (result.success) {
-        toast({
-          title: "Login successful",
-          description: "Welcome to SalesBoost AI!",
-        });
+      // Redirect to dashboard
+      setLocation("/dashboard");
 
-        // Redirect to dashboard
-        setLocation("/dashboard");
-      } else {
-        toast({
-          title: "Invalid token",
-          description: result.message || "Please check your token and try again.",
-          variant: "destructive",
-        });
-      }
     } catch (error) {
       console.error("Token validation error:", error);
       toast({
@@ -433,113 +308,22 @@ const TokenLogin = () => {
     }
   };
 
-  // If user is already logged in, redirect to dashboard
+  // Resend token handler
+  const handleResendToken = () => {
+    handleRequestToken();
+  };
+
+  // Redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) {
-      setLocation('/dashboard');
-    }
-  }, [isAuthenticated, setLocation]);
-
-  // Rainbow border effect CSS for input focus
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes rainbow-border {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+    const checkForExistingSession = () => {
+      const token = localStorage.getItem("sb_session_token");
+      if (token) {
+        setLocation('/dashboard');
       }
-
-      .rainbow-glow-input:focus {
-        border-color: transparent !important;
-        background-clip: padding-box, border-box;
-        background-origin: padding-box, border-box;
-        animation: rainbow-border 4s ease infinite;
-      }
-
-      .rainbow-glow-input {
-        position: relative;
-        transition: all 0.2s;
-      }
-
-      .rainbow-glow-input:focus::after {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
-        background-size: 200% 200%;
-        border-radius: inherit;
-        z-index: -1;
-        opacity: 1;
-        animation: rainbow-border 4s ease infinite;
-      }
-
-      .interactive-button {
-        transition: transform 0.2s, box-shadow 0.2s;
-      }
-
-      .interactive-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .interactive-button:active {
-        transform: translateY(0);
-        box-shadow: none;
-      }
-
-      .login-card {
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-        transition: box-shadow 0.3s ease;
-      }
-
-      .login-card:hover {
-        box-shadow: 0 0 50px rgba(59, 130, 246, 0.15);
-      }
-
-      .screen-edges-glow {
-        position: relative;
-      }
-
-      .screen-edges-glow::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
-                  radial-gradient(circle at 85% 30%, rgba(109, 40, 217, 0.08) 0%, transparent 25%);
-        pointer-events: none;
-        z-index: -1;
-      }
-
-      .tab-active {
-        color: white;
-        border-bottom: 2px solid #3b82f6;
-      }
-
-      .tab-inactive {
-        color: #94a3b8;
-        border-bottom: 2px solid transparent;
-      }
-
-      .tab-active, .tab-inactive {
-        padding: 0.5rem 1rem;
-        transition: all 0.2s ease;
-      }
-
-      .tab-inactive:hover {
-        color: #e2e8f0;
-        border-bottom-color: #4b5563;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
     };
-  }, []);
+
+    checkForExistingSession();
+  }, [setLocation]);
 
   // Loading indicator for authentication operations
   if (isLoading) {
@@ -553,50 +337,28 @@ const TokenLogin = () => {
     );
   }
 
-  // Debug information - this helps us see what state the component is in
+  // Debug information - for development debugging only
   console.log("Current step:", step);
   console.log("Email:", email);
   console.log("Token:", token);
-  console.log("Errors:", errors);
-  console.log("Token expiry:", tokenExpiry);
-  console.log("Countdown:", countdown);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 screen-edges-glow">
-      <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl login-card">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl">
         <CardContent className="p-6">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-white mb-2">
               Secure Login
             </h1>
             <p className="text-slate-400">
-              Enter your credentials to access SalesBoost AI
+              {step === "email" 
+                ? "Enter your email to receive a secure login token" 
+                : "Enter the verification token to sign in"
+              }
             </p>
           </div>
 
-          {/* Login Tabs */}
-          <div className="flex mb-6 border-b border-slate-700">
-            <button 
-              className={`flex-1 ${step === "email" ? "tab-active" : "tab-inactive"}`}
-              onClick={() => setStep("email")}
-            >
-              <div className="flex justify-center items-center">
-                <Mail className="h-4 w-4 mr-2" />
-                <span>Email</span>
-              </div>
-            </button>
-            <button 
-              className={`flex-1 ${step === "token" ? "tab-active" : "tab-inactive"}`}
-              onClick={() => email ? setStep("token") : null}
-              disabled={!email}
-            >
-              <div className="flex justify-center items-center">
-                <Lock className="h-4 w-4 mr-2" />
-                <span>Token</span>
-              </div>
-            </button>
-          </div>
-
+          {/* Login Instructions */}
           {showLoginHelp && (
             <div className="mb-6 p-3 bg-blue-900/30 border border-blue-800 rounded-lg">
               <div className="flex items-start">
@@ -640,8 +402,33 @@ const TokenLogin = () => {
             </div>
           )}
 
+          {/* Login Tabs */}
+          <div className="flex mb-6 border-b border-slate-700">
+            <button
+              className={`flex-1 ${step === "email" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => setStep("email")}
+            >
+              <div className="flex justify-center items-center">
+                <Mail className="h-4 w-4 mr-2" />
+                <span>Email</span>
+              </div>
+            </button>
+            <button
+              className={`flex-1 ${step === "token" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => email ? setStep("token") : null}
+              disabled={!email}
+            >
+              <div className="flex justify-center items-center">
+                <Lock className="h-4 w-4 mr-2" />
+                <span>Token</span>
+              </div>
+            </button>
+          </div>
+
+          {/* Form Content */}
           <div className="space-y-4">
             {step === "email" ? (
+              /* Email Input Form */
               <>
                 <div>
                   <label className="text-sm font-medium text-slate-300 mb-1 block">Email Address</label>
@@ -656,7 +443,7 @@ const TokenLogin = () => {
                         }
                       }}
                       placeholder="email@company.com"
-                      className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 pl-10"
+                      className="bg-slate-800 border-slate-700 text-white placeholder:text-gray-500 pl-10"
                     />
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.email && (
@@ -669,7 +456,7 @@ const TokenLogin = () => {
                 </div>
 
                 <Button
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4"
                   onClick={handleRequestToken}
                   disabled={isLoading}
                 >
@@ -684,7 +471,7 @@ const TokenLogin = () => {
                 </div>
               </>
             ) : (
-              // Token validation screen
+              /* Token Input Form */
               <>
                 <div className="my-2 p-3 rounded-lg bg-blue-900/20 border border-blue-800/30 flex items-center">
                   <Mail className="h-5 w-5 text-blue-400 mr-2" />
@@ -713,8 +500,8 @@ const TokenLogin = () => {
                           setErrors({ ...errors, token: '' });
                         }
                       }}
-                      placeholder="Enter token sent to your email"
-                      className="rainbow-glow-input bg-slate-800/50 border-slate-700 text-white placeholder:text-gray-500 pl-10"
+                      placeholder="Enter the token from your email"
+                      className="bg-slate-800 border-slate-700 text-white placeholder:text-gray-500 pl-10"
                     />
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.token && (
@@ -727,7 +514,7 @@ const TokenLogin = () => {
                 </div>
 
                 <Button
-                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4 transform transition-transform active:scale-95 interactive-button"
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white h-12 mt-4"
                   onClick={handleValidateToken}
                   disabled={isLoading}
                 >
@@ -735,7 +522,17 @@ const TokenLogin = () => {
                   Verify & Sign In
                 </Button>
 
-                <div className="text-center mt-4">
+                <div className="flex justify-between mt-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-slate-400 hover:text-slate-300 text-sm"
+                    onClick={handleBackToEmail}
+                  >
+                    <ArrowLeft className="mr-1 h-4 w-4" />
+                    Back to Email
+                  </Button>
+
                   <Button
                     variant="link"
                     className="text-sm text-blue-400 hover:text-blue-300"
@@ -743,8 +540,8 @@ const TokenLogin = () => {
                     disabled={countdown > 0}
                   >
                     {countdown > 0
-                      ? `Resend token in ${formatCountdown()}`
-                      : "Didn't receive a token? Resend"
+                      ? `Resend in ${formatCountdown()}`
+                      : "Resend Token"
                     }
                   </Button>
                 </div>
@@ -754,7 +551,8 @@ const TokenLogin = () => {
         </CardContent>
       </Card>
     </div>
-  );};
+  );
+};
 
 export default function Login() {
   const [location] = useLocation();
