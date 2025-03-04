@@ -12,7 +12,6 @@ import {
   Database,
   Library,
   Menu,
-  X,
   Settings,
   Search
 } from "lucide-react";
@@ -38,14 +37,14 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Always visible */}
       <Button
         variant="ghost"
         size="icon"
         className="fixed top-4 left-4 md:hidden z-50 text-black"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        <Menu className="h-6 w-6" />
       </Button>
 
       {/* Sidebar */}
