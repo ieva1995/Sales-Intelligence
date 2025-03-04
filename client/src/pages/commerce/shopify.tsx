@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { getShopifyProducts, getShopifyOrders, getShopifyCustomers } from "@/lib/shopify";
+import { getShopifyProducts, getShopifyOrders, getShopifyCustomers, authenticateWithShopify } from "@/lib/shopify";
 import {
   ShoppingBag,
   Users,
@@ -78,39 +78,16 @@ export default function ShopifyDashboard() {
     orders: null,
     customers: null
   });
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-
-  // Function to authenticate with Shopify
-  const authenticateWithShopify = () => {
-    console.log("Initiating Shopify authentication");
-    // Redirect to the auth endpoint to start OAuth flow
-    window.location.href = `/api/shopify/auth`;
-  };
 
   // Function to fetch Shopify data
   const fetchShopifyData = async () => {
     console.log("Fetching Shopify data");
-    // If we don't have an access token, we need to authenticate first
-    if (!accessToken) {
-      // For demo purposes, we'll use a placeholder token or redirect to auth
-      const tempToken = import.meta.env.VITE_SHOPIFY_ACCESS_TOKEN || localStorage.getItem('shopify_token');
-      console.log("Checking for access token", !!tempToken);
-      if (tempToken) {
-        setAccessToken(tempToken);
-      } else {
-        authenticateWithShopify();
-        return;
-      }
-    }
-
-    // Use the non-null assertion operator since we know accessToken is not null at this point
-    const token = accessToken!;
 
     // Fetch products
     setLoading(prev => ({ ...prev, products: true }));
     try {
       console.log("Fetching Shopify products");
-      const productsData = await getShopifyProducts(token);
+      const productsData = await getShopifyProducts();
       console.log("Products data received:", productsData ? productsData.length : 0);
       setProducts(productsData || []);
       setError(prev => ({ ...prev, products: null }));
@@ -130,7 +107,7 @@ export default function ShopifyDashboard() {
     setLoading(prev => ({ ...prev, orders: true }));
     try {
       console.log("Fetching Shopify orders");
-      const ordersData = await getShopifyOrders(token);
+      const ordersData = await getShopifyOrders();
       console.log("Orders data received:", ordersData ? ordersData.length : 0);
       setOrders(ordersData || []);
       setError(prev => ({ ...prev, orders: null }));
@@ -150,7 +127,7 @@ export default function ShopifyDashboard() {
     setLoading(prev => ({ ...prev, customers: true }));
     try {
       console.log("Fetching Shopify customers");
-      const customersData = await getShopifyCustomers(token);
+      const customersData = await getShopifyCustomers();
       console.log("Customers data received:", customersData ? customersData.length : 0);
       setCustomers(customersData || []);
       setError(prev => ({ ...prev, customers: null }));
@@ -311,16 +288,12 @@ export default function ShopifyDashboard() {
   // Use useEffect to try to fetch data on component mount
   useEffect(() => {
     console.log("ShopifyDashboard useEffect running");
-    // Check if we have a token
-    const token = localStorage.getItem('shopify_token') || import.meta.env.VITE_SHOPIFY_ACCESS_TOKEN;
-    console.log("Access token found:", !!token);
-    if (token) {
-      setAccessToken(token);
-      fetchShopifyData(); //Call fetchShopifyData when token is present
-    } else {
-      // For demo purposes, load sample data
+
+    // Try to fetch real data first, if it fails we'll fall back to sample data
+    fetchShopifyData().catch(error => {
+      console.warn("Failed to fetch Shopify data, using sample data instead:", error);
       loadSampleData();
-    }
+    });
   }, []);
 
   // Get stats for summary cards
@@ -358,7 +331,7 @@ export default function ShopifyDashboard() {
             <RefreshCw className="mr-2 h-4 w-4" />
             Load Sample Data
           </Button>
-          <Button onClick={authenticateWithShopify}>
+          <Button onClick={() => authenticateWithShopify()}>
             <Store className="mr-2 h-4 w-4" />
             Connect Shopify
           </Button>
@@ -677,7 +650,7 @@ export default function ShopifyDashboard() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-6">
-                    <Button variant="outline" className="w-full" onClick={() => loadSampleData()}>
+                    <Button variant="outline" className="w-full" onClick={() => fetchShopifyData()}>
                       <RefreshCw className="mr-2 h-4 w-4" />
                       Update Data
                     </Button>
