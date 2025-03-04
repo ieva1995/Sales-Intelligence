@@ -52,11 +52,11 @@ const LandingPage = () => {
 
   // Format date for display
   const formatDate = () => {
-    return currentDate.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return currentDate.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -181,8 +181,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Other sections removed to focus on login functionality */}
 
       {/* Footer */}
       <footer className="bg-slate-900 py-12 border-t border-slate-800 relative z-10">
@@ -330,7 +328,7 @@ const TokenLogin = () => {
           setTokenExpiry(result.expiresAt);
         }
 
-        setStep("token");
+        setStep("token"); // This is the key transition - explicitly setting to token step
 
         // For demo purposes only - In a real application, the token would never be shown in the UI
         if (process.env.NODE_ENV === 'development' && result._devToken) {
@@ -523,7 +521,7 @@ const TokenLogin = () => {
               Secure Login
             </h1>
             <p className="text-slate-400">
-              {step === "email" 
+              {step === "email"
                 ? "Enter your email to receive a secure one-time login token"
                 : "Enter the verification token sent to your email"
               }
@@ -557,6 +555,18 @@ const TokenLogin = () => {
             </div>
           )}
 
+          {!showLoginHelp && (
+            <div className="text-center mt-2">
+              <Button
+                variant="link"
+                className="text-xs text-slate-500 hover:text-slate-400"
+                onClick={() => setShowLoginHelp(true)}
+              >
+                Show test login instructions
+              </Button>
+            </div>
+          )}
+
           <div className="space-y-4">
             {step === "email" ? (
               <>
@@ -569,7 +579,7 @@ const TokenLogin = () => {
                       onChange={(e) => {
                         setEmail(e.target.value);
                         if (errors.email) {
-                          setErrors({...errors, email: ''});
+                          setErrors({ ...errors, email: '' });
                         }
                       }}
                       placeholder="email@company.com"
@@ -598,8 +608,8 @@ const TokenLogin = () => {
               // Token validation screen
               <>
                 <div className="relative">
-                  <button 
-                    className="absolute top-0 left-0 text-gray-400 hover:text-white" 
+                  <button
+                    className="absolute top-0 left-0 text-gray-400 hover:text-white"
                     onClick={handleBackToEmail}
                   >
                     <ArrowLeft className="h-5 w-5" />
@@ -630,7 +640,7 @@ const TokenLogin = () => {
                       onChange={(e) => {
                         setToken(e.target.value);
                         if (errors.token) {
-                          setErrors({...errors, token: ''});
+                          setErrors({ ...errors, token: '' });
                         }
                       }}
                       placeholder="Enter token sent to your email"
@@ -656,31 +666,19 @@ const TokenLogin = () => {
                 </Button>
 
                 <div className="text-center mt-4">
-                  <Button 
-                    variant="link" 
+                  <Button
+                    variant="link"
                     className="text-sm text-blue-400 hover:text-blue-300"
                     onClick={handleResendToken}
                     disabled={countdown > 0}
                   >
-                    {countdown > 0 
+                    {countdown > 0
                       ? `Resend token in ${formatCountdown()}`
                       : "Didn't receive a token? Resend"
                     }
                   </Button>
                 </div>
               </>
-            )}
-
-            {!showLoginHelp && (
-              <div className="text-center mt-2">
-                <Button
-                  variant="link"
-                  className="text-xs text-slate-500 hover:text-slate-400"
-                  onClick={() => setShowLoginHelp(true)}
-                >
-                  Show test login instructions
-                </Button>
-              </div>
             )}
           </div>
         </CardContent>
