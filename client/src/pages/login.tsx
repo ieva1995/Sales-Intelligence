@@ -374,7 +374,13 @@ const LandingPage = () => {
 };
 
 // New enhanced login flow components
-const WelcomeBack = ({ onContinue, onBackToOptions, onSignUpWithEmail }) => {
+interface WelcomeBackProps {
+  onContinue: () => void;
+  onBackToOptions: () => void;
+  onSignUpWithEmail: () => void;
+}
+
+const WelcomeBack = ({ onContinue, onBackToOptions, onSignUpWithEmail }: WelcomeBackProps) => {
   return (
     <div className="text-center space-y-4">
       <h2 className="text-2xl font-bold mb-1">Welcome Back</h2>
@@ -430,9 +436,31 @@ const WelcomeBack = ({ onContinue, onBackToOptions, onSignUpWithEmail }) => {
   );
 };
 
-const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, password, setPassword, errors, setErrors }) => {
+interface EmailSignInProps {
+  onContinue: () => void;
+  onBack: () => void;
+  onForgotPassword: () => void;
+  email: string;
+  setEmail: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
+  errors: Record<string, string>;
+  setErrors: (errors: Record<string, string>) => void;
+}
+
+const EmailSignIn = ({ 
+  onContinue, 
+  onBack, 
+  onForgotPassword, 
+  email, 
+  setEmail, 
+  password, 
+  setPassword, 
+  errors, 
+  setErrors 
+}: EmailSignInProps) => {
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     // Email validation
     if (!email) {
@@ -536,7 +564,14 @@ const EmailSignIn = ({ onContinue, onBack, onForgotPassword, email, setEmail, pa
   );
 };
 
-const VerificationCode = ({ onVerify, onBack, onResend, email }) => {
+interface VerificationCodeProps {
+  onVerify: (code: string) => void;
+  onBack: () => void;
+  onResend: () => void;
+  email: string;
+}
+
+const VerificationCode = ({ onVerify, onBack, onResend, email }: VerificationCodeProps) => {
   // Fixed syntax error in the array creation
   return (
     <div className="space-y-4">
@@ -576,9 +611,18 @@ const VerificationCode = ({ onVerify, onBack, onResend, email }) => {
   );
 };
 
-const ForgotPassword = ({ onSendReset, onBack, email, setEmail, errors, setErrors }) => {
+interface ForgotPasswordProps {
+  onSendReset: () => void;
+  onBack: () => void;
+  email: string;
+  setEmail: (value: string) => void;
+  errors: Record<string, string>;
+  setErrors: (errors: Record<string, string>) => void;
+}
+
+const ForgotPassword = ({ onSendReset, onBack, email, setEmail, errors, setErrors }: ForgotPasswordProps) => {
   const validateEmail = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!email) {
       newErrors.email = "Email is required";
@@ -643,12 +687,19 @@ const ForgotPassword = ({ onSendReset, onBack, email, setEmail, errors, setError
   );
 };
 
-const ResetPassword = ({ onResetPassword, onBack, errors, setErrors }) => {
+interface ResetPasswordProps {
+  onResetPassword: (newPassword: string, confirmPassword: string) => void;
+  onBack: () => void;
+  errors: Record<string, string>;
+  setErrors: (errors: Record<string, string>) => void;
+}
+
+const ResetPassword = ({ onResetPassword, onBack, errors, setErrors }: ResetPasswordProps) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const validatePasswords = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!newPassword) {
       newErrors.newPassword = "New password is required";
@@ -744,11 +795,22 @@ const ResetPassword = ({ onResetPassword, onBack, errors, setErrors }) => {
   );
 };
 
-const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword, errors, setErrors }) => {
+interface SignUpProps {
+  onSignUp: (name: string, email: string, password: string) => void;
+  onBack: () => void;
+  email: string;
+  setEmail: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
+  errors: Record<string, string>;
+  setErrors: (errors: Record<string, string>) => void;
+}
+
+const SignUp = ({ onSignUp, onBack, email, setEmail, password, setPassword, errors, setErrors }: SignUpProps) => {
   const [fullName, setFullName] = useState('');
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!fullName) {
       newErrors.fullName = "Full name is required";
@@ -884,7 +946,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginStep, setLoginStep] = useState("welcome"); // welcome, email, verification, forgot, reset, signup
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Use our authentication hook
   const { login, signUp, isLoading } = useAuth();
@@ -1049,7 +1111,7 @@ const LoginForm = () => {
     }
   };
 
-  const handleSignUp = async (name, email, password) => {
+  const handleSignUp = async (name: string, email: string, password: string) => {
     try {
       const result = await signUp(name, email, password);
       if (result.success) {
@@ -1067,13 +1129,13 @@ const LoginForm = () => {
     }
   };
 
-  const handleVerification = (code) => {
+  const handleVerification = (code: string) => {
     // For this demo, we'll just redirect to dashboard
     // In a real app, you would verify the code with the server
     setLocation('/dashboard');
   };
 
-  const handleResetPassword = (newPassword, confirmPassword) => {
+  const handleResetPassword = (newPassword: string, confirmPassword: string) => {
     // For demo purposes, just return to login
     if (newPassword === confirmPassword) {
       setLoginStep("email");
@@ -1232,7 +1294,5 @@ export default function Login() {
 
   // If the URL is exactly '/login', show the login form
   // Otherwise, show the landing page
-  const isLoginPage = location === "/login";
-
-  return isLoginPage ? <LoginForm /> : <LandingPage />;
+  return location === '/login' ? <LoginForm /> : <LandingPage />;
 }

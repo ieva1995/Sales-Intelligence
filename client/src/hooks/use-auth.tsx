@@ -50,7 +50,7 @@ const DEMO_USERS = [
 ];
 
 // Define role hierarchy for permission checks
-const ROLE_HIERARCHY = {
+const ROLE_HIERARCHY: Record<string, string[]> = {
   admin: ["admin", "manager", "rep", "user"],  // Admin can access all roles
   manager: ["manager", "rep", "user"],         // Manager can access manager, rep and user roles
   rep: ["rep", "user"],                        // Rep can access rep and user roles
