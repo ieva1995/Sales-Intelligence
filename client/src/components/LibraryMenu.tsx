@@ -32,23 +32,18 @@ export default function LibraryMenu() {
     <div className="relative">
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden flex items-center gap-2 px-4 py-3 text-black bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors w-full"
+        className="md:hidden inline-flex items-center justify-center p-2 text-black bg-transparent hover:bg-gray-100 rounded-md"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Menu className="h-5 w-5" />
-        <span>Library Menu</span>
-        <ChevronDown className={cn(
-          "ml-auto h-5 w-5 transition-transform duration-200",
-          isOpen && "rotate-180"
-        )} />
+        <Menu className="h-6 w-6" />
       </button>
 
       {/* Menu Items */}
       <nav
         className={cn(
-          "absolute left-0 right-0 bg-slate-800 text-white rounded-lg shadow-xl overflow-hidden transition-all duration-300 ease-in-out z-50",
-          "md:relative md:w-full md:bg-slate-700",
-          isOpen ? "opacity-100 visible translate-y-2" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
+          "fixed inset-y-0 left-0 w-64 bg-slate-800 text-white shadow-xl transform transition-transform duration-300 ease-in-out z-50",
+          "md:relative md:transform-none md:shadow-none",
+          isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         <div className="py-2">
