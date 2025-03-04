@@ -1,4 +1,16 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "wouter";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+const commerceItems = [
+  { label: "Overview", href: "/commerce/overview" },
+  { label: "Payments", href: "/commerce/payments" },
+  { label: "Invoices", href: "/commerce/invoices" },
+  { label: "Payment Links", href: "/commerce/payment-links" },
+  { label: "Quotes", href: "/commerce/quotes" },
+  { label: "Products", href: "/commerce/products" },
+  { label: "Subscriptions", href: "/commerce/subscriptions" },
+];
 
 export default function Commerce() {
   return (
@@ -8,15 +20,17 @@ export default function Commerce() {
         <p className="text-muted-foreground">Manage your business transactions and payments</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Welcome to Commerce</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Select an option from the menu to start managing your commerce operations.
-          </p>
-        </CardContent>
+      <Card className="bg-slate-800">
+        {commerceItems.map((item) => (
+          <Link key={item.label} href={item.href}>
+            <a className={cn(
+              "block px-6 py-3 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+              "text-sm font-medium"
+            )}>
+              {item.label}
+            </a>
+          </Link>
+        ))}
       </Card>
     </div>
   );

@@ -1,4 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "wouter";
+import { cn } from "@/lib/utils";
+
+const crmItems = [
+  { label: "Contacts", href: "/crm/contacts" },
+  { label: "Companies", href: "/crm/companies" },
+  { label: "Deals", href: "/crm/deals" },
+  { label: "Tickets", href: "/crm/tickets" },
+  { label: "Lists", href: "/crm/lists" },
+  { label: "Inbox", href: "/crm/inbox" },
+  { label: "Calls", href: "/crm/calls" },
+  { label: "Tasks", href: "/crm/tasks" },
+];
 
 export default function CRM() {
   return (
@@ -8,15 +21,17 @@ export default function CRM() {
         <p className="text-muted-foreground">Manage your contacts and leads.</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Welcome to CRM</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Select an option from the menu to start managing your customer relationships.
-          </p>
-        </CardContent>
+      <Card className="bg-slate-800">
+        {crmItems.map((item) => (
+          <Link key={item.label} href={item.href}>
+            <a className={cn(
+              "block px-6 py-3 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+              "text-sm font-medium"
+            )}>
+              {item.label}
+            </a>
+          </Link>
+        ))}
       </Card>
     </div>
   );
