@@ -3,6 +3,7 @@ import { Router } from "express";
 
 const router = Router();
 
+// Initialize OpenAI with the API key from environment variables
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.post("/api/chat", async (req, res) => {
@@ -10,7 +11,7 @@ router.post("/api/chat", async (req, res) => {
     const { message } = req.body;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      model: "gpt-4o", 
       messages: [
         {
           role: "system",
