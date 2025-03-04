@@ -22,16 +22,18 @@ export default function Marketing() {
       </div>
 
       <Card className="bg-slate-800">
-        {marketingItems.map((item) => (
-          <Link key={item.label} href={item.href}>
-            <a className={cn(
-              "block px-6 py-6 mt-[1px] text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
-              "text-sm font-medium border-b border-slate-700/50 last:border-0"
-            )}>
-              {item.label}
-            </a>
-          </Link>
-        ))}
+        <div className="py-2">
+          {marketingItems.map((item) => (
+            <Link key={item.label} href={item.href}>
+              <a className={cn(
+                "block px-6 py-6 mt-[1px] text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+                "text-sm font-medium border-b border-slate-700/50 last:border-0"
+              )}>
+                {item.label}
+              </a>
+            </Link>
+          ))}
+        </div>
       </Card>
     </div>
   );
