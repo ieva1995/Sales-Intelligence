@@ -316,7 +316,9 @@ const TokenLogin = () => {
     }
 
     try {
+      console.log("Requesting login token for email:", email);
       const result = await requestLoginToken(email);
+      console.log("Token request result:", result);
 
       if (result.success) {
         toast({
@@ -328,7 +330,9 @@ const TokenLogin = () => {
           setTokenExpiry(result.expiresAt);
         }
 
-        setStep("token"); // This is the key transition - explicitly setting to token step
+        // Key change: Explicitly set step to token
+        setStep("token");
+        console.log("Set step to token");
 
         // For demo purposes only - In a real application, the token would never be shown in the UI
         if (process.env.NODE_ENV === 'development' && result._devToken) {
@@ -512,6 +516,14 @@ const TokenLogin = () => {
     );
   }
 
+  // Debug information - this helps us see what state the component is in
+  console.log("Current step:", step);
+  console.log("Email:", email);
+  console.log("Token:", token);
+  console.log("Errors:", errors);
+  console.log("Token expiry:", tokenExpiry);
+  console.log("Countdown:", countdown);
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 screen-edges-glow">
       <Card className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl backdrop-blur-xl login-card">
@@ -533,13 +545,17 @@ const TokenLogin = () => {
               <div className="flex items-start">
                 <Info className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
                 <div>
-                  <p className="text-sm text-blue-300 font-medium">Test Account Instructions</p>
+                  <p className="text-sm text-blue-300 font-medium">Login Instructions</p>
                   <p className="text-xs text-blue-200 mt-1">
-                    Use the following email for testing:
+                    This platform uses a secure token-based login system:
                     <br />
-                    - Admin user: <span className="font-mono">admin@salesboost.ai</span>
+                    1. Enter your email address
                     <br />
-                    - Regular user: <span className="font-mono">rep@salesboost.ai</span>
+                    2. Click "Send Login Token"
+                    <br />
+                    3. Enter the token you receive
+                    <br />
+                    4. Click "Verify & Sign In"
                   </p>
                   <p className="text-xs text-blue-200 mt-1">
                     <strong>Note:</strong> In development mode, the token will be shown in a notification.
@@ -562,7 +578,7 @@ const TokenLogin = () => {
                 className="text-xs text-slate-500 hover:text-slate-400"
                 onClick={() => setShowLoginHelp(true)}
               >
-                Show test login instructions
+                Show login instructions
               </Button>
             </div>
           )}
