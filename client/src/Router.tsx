@@ -24,7 +24,7 @@ export default function Router() {
       <Sidebar />
       <Header />
       <main className="main-content">
-        <div className="page-container">
+        <div className="page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8">
           <Switch>
             <Route path="/" component={Dashboard} />
             <Route path="/crm" component={CRM} />

@@ -3,16 +3,16 @@ import LibraryMenu from "@/components/LibraryMenu";
 
 export default function Library() {
   return (
-    <div className="flex">
+    <div className="flex flex-col sm:flex-row gap-6">
       {/* Library Menu */}
-      <div className="w-64 flex-shrink-0">
+      <div className="w-full sm:w-64 flex-shrink-0">
         <LibraryMenu />
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow space-y-8 pl-6">
+      <div className="flex-grow space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Library</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Library</h1>
           <p className="text-muted-foreground">Access your templates, documents, and resources</p>
         </div>
 

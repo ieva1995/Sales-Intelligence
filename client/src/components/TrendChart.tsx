@@ -21,10 +21,10 @@ export default function TrendChart({ data, title }: TrendChartProps) {
         <LineChart
           data={data}
           margin={{ 
-            top: 20,
-            right: 30,
-            left: 20,
-            bottom: 20
+            top: 10,
+            right: 10,
+            left: 0,
+            bottom: 10
           }}
         >
           <CartesianGrid 
@@ -37,22 +37,22 @@ export default function TrendChart({ data, title }: TrendChartProps) {
             dataKey="time"
             tickFormatter={formatDate}
             stroke="#64748b"
-            fontSize={12}
+            fontSize={10}
             tickLine={false}
             axisLine={false}
             interval="preserveStartEnd"
             padding={{ left: 10, right: 10 }}
-            minTickGap={50}
+            minTickGap={30}
           />
           <YAxis
             stroke="#64748b"
-            fontSize={12}
+            fontSize={10}
             tickLine={false}
             axisLine={false}
             tickFormatter={(value) => `${value}`}
             domain={[0, 100]}
             ticks={[0, 25, 50, 75, 100]}
-            width={35}
+            width={25}
           />
           <Tooltip
             contentStyle={{

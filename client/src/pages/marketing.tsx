@@ -19,16 +19,16 @@ export default function Marketing() {
   const [selectedTools, setSelectedTools] = useState<string[]>([]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col sm:flex-row gap-6">
       {/* Marketing Menu */}
-      <div className="w-64 flex-shrink-0">
+      <div className="w-full sm:w-64 flex-shrink-0">
         <MarketingMenu />
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow space-y-8 pl-6">
+      <div className="flex-grow space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Marketing Automation</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Marketing Automation</h1>
           <p className="text-muted-foreground">Connect your marketing tools to automate workflows.</p>
         </div>
 
@@ -58,18 +58,24 @@ export default function Marketing() {
                         checked={isSelected}
                       />
                     </div>
-                    <tool.icon className="h-6 w-6" />
-                    <span className="font-medium">{tool.name}</span>
+                    <tool.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <span className="font-medium text-sm sm:text-base">{tool.name}</span>
                   </div>
                 );
               })}
             </div>
 
             <div className="mt-6">
-              <Button className="w-full" disabled={selectedTools.length === 0}>
+              <Button 
+                className="w-full text-sm sm:text-base" 
+                disabled={selectedTools.length === 0}
+              >
                 Next
               </Button>
-              <Button variant="link" className="w-full mt-2">
+              <Button 
+                variant="link" 
+                className="w-full mt-2 text-sm sm:text-base"
+              >
                 Skip and explore apps later
               </Button>
             </div>
