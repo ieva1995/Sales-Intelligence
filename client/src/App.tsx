@@ -31,7 +31,7 @@ function Header() {
       <div className="flex items-center justify-between h-full px-4 md:pl-72">
         <div className="flex items-center">
           <div className="relative w-[240px]">
-            <div className="relative">
+            <div className="relative z-[60]">
               <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
                 isSearchFocused ? 'text-white' : 'text-gray-500'
               }`} />
@@ -61,7 +61,7 @@ function Header() {
       {/* Backdrop overlay when search is focused */}
       {isSearchFocused && (
         <div 
-          className="fixed inset-0 bg-white/5 backdrop-blur-sm"
+          className="fixed inset-0 bg-white/5 backdrop-blur-sm z-50"
           onClick={() => setIsSearchFocused(false)}
         />
       )}
