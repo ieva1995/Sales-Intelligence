@@ -30,14 +30,20 @@ function Header() {
   return (
     <header className="header relative z-50">
       <div className="flex items-center justify-between h-full px-4">
-        <div className={`flex items-center transition-all duration-300 ease-in-out ${isSearchFocused ? 'w-full max-w-3xl mx-auto' : 'flex-1'}`}>
-          <div className={`relative transition-all duration-300 ${isSearchFocused ? 'w-full' : 'w-full max-w-lg'}`}>
+        <div className={`flex items-center transition-all duration-300 ease-in-out ${
+          isSearchFocused ? 'w-full' : 'w-auto'
+        }`}>
+          <div className={`relative transition-all duration-300 ${
+            isSearchFocused ? 'w-[600px] mx-auto' : 'w-[240px]'
+          }`}>
             <div className="relative">
-              <Search className={`absolute left-2.5 top-2.5 h-4 w-4 transition-colors ${isSearchFocused ? 'text-white' : 'text-gray-500'}`} />
+              <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors ${
+                isSearchFocused ? 'text-white' : 'text-gray-500'
+              }`} />
               <Input
                 type="search"
                 placeholder="Search..."
-                className={`pl-9 transition-all duration-300 ${
+                className={`pl-10 h-9 rounded-full transition-all duration-300 ${
                   isSearchFocused 
                     ? 'bg-black/20 border-gray-600 text-white backdrop-blur-sm focus:border-gray-400' 
                     : 'bg-gray-50/5 border-gray-800 focus:border-gray-600'
@@ -48,6 +54,7 @@ function Header() {
             </div>
           </div>
         </div>
+
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
