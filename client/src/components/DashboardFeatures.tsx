@@ -32,13 +32,13 @@ interface FeatureCardProps {
 const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise }: FeatureCardProps) => (
   <Link href={href}>
     <a className="block">
-      <Card className="p-4 bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
+      <Card className="bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
         <div className="flex items-start space-x-3">
           <div className="p-2 bg-blue-500/10 rounded-lg">
             <Icon className="h-5 w-5 text-blue-500" />
           </div>
           <div className="space-y-0.5 flex-1 pr-16">
-            <h3 className="font-semibold text-sm text-white group-hover:text-blue-400 transition-colors">{title}</h3>
+            <h3 className="text-sm font-medium text-gray-100 group-hover:text-blue-400 transition-colors">{title}</h3>
             <p className="text-xs text-gray-400">{description}</p>
           </div>
         </div>
