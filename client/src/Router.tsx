@@ -19,6 +19,8 @@ import SmartProposal from "@/pages/features/smart-proposal";
 import DealPredictor from "@/pages/features/deal-predictor";
 import WhisperBot from "@/pages/features/whisper-bot";
 import StealthAudit from "@/pages/features/stealth-audit";
+import SmartTools from "@/pages/features/smart-tools";
+import EnterpriseTurbo from "@/pages/features/enterprise-turbo";
 import Sidebar from "@/components/Sidebar";
 import Header from "./components/Header";
 import { Menu } from "lucide-react";
@@ -60,37 +62,15 @@ export default function Router() {
             <Route path="/settings" component={Settings} />
             <Route path="/settings/login" component={Login} />
 
+            {/* Premium Features */}
+            <Route path="/features/smart-tools" component={SmartTools} />
+            <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
+
             {/* AI-Powered Feature Routes */}
             <Route path="/features/smart-proposal" component={SmartProposal} />
             <Route path="/features/deal-predictor" component={DealPredictor} />
             <Route path="/features/whisper-bot" component={WhisperBot} />
             <Route path="/features/stealth-audit" component={StealthAudit} />
-
-            {/* Interactive Feature Routes */}
-            <Route path="/features/configurator" component={() => (
-              <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Product Configurator</h1>
-                <p className="text-gray-600">This feature is currently in development.</p>
-              </div>
-            )} />
-            <Route path="/features/upsell" component={() => (
-              <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Upsell Brain</h1>
-                <p className="text-gray-600">This feature is currently in development.</p>
-              </div>
-            )} />
-            <Route path="/features/case-studies" component={() => (
-              <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Case Study Finder</h1>
-                <p className="text-gray-600">This feature is currently in development.</p>
-              </div>
-            )} />
-            <Route path="/features/reputation" component={() => (
-              <div className="p-6">
-                <h1 className="text-2xl font-bold mb-4">Digital Reputation Score</h1>
-                <p className="text-gray-600">This feature is currently in development.</p>
-              </div>
-            )} />
 
             <Route component={NotFound} />
           </Switch>

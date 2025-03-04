@@ -12,6 +12,8 @@ import {
   Database,
   Library,
   Settings,
+  Sparkles,
+  Rocket,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -31,6 +33,11 @@ const mainNavItems = [
   { href: "/library", icon: Library, label: "Library" },
 ];
 
+const premiumFeatures = [
+  { href: "/features/smart-tools", icon: Sparkles, label: "Advanced Sales Tools" },
+  { href: "/features/enterprise-turbo", icon: Rocket, label: "Enterprise Turbo" },
+];
+
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [location] = useLocation();
 
@@ -48,23 +55,53 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </h2>
         </div>
 
-        <nav className="space-y-1">
-          {mainNavItems.map((item) => (
-            <Link key={item.label} href={item.href}>
-              <a
-                className={cn(
-                  "flex items-center px-6 py-3 text-sm font-medium",
-                  location === item.href
-                    ? "text-white bg-slate-700"
-                    : "text-gray-300 hover:text-white hover:bg-slate-700/50"
-                )}
-                onClick={onClose}
-              >
-                <item.icon className="mr-3 h-5 w-5" />
-                <span>{item.label}</span>
-              </a>
-            </Link>
-          ))}
+        <nav className="space-y-6">
+          {/* Main Navigation */}
+          <div className="space-y-1">
+            {mainNavItems.map((item) => (
+              <Link key={item.label} href={item.href}>
+                <a
+                  className={cn(
+                    "flex items-center px-6 py-3 text-sm font-medium",
+                    location === item.href
+                      ? "text-white bg-slate-700"
+                      : "text-gray-300 hover:text-white hover:bg-slate-700/50"
+                  )}
+                  onClick={onClose}
+                >
+                  <item.icon className="mr-3 h-5 w-5" />
+                  <span>{item.label}</span>
+                </a>
+              </Link>
+            ))}
+          </div>
+
+          {/* Premium Features Section */}
+          <div>
+            <div className="px-6 py-2">
+              <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold">
+                Premium Features
+              </h3>
+            </div>
+            <div className="space-y-1">
+              {premiumFeatures.map((item) => (
+                <Link key={item.label} href={item.href}>
+                  <a
+                    className={cn(
+                      "flex items-center px-6 py-3 text-sm font-medium",
+                      location === item.href
+                        ? "text-white bg-gradient-to-r from-blue-600 to-purple-600"
+                        : "text-gray-300 hover:text-white hover:bg-slate-700/50"
+                    )}
+                    onClick={onClose}
+                  >
+                    <item.icon className="mr-3 h-5 w-5" />
+                    <span>{item.label}</span>
+                  </a>
+                </Link>
+              ))}
+            </div>
+          </div>
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
