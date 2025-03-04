@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { cn } from "@/lib/utils";
-import { ChevronUp } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import { SiGooglelens, SiGoogleanalytics } from "react-icons/si";
 
 interface LibraryMenuItem {
@@ -32,18 +32,23 @@ export default function LibraryMenu() {
     <div className="relative">
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden p-4 text-white bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors"
+        className="md:hidden flex items-center gap-2 px-4 py-3 text-white bg-slate-800 rounded-lg hover:bg-slate-700 transition-colors w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
-        Library Menu
+        <Menu className="h-5 w-5" />
+        <span>Library Menu</span>
+        <ChevronDown className={cn(
+          "ml-auto h-5 w-5 transition-transform duration-200",
+          isOpen && "rotate-180"
+        )} />
       </button>
 
       {/* Menu Items */}
       <nav
         className={cn(
-          "absolute left-0 bg-slate-700 text-white rounded-lg shadow-xl overflow-hidden w-48 transition-all duration-300 ease-in-out",
-          "md:relative md:w-full",
-          isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
+          "absolute left-0 right-0 bg-slate-800 text-white rounded-lg shadow-xl overflow-hidden transition-all duration-300 ease-in-out z-50",
+          "md:relative md:w-full md:bg-slate-700",
+          isOpen ? "opacity-100 visible translate-y-2" : "opacity-0 invisible -translate-y-2 md:opacity-100 md:visible md:translate-y-0"
         )}
       >
         <div className="py-2">
@@ -75,7 +80,7 @@ export default function LibraryMenu() {
                   <span>{item.label}</span>
                 </div>
                 {item.hasSubmenu && (
-                  <ChevronUp 
+                  <ChevronDown 
                     className={cn(
                       "h-4 w-4 text-gray-400 transition-all duration-200",
                       hoveredItem === item.label ? "rotate-180" : ""
