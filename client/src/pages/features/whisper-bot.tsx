@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Bot, Send, TrendingUp, MessageSquare, FileText, Activity,
-  Globe, Bell, RefreshCw, CheckCircle, AlertTriangle
+  Globe, Bell, RefreshCw, CheckCircle, AlertTriangle, Search,
+  Newspaper, BarChart, BookOpen, ArrowRight
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -50,6 +51,7 @@ export default function WhisperBot() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState(false);
+  const [activeQuickAction, setActiveQuickAction] = useState<string | null>(null);
 
   useEffect(() => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -108,17 +110,175 @@ export default function WhisperBot() {
     };
   }, []);
 
-  const handleQuickAction = (action: string) => {
-    toast({
-      title: `${action} Started`,
-      description: `Initiating ${action.toLowerCase()} process...`,
-    });
-  };
-
   const handleInsightAction = (insight: Insight) => {
     setSelectedInsight(insight);
     setIsDialogOpen(true);
   };
+
+  const NewsAnalysis = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-blue-500/10 rounded-lg">
+        <Newspaper className="h-5 w-5 text-blue-400" />
+        <div>
+          <h4 className="font-medium text-white">Latest Industry Updates</h4>
+          <p className="text-sm text-gray-400">Real-time news analysis</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {[
+          {
+            title: "AI Market Expansion",
+            source: "Tech Weekly",
+            sentiment: "Positive",
+            impact: "High",
+            summary: "Major tech companies increasing AI investments by 45%"
+          },
+          {
+            title: "Cloud Security Trends",
+            source: "CyberNews",
+            sentiment: "Neutral",
+            impact: "Medium",
+            summary: "New security protocols reshaping cloud infrastructure"
+          },
+          {
+            title: "Enterprise Software Growth",
+            source: "Business Insights",
+            sentiment: "Positive",
+            impact: "High",
+            summary: "Enterprise software market expected to grow 30% YoY"
+          }
+        ].map((news, index) => (
+          <div key={index} className="p-4 bg-white/5 rounded-lg">
+            <div className="flex justify-between items-start mb-2">
+              <h5 className="font-medium text-white">{news.title}</h5>
+              <span className={`px-2 py-1 text-xs rounded ${
+                news.sentiment === 'Positive' ? 'bg-green-500/20 text-green-400' :
+                  news.sentiment === 'Negative' ? 'bg-red-500/20 text-red-400' :
+                    'bg-blue-500/20 text-blue-400'
+              }`}>
+                {news.sentiment}
+              </span>
+            </div>
+            <p className="text-sm text-gray-400 mb-2">{news.summary}</p>
+            <div className="flex justify-between text-xs text-gray-500">
+              <span>{news.source}</span>
+              <span>Impact: {news.impact}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const OpportunityAlerts = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-green-500/10 rounded-lg">
+        <BarChart className="h-5 w-5 text-green-400" />
+        <div>
+          <h4 className="font-medium text-white">Active Opportunities</h4>
+          <p className="text-sm text-gray-400">AI-detected market opportunities</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {[
+          {
+            company: "TechCorp International",
+            opportunity: "Cloud Migration",
+            probability: "85%",
+            value: "$2.5M",
+            timeframe: "Immediate"
+          },
+          {
+            company: "Global Systems Inc",
+            opportunity: "Security Upgrade",
+            probability: "75%",
+            value: "$1.8M",
+            timeframe: "30 days"
+          },
+          {
+            company: "DataFlow Solutions",
+            opportunity: "AI Implementation",
+            probability: "92%",
+            value: "$3.2M",
+            timeframe: "Immediate"
+          }
+        ].map((opp, index) => (
+          <div key={index} className="p-4 bg-white/5 rounded-lg">
+            <div className="flex justify-between items-start mb-2">
+              <h5 className="font-medium text-white">{opp.company}</h5>
+              <span className="text-green-400 font-medium">{opp.probability}</span>
+            </div>
+            <p className="text-sm text-white mb-2">{opp.opportunity}</p>
+            <div className="flex justify-between text-xs">
+              <span className="text-green-400">{opp.value}</span>
+              <span className={`px-2 py-1 rounded ${
+                opp.timeframe === 'Immediate' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
+              }`}>
+                {opp.timeframe}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const AutoResponse = () => (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 p-4 bg-purple-500/10 rounded-lg">
+        <BookOpen className="h-5 w-5 text-purple-400" />
+        <div>
+          <h4 className="font-medium text-white">Smart Response Suggestions</h4>
+          <p className="text-sm text-gray-400">AI-powered communication templates</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {[
+          {
+            type: "Initial Contact",
+            context: "After AI detected interest in cloud services",
+            suggestion: "I noticed your recent cloud infrastructure expansion. Our AI-driven solution has helped similar companies achieve 40% cost reduction.",
+            tone: "Professional"
+          },
+          {
+            type: "Follow Up",
+            context: "Post technical discussion",
+            suggestion: "Following our discussion about your security needs, I've prepared a custom implementation plan that addresses your specific concerns.",
+            tone: "Technical"
+          },
+          {
+            type: "Closing",
+            context: "High intent signals detected",
+            suggestion: "Based on our discussions, I've outlined a strategic roadmap for implementing our solution within your Q2 timeline.",
+            tone: "Strategic"
+          }
+        ].map((response, index) => (
+          <div key={index} className="p-4 bg-white/5 rounded-lg">
+            <div className="flex justify-between items-start mb-2">
+              <h5 className="font-medium text-white">{response.type}</h5>
+              <span className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded">
+                {response.tone}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mb-2">{response.context}</p>
+            <p className="text-sm text-white mb-2">{response.suggestion}</p>
+            <Button
+              className="w-full mt-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400"
+              onClick={() => {
+                toast({
+                  title: "Response Copied",
+                  description: "Smart response has been copied to clipboard"
+                });
+              }}
+            >
+              <Search className="h-4 w-4 mr-2" />
+              Use Template
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   const ActionDialog = () => {
     if (!selectedInsight) return null;
@@ -210,7 +370,6 @@ export default function WhisperBot() {
         <p className="text-muted-foreground">Industry news analysis with targeted solution suggestions</p>
       </div>
 
-      {/* Connection Status */}
       <div className="flex items-center space-x-2 mb-4">
         <div className={`h-2 w-2 rounded-full ${
           isConnected ? 'bg-green-500' :
@@ -222,10 +381,11 @@ export default function WhisperBot() {
         </span>
       </div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-blue-500/10 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors"
-          onClick={() => handleQuickAction("News Analysis")}>
+        <Card
+          className="bg-blue-500/10 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors"
+          onClick={() => setActiveQuickAction("news")}
+        >
           <CardContent className="p-4 flex items-center space-x-4">
             <Bot className="h-8 w-8 text-blue-500" />
             <div>
@@ -235,8 +395,10 @@ export default function WhisperBot() {
           </CardContent>
         </Card>
 
-        <Card className="bg-green-500/10 border-0 cursor-pointer hover:bg-green-500/20 transition-colors"
-          onClick={() => handleQuickAction("Opportunity Detection")}>
+        <Card
+          className="bg-green-500/10 border-0 cursor-pointer hover:bg-green-500/20 transition-colors"
+          onClick={() => setActiveQuickAction("opportunities")}
+        >
           <CardContent className="p-4 flex items-center space-x-4">
             <TrendingUp className="h-8 w-8 text-green-500" />
             <div>
@@ -246,8 +408,10 @@ export default function WhisperBot() {
           </CardContent>
         </Card>
 
-        <Card className="bg-purple-500/10 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors"
-          onClick={() => handleQuickAction("Auto Response")}>
+        <Card
+          className="bg-purple-500/10 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors"
+          onClick={() => setActiveQuickAction("responses")}
+        >
           <CardContent className="p-4 flex items-center space-x-4">
             <Send className="h-8 w-8 text-purple-500" />
             <div>
@@ -258,7 +422,42 @@ export default function WhisperBot() {
         </Card>
       </div>
 
-      {/* Recent Insights */}
+      <Dialog open={activeQuickAction === "news"} onOpenChange={() => setActiveQuickAction(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Industry News Analysis</DialogTitle>
+            <DialogDescription>
+              AI-powered analysis of latest industry developments
+            </DialogDescription>
+          </DialogHeader>
+          <NewsAnalysis />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeQuickAction === "opportunities"} onOpenChange={() => setActiveQuickAction(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Real-time Opportunities</DialogTitle>
+            <DialogDescription>
+              AI-detected market opportunities and leads
+            </DialogDescription>
+          </DialogHeader>
+          <OpportunityAlerts />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={activeQuickAction === "responses"} onOpenChange={() => setActiveQuickAction(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Smart Response Generator</DialogTitle>
+            <DialogDescription>
+              AI-generated response templates based on context
+            </DialogDescription>
+          </DialogHeader>
+          <AutoResponse />
+        </DialogContent>
+      </Dialog>
+
       <Card className="border-0 bg-slate-800">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
