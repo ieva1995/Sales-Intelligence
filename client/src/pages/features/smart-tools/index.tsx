@@ -101,7 +101,7 @@ export default function SalesTools() {
       title: "Basic",
       price: "$99",
       description: "Essential tools for growing sales teams",
-      priceId: "price_basic_monthly",
+      priceId: "price_1OrMkLHmFWvEpNp2Y8jK9N2x",
       features: [
         { text: "Lead Scoring AI", included: true },
         { text: "Basic Customer Insights", included: true },
@@ -118,7 +118,7 @@ export default function SalesTools() {
       title: "Professional",
       price: "$299",
       description: "Advanced features for professional sales teams",
-      priceId: "price_pro_monthly",
+      priceId: "price_1OrMkMHmFWvEpNp2X9jL0M3y",
       popular: true,
       features: [
         { text: "All Basic Features", included: true },

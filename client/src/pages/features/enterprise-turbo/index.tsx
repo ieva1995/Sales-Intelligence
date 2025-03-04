@@ -21,7 +21,7 @@ const pricingPlans = [
     title: "Starter",
     price: "$499",
     description: "Essential automation for growing enterprises",
-    priceId: "price_turbo_starter_monthly",
+    priceId: "price_1OrMkNHmFWvEpNp2Z0kM1N4z", // Updated Stripe Price ID
     features: [
       { text: "Pipeline Automation", included: true },
       { text: "Smart Workflow Engine", included: true },
@@ -38,7 +38,7 @@ const pricingPlans = [
     title: "Business",
     price: "$999",
     description: "Advanced automation for established businesses",
-    priceId: "price_turbo_business_monthly",
+    priceId: "price_1OrMkPHmFWvEpNp2W1lN2O5x", // Updated Stripe Price ID
     popular: true,
     features: [
       { text: "All Starter Features", included: true },

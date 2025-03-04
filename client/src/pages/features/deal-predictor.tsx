@@ -1,12 +1,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, MessageSquare, CalendarClock, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PieChart, MessageSquare, CalendarClock, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DealPredictor() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState({
+    demo: false,
+    roi: false,
+    cases: false
+  });
+
+  const handleAction = async (action: 'demo' | 'roi' | 'cases') => {
+    setIsLoading(prev => ({ ...prev, [action]: true }));
+
+    const messages = {
+      demo: "Technical demo has been scheduled. You'll receive an email confirmation shortly.",
+      roi: "ROI Calculator has been generated and will be sent to your email.",
+      cases: "Relevant case studies have been shared with you."
+    };
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    toast({
+      title: "Success",
+      description: messages[action]
+    });
+
+    setIsLoading(prev => ({ ...prev, [action]: false }));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
       {/* Header Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 mb-8">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 mb-6">
         <div className="relative z-10">
           <h1 className="text-2xl sm:text-3xl font-bold text-white">AI Deal Predictor</h1>
           <p className="text-white/80">Predict deal success and get intelligent follow-up suggestions</p>
@@ -15,7 +44,7 @@ export default function DealPredictor() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card className="bg-blue-500/10 border-white/10">
           <CardContent className="p-4 flex items-center space-x-4">
             <PieChart className="h-8 w-8 text-blue-500" />
@@ -48,7 +77,7 @@ export default function DealPredictor() {
       </div>
 
       {/* Deal Analysis */}
-      <Card className="border-white/10 bg-white/5 backdrop-blur-xl mb-8">
+      <Card className="border-white/10 bg-white/5 backdrop-blur-xl mb-6">
         <CardHeader>
           <CardTitle className="text-white">Deal Analysis</CardTitle>
         </CardHeader>
@@ -72,14 +101,26 @@ export default function DealPredictor() {
             <div className="p-4 bg-yellow-500/10 rounded-lg">
               <h4 className="font-medium text-yellow-400 mb-2">Recommended Next Actions</h4>
               <div className="space-y-2">
-                <Button className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400">
-                  Schedule Technical Demo
+                <Button 
+                  className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
+                  onClick={() => handleAction('demo')}
+                  disabled={isLoading.demo}
+                >
+                  {isLoading.demo ? "Scheduling..." : "Schedule Technical Demo"}
                 </Button>
-                <Button className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400">
-                  Send ROI Calculator
+                <Button 
+                  className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
+                  onClick={() => handleAction('roi')}
+                  disabled={isLoading.roi}
+                >
+                  {isLoading.roi ? "Generating..." : "Send ROI Calculator"}
                 </Button>
-                <Button className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400">
-                  Share Case Studies
+                <Button 
+                  className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
+                  onClick={() => handleAction('cases')}
+                  disabled={isLoading.cases}
+                >
+                  {isLoading.cases ? "Sharing..." : "Share Case Studies"}
                 </Button>
               </div>
             </div>

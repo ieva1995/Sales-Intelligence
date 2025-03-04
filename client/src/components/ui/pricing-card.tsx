@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, RefreshCw } from "lucide-react";
+import { useState } from "react";
 
 interface PricingFeature {
   text: string;
@@ -28,6 +29,19 @@ export function PricingCard({
   priceId = "",
   onSubscribe
 }: PricingCardProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    try {
+      setIsLoading(true);
+      await onSubscribe(priceId);
+    } catch (error) {
+      console.error('Subscription error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Card className={`relative ${popular ? 'border-primary shadow-lg scale-105' : ''}`}>
       {popular && (
@@ -59,9 +73,17 @@ export function PricingCard({
         <Button 
           className="w-full" 
           variant={popular ? "default" : "outline"}
-          onClick={() => onSubscribe(priceId)}
+          onClick={handleSubscribe}
+          disabled={isLoading || !priceId}
         >
-          {buttonText}
+          {isLoading ? (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            buttonText
+          )}
         </Button>
       </CardFooter>
     </Card>
