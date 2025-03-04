@@ -70,6 +70,15 @@ export default function Router() {
             <Route path="/features/simulator" component={() => <div>POC Simulator - Coming Soon</div>} />
             <Route path="/features/reputation" component={() => <div>Digital Reputation Score - Coming Soon</div>} />
 
+            {/* Enterprise Feature Routes */}
+            <Route path="/features/whisper-bot" component={() => <div>AI Whisper Bot - Coming Soon</div>} />
+            <Route path="/features/stealth-audit" component={() => <div>Stealth Audit Tool - Coming Soon</div>} />
+            <Route path="/features/warm-up" component={() => <div>Auto Warm-Up Campaign - Coming Soon</div>} />
+            <Route path="/features/corporate-leech" component={() => <div>Corporate Leech System™ - Coming Soon</div>} />
+            <Route path="/features/champion-hunter" component={() => <div>Secret Champion Hunter - Coming Soon</div>} />
+            <Route path="/features/roi-calculator" component={() => <div>Instant ROI Calculator - Coming Soon</div>} />
+            <Route path="/features/beta-system" component={() => <div>Private BETA System - Coming Soon</div>} />
+
             <Route component={NotFound} />
           </Switch>
         </div>
