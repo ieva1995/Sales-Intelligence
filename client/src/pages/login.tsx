@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, Users, Cog } from "lucide-react";
+import { BackgroundMetrics } from "@/components/BackgroundMetrics";
 
 interface LoginOptionProps {
   title: string;
@@ -36,6 +37,7 @@ export default function Login() {
   if (!selectedRole) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <BackgroundMetrics />
         <Card className="w-full max-w-md bg-black/30 border border-gray-800 rounded-2xl backdrop-blur-xl">
           <CardContent className="p-8 space-y-6">
             <div className="text-center space-y-2 mb-8">
@@ -66,6 +68,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <BackgroundMetrics />
       <Card className="w-full max-w-md bg-black/30 border border-gray-800 rounded-2xl backdrop-blur-xl">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-2 mb-8">
@@ -138,7 +141,7 @@ export default function Login() {
                 <Checkbox
                   id="remember"
                   checked={formData.rememberMe}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setFormData({ ...formData, rememberMe: checked as boolean })
                   }
                   className="border-gray-800 data-[state=checked]:bg-green-500"
@@ -169,8 +172,8 @@ export default function Login() {
 
           {selectedRole && (
             <div className="absolute top-4 left-4">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-gray-400 hover:text-white"
                 onClick={() => setSelectedRole(null)}
               >
