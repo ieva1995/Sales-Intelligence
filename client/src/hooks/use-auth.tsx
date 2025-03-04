@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import axios from "axios";
-import { FingerprintJS } from '@fingerprintjs/fingerprintjs';
+import * as FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // Define user types and interfaces
 export interface User {
