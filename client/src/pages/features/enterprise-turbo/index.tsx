@@ -90,7 +90,7 @@ export default function EnterpriseTurbo() {
   const pricingPlans = [
     {
       title: "Starter",
-      price: "$299",
+      price: "$499",
       description: "Essential automation for growing enterprises",
       priceId: "price_turbo_starter_monthly",
       features: [
@@ -98,13 +98,16 @@ export default function EnterpriseTurbo() {
         { text: "Smart Workflow Engine", included: true },
         { text: "Basic AI Assistant", included: true },
         { text: "Standard Analytics", included: true },
+        { text: "Up to 10 Users", included: true },
+        { text: "5 Automated Workflows", included: true },
         { text: "Custom Integrations", included: false },
         { text: "Advanced Security", included: false },
+        { text: "24/7 Support", included: false },
       ],
     },
     {
       title: "Business",
-      price: "$799",
+      price: "$999",
       description: "Advanced automation for established businesses",
       priceId: "price_turbo_business_monthly",
       popular: true,
@@ -113,8 +116,11 @@ export default function EnterpriseTurbo() {
         { text: "Advanced AI Assistant", included: true },
         { text: "Custom Integrations", included: true },
         { text: "Advanced Analytics", included: true },
+        { text: "Unlimited Users", included: true },
+        { text: "Unlimited Workflows", included: true },
         { text: "Priority Support", included: true },
         { text: "Team Training", included: true },
+        { text: "ROI Tracking", included: true },
       ],
     },
     {
@@ -125,10 +131,13 @@ export default function EnterpriseTurbo() {
       features: [
         { text: "All Business Features", included: true },
         { text: "Custom Development", included: true },
-        { text: "Dedicated Support", included: true },
+        { text: "Dedicated Support Team", included: true },
         { text: "Enterprise SLA", included: true },
-        { text: "Custom Security", included: true },
-        { text: "On-premise Option", included: true },
+        { text: "Custom Security Policies", included: true },
+        { text: "On-premise Deployment", included: true },
+        { text: "Custom AI Training", included: true },
+        { text: "Multi-Region Support", included: true },
+        { text: "Compliance Management", included: true },
       ],
     },
   ];
