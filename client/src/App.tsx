@@ -23,13 +23,12 @@ import Login from "@/pages/login";
 import Settings from "@/pages/settings";
 import { useState } from 'react';
 
-
 function Header() {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
     <header className="header relative z-50">
-      <div className="flex items-center justify-between h-full px-4">
+      <div className="flex items-center justify-between h-full px-4 md:pl-72">
         <div className={`flex items-center transition-all duration-300 ease-in-out ${
           isSearchFocused ? 'w-full' : 'w-auto'
         }`}>
