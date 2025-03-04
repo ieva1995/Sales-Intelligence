@@ -91,8 +91,8 @@ export default function Dashboard() {
           <CardHeader className="bg-blue-500 p-4">
             <CardTitle className="text-lg text-white">Performance Overview</CardTitle>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="h-[240px] w-full">
+          <CardContent className="p-4">
+            <div className="h-[300px] sm:h-[240px]"> {/* Adjusted height for mobile */}
               {trendData && (
                 <TrendChart
                   data={trendData.timelineData}
@@ -100,11 +100,11 @@ export default function Dashboard() {
                 />
               )}
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-8 border-t pt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 border-t pt-4">
               {performanceMetrics.map((metric, i) => (
-                <div key={i} className="text-center">
-                  <h3 className="text-2xl font-bold mb-1">{metric.value}</h3>
-                  <p className="text-sm text-gray-500">{metric.title}</p>
+                <div key={i} className="text-center p-2">
+                  <h3 className="text-xl sm:text-2xl font-bold">{metric.value}</h3>
+                  <p className="text-sm text-gray-500 mt-1">{metric.title}</p>
                   <p className={`text-xs ${metric.change.includes('-') ? 'text-red-500' : 'text-green-500'} mt-1`}>
                     {metric.change}
                   </p>
