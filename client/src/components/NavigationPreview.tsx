@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Preview data structure
@@ -61,13 +61,40 @@ export const navigationPreviews: Record<string, PreviewData> = {
       { label: "Content ROI", value: "3.6x", trend: "up" }
     ]
   },
-  library: {
-    title: "Library",
-    description: "Access sales resources, templates, and documents",
+  customers: {
+    title: "Customers",
+    description: "Customer relationship management and insights",
     stats: [
-      { label: "Documents", value: "425", trend: "up" },
-      { label: "Templates", value: "56", trend: "neutral" },
-      { label: "Recent Uploads", value: "12", trend: "up" }
+      { label: "Total Customers", value: "8,472", trend: "up" },
+      { label: "New Today", value: "24", trend: "up" },
+      { label: "Retention Rate", value: "76.3%", trend: "neutral" }
+    ]
+  },
+  orders: {
+    title: "Orders",
+    description: "Manage your order pipeline and fulfillment",
+    stats: [
+      { label: "New Orders", value: "83", trend: "up" },
+      { label: "Pending", value: "17", trend: "neutral" },
+      { label: "Fulfilled", value: "66", trend: "up" }
+    ]
+  },
+  shipping: {
+    title: "Shipping",
+    description: "Track and manage your shipping operations",
+    stats: [
+      { label: "In Transit", value: "52", trend: "up" },
+      { label: "Delivered", value: "418", trend: "up" },
+      { label: "Avg. Delivery Time", value: "2.3 days", trend: "down" }
+    ]
+  },
+  product: {
+    title: "Product",
+    description: "Manage your product catalog and inventory",
+    stats: [
+      { label: "Total Products", value: "1,286", trend: "up" },
+      { label: "Low Stock", value: "24", trend: "up" },
+      { label: "Top Seller", value: "Premium Plan", trend: "neutral" }
     ]
   }
 };
@@ -144,7 +171,7 @@ const NavigationPreview = ({ path, isVisible, position }: NavigationPreviewProps
           <div className="p-4">
             <h3 className="text-lg font-semibold text-white mb-1">{previewData.title}</h3>
             <p className="text-sm text-gray-400 mb-4">{previewData.description}</p>
-            
+
             {previewData.stats && (
               <div className="grid grid-cols-3 gap-2 mt-2">
                 {previewData.stats.map((stat, index) => (

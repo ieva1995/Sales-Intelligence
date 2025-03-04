@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { 
@@ -16,6 +16,7 @@ import {
   Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import NavigationPreview, { PreviewData } from './NavigationPreview';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -87,6 +88,13 @@ const menuItems: MenuItem[] = [
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const [, setLocation] = useLocation();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+
+  // Use a ref to track items being hovered
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Disable body scroll when menu is open
@@ -114,6 +122,45 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleMouseEnter = (item: MenuItem, event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    hoverTimeoutRef.current = setTimeout(() => {
+      setPreviewPosition({ 
+        x: rect.right, 
+        y: rect.top 
+      });
+
+      setPreviewData({
+        title: item.title,
+        description: `View your ${item.title.toLowerCase()} data and insights`,
+        stats: [
+          { label: 'Recent Updates', value: '24', trend: 'up' },
+          { label: 'Last Activity', value: '2h ago', trend: 'neutral' },
+          { label: 'Status', value: 'Active', trend: 'up' }
+        ]
+      });
+
+      setPreviewVisible(true);
+      setHoveredPath(item.path || `/${item.title.toLowerCase()}`);
+    }, 300); // 300ms delay before showing preview
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    hoverTimeoutRef.current = setTimeout(() => {
+      setPreviewVisible(false);
+      setHoveredPath(null);
+    }, 100);
+  };
+
   const variants = {
     open: { x: 0, opacity: 1 },
     closed: { x: '-100%', opacity: 0 },
@@ -122,6 +169,25 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const overlayVariants = {
     open: { opacity: 1 },
     closed: { opacity: 0 },
+  };
+
+  const childVariants = {
+    open: {
+      opacity: 1,
+      height: 'auto',
+      transition: {
+        duration: 0.3,
+        ease: "easeOut"
+      }
+    },
+    closed: {
+      opacity: 0,
+      height: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn"
+      }
+    }
   };
 
   return (
@@ -138,7 +204,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             transition={{ duration: 0.2 }}
             onClick={onClose}
           />
-          
+
           {/* Sidebar */}
           <motion.div 
             className="fixed inset-y-0 left-0 w-[280px] max-w-[80vw] bg-slate-900 border-r border-slate-800 z-50 flex flex-col"
@@ -157,7 +223,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            
+
             {/* Menu Items */}
             <div className="flex-1 overflow-y-auto py-2">
               <ul className="space-y-1 p-2">
@@ -168,6 +234,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         <button
                           className="w-full flex items-center justify-between p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                           onClick={() => toggleExpand(item.title)}
+                          onMouseEnter={(e) => handleMouseEnter(item, e)}
+                          onMouseLeave={handleMouseLeave}
                         >
                           <div className="flex items-center">
                             <item.icon className="h-5 w-5 mr-3 text-slate-400" />
@@ -177,32 +245,38 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                             className={`h-4 w-4 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
                           />
                         </button>
-                        
-                        {expandedItems[item.title] && (
-                          <motion.ul
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            className="bg-slate-800/50 rounded-md mt-1 overflow-hidden"
-                          >
-                            {item.children.map((child) => (
-                              <li key={child.title}>
-                                <button
-                                  className="w-full flex items-center p-3 pl-11 hover:bg-slate-700/50 text-slate-300 text-sm"
-                                  onClick={() => handleNavigation(child.path)}
-                                >
-                                  <span>{child.title}</span>
-                                </button>
-                              </li>
-                            ))}
-                          </motion.ul>
-                        )}
+
+                        <AnimatePresence>
+                          {expandedItems[item.title] && (
+                            <motion.ul
+                              initial="closed"
+                              animate="open"
+                              exit="closed"
+                              variants={childVariants}
+                              className="bg-slate-800/50 rounded-md mt-1 overflow-hidden"
+                            >
+                              {item.children.map((child) => (
+                                <li key={child.title}>
+                                  <button
+                                    className="w-full flex items-center p-3 pl-11 hover:bg-slate-700/50 text-slate-300 text-sm"
+                                    onClick={() => handleNavigation(child.path)}
+                                    onMouseEnter={(e) => handleMouseEnter(child, e)}
+                                    onMouseLeave={handleMouseLeave}
+                                  >
+                                    <span>{child.title}</span>
+                                  </button>
+                                </li>
+                              ))}
+                            </motion.ul>
+                          )}
+                        </AnimatePresence>
                       </div>
                     ) : (
                       <button
                         className="w-full flex items-center p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                         onClick={() => handleNavigation(item.path)}
+                        onMouseEnter={(e) => handleMouseEnter(item, e)}
+                        onMouseLeave={handleMouseLeave}
                       >
                         <item.icon className="h-5 w-5 mr-3 text-slate-400" />
                         <span>{item.title}</span>
@@ -212,7 +286,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 ))}
               </ul>
             </div>
-            
+
             {/* Footer */}
             <div className="p-4 border-t border-slate-800">
               <Button 
@@ -223,6 +297,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
               </Button>
             </div>
           </motion.div>
+
+          {/* Navigation Preview */}
+          <NavigationPreview 
+            path={hoveredPath || ''}
+            isVisible={previewVisible}
+            position={previewPosition}
+            data={previewData}
+          />
         </>
       )}
     </AnimatePresence>
