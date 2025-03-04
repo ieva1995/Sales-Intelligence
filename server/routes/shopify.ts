@@ -45,7 +45,14 @@ router.get('/auth', async (req, res) => {
   try {
     // In newer versions of Shopify API, the auth methods have been restructured
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
-    const redirectUrl = `${process.env.HOST || 'http://localhost:5000'}/api/shopify/callback`;
+
+    // Get the base URL from the request
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const host = req.headers.host;
+    const baseUrl = `${protocol}://${host}`;
+    const redirectUrl = `${baseUrl}/api/shopify/callback`;
+
+    console.log('Initiating Shopify auth with redirect URL:', redirectUrl);
 
     // Create an auth URL manually since the API has changed
     const authUrl = `https://${shop}/admin/oauth/authorize?` +

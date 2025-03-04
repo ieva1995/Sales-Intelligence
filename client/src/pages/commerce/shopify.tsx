@@ -78,10 +78,14 @@ export default function ShopifyDashboard() {
     orders: null,
     customers: null
   });
+  const [connectionStatus, setConnectionStatus] = useState<'connected'|'disconnected'|'loading'>('loading');
+  const [usingSampleData, setUsingSampleData] = useState(false);
 
   // Function to fetch Shopify data
   const fetchShopifyData = async () => {
     console.log("Fetching Shopify data");
+    setConnectionStatus('loading');
+    setUsingSampleData(false);
 
     // Fetch products
     setLoading(prev => ({ ...prev, products: true }));
@@ -91,9 +95,11 @@ export default function ShopifyDashboard() {
       console.log("Products data received:", productsData ? productsData.length : 0);
       setProducts(productsData || []);
       setError(prev => ({ ...prev, products: null }));
+      setConnectionStatus('connected');
     } catch (err: any) {
       console.error("Error fetching Shopify products:", err);
       setError(prev => ({ ...prev, products: err.message }));
+      setConnectionStatus('disconnected');
       toast({
         title: "Error fetching products",
         description: err.message,
@@ -147,6 +153,8 @@ export default function ShopifyDashboard() {
   // For demo purposes, use this sample data when real data can't be fetched
   const loadSampleData = () => {
     console.log("Loading sample Shopify data");
+    setUsingSampleData(true);
+    setConnectionStatus('disconnected');
     setProducts([
       {
         id: "1",
@@ -337,6 +345,37 @@ export default function ShopifyDashboard() {
           </Button>
         </div>
       </div>
+
+      {/* Connection Status */}
+      {usingSampleData && (
+        <div className="bg-amber-100 dark:bg-amber-800/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 px-4 py-3 rounded-md flex items-center">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+          <div>
+            <p className="font-medium">Using sample data</p>
+            <p className="text-sm">You're viewing sample data. Connect your Shopify store to see real data.</p>
+          </div>
+        </div>
+      )}
+
+      {!usingSampleData && connectionStatus === 'disconnected' && (
+        <div className="bg-red-100 dark:bg-red-800/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-md flex items-center">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+          <div>
+            <p className="font-medium">Connection failed</p>
+            <p className="text-sm">Unable to connect to your Shopify store. Please check your credentials or try again.</p>
+          </div>
+        </div>
+      )}
+
+      {!usingSampleData && connectionStatus === 'connected' && (
+        <div className="bg-green-100 dark:bg-green-800/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-md flex items-center">
+          <Check className="h-5 w-5 mr-2 flex-shrink-0" />
+          <div>
+            <p className="font-medium">Connected to Shopify</p>
+            <p className="text-sm">Successfully connected to your Shopify store.</p>
+          </div>
+        </div>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
