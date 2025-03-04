@@ -19,7 +19,8 @@ import {
   AlertCircle,
   Info,
   ArrowLeft,
-  Clock
+  Clock,
+  Copy
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../hooks/use-auth";
@@ -297,6 +298,23 @@ const TokenLogin = () => {
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Handle copying token to clipboard
+  const copyTokenToClipboard = (tokenToCopy: string) => {
+    navigator.clipboard.writeText(tokenToCopy).then(() => {
+      toast({
+        title: "Copied to clipboard",
+        description: "Token copied to clipboard successfully",
+      });
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      toast({
+        title: "Copy failed",
+        description: "Failed to copy token to clipboard",
+        variant: "destructive",
+      });
+    });
+  };
+
   // Handle requesting a token
   const handleRequestToken = async () => {
     // Validate email
@@ -337,7 +355,19 @@ const TokenLogin = () => {
         if (process.env.NODE_ENV === 'development' && result._devToken) {
           toast({
             title: "DEMO MODE: Login Token",
-            description: `Token: ${result._devToken}`,
+            description: (
+              <div className="flex items-center justify-between">
+                <span>Token: {result._devToken}</span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-5 w-5 ml-2"
+                  onClick={() => copyTokenToClipboard(result._devToken)}
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
+              </div>
+            ),
             variant: "default",
           });
         }
@@ -401,18 +431,6 @@ const TokenLogin = () => {
         variant: "destructive",
       });
     }
-  };
-
-  // Reset to email step
-  const handleBackToEmail = () => {
-    setStep("email");
-    setToken("");
-    setErrors({});
-  };
-
-  // Request a new token (resend)
-  const handleResendToken = () => {
-    handleRequestToken();
   };
 
   // If user is already logged in, redirect to dashboard
@@ -495,6 +513,26 @@ const TokenLogin = () => {
         pointer-events: none;
         z-index: -1;
       }
+
+      .tab-active {
+        color: white;
+        border-bottom: 2px solid #3b82f6;
+      }
+
+      .tab-inactive {
+        color: #94a3b8;
+        border-bottom: 2px solid transparent;
+      }
+
+      .tab-active, .tab-inactive {
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+      }
+
+      .tab-inactive:hover {
+        color: #e2e8f0;
+        border-bottom-color: #4b5563;
+      }
     `;
     document.head.appendChild(style);
 
@@ -532,11 +570,31 @@ const TokenLogin = () => {
               Secure Login
             </h1>
             <p className="text-slate-400">
-              {step === "email"
-                ? "Enter your email to receive a secure one-time login token"
-                : "Enter the verification token sent to your email"
-              }
+              Enter your credentials to access SalesBoost AI
             </p>
+          </div>
+
+          {/* Login Tabs */}
+          <div className="flex mb-6 border-b border-slate-700">
+            <button 
+              className={`flex-1 ${step === "email" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => setStep("email")}
+            >
+              <div className="flex justify-center items-center">
+                <Mail className="h-4 w-4 mr-2" />
+                <span>Email</span>
+              </div>
+            </button>
+            <button 
+              className={`flex-1 ${step === "token" ? "tab-active" : "tab-inactive"}`}
+              onClick={() => email ? setStep("token") : null}
+              disabled={!email}
+            >
+              <div className="flex justify-center items-center">
+                <Lock className="h-4 w-4 mr-2" />
+                <span>Token</span>
+              </div>
+            </button>
           </div>
 
           {showLoginHelp && (
@@ -571,7 +629,7 @@ const TokenLogin = () => {
           )}
 
           {!showLoginHelp && (
-            <div className="text-center mt-2">
+            <div className="text-center mt-2 mb-4">
               <Button
                 variant="link"
                 className="text-xs text-slate-500 hover:text-slate-400"
@@ -618,19 +676,16 @@ const TokenLogin = () => {
                   <Mail className="mr-2 h-4 w-4" />
                   Send Login Token
                 </Button>
+
+                <div className="text-center mt-4">
+                  <p className="text-sm text-slate-400">
+                    After receiving the token, click the "Token" tab above
+                  </p>
+                </div>
               </>
             ) : (
               // Token validation screen
               <>
-                <div className="relative">
-                  <button
-                    className="absolute top-0 left-0 text-gray-400 hover:text-white"
-                    onClick={handleBackToEmail}
-                  >
-                    <ArrowLeft className="h-5 w-5" />
-                  </button>
-                </div>
-
                 <div className="my-2 p-3 rounded-lg bg-blue-900/20 border border-blue-800/30 flex items-center">
                   <Mail className="h-5 w-5 text-blue-400 mr-2" />
                   <div>
@@ -699,8 +754,7 @@ const TokenLogin = () => {
         </CardContent>
       </Card>
     </div>
-  );
-};
+  );};
 
 export default function Login() {
   const [location] = useLocation();
