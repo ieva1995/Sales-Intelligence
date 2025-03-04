@@ -1,4 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "wouter";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+
+const dataItems = [
+  { label: "Integrations", href: "/data/integrations" },
+  { label: "Custom Events", href: "/data/custom-events" },
+  { label: "Data Quality", href: "/data/quality" },
+  { label: "Datasets", href: "/data/datasets" },
+  { label: "Data Model", href: "/data/model" },
+  { label: "Data Enrichment", href: "/data/enrichment" },
+];
 
 export default function DataManagement() {
   return (
@@ -8,15 +19,17 @@ export default function DataManagement() {
         <p className="text-muted-foreground">Manage your data integrations and transformations</p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Welcome to Data Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Select an option from the menu to start managing your data operations.
-          </p>
-        </CardContent>
+      <Card className="bg-slate-800">
+        {dataItems.map((item) => (
+          <Link key={item.label} href={item.href}>
+            <a className={cn(
+              "block px-6 py-3 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+              "text-sm font-medium"
+            )}>
+              {item.label}
+            </a>
+          </Link>
+        ))}
       </Card>
     </div>
   );
