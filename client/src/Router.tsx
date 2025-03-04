@@ -9,6 +9,7 @@ import Content from "@/pages/content";
 import Commerce from "@/pages/commerce";
 import CommerceOverview from "@/pages/commerce/Overview";
 import ShopifyDashboard from "@/pages/commerce/shopify";
+import ShopifyPerformance from "@/pages/commerce/performance";
 import Automations from "@/pages/automations";
 import Reporting from "@/pages/reporting";
 import DataManagement from "@/pages/data";
@@ -78,6 +79,7 @@ export default function Router() {
             <Route path="/commerce" component={Commerce} />
             <Route path="/commerce/overview" component={CommerceOverview} />
             <Route path="/commerce/shopify" component={ShopifyDashboard} />
+            <Route path="/commerce/performance" component={ShopifyPerformance} />
             <Route path="/automations" component={Automations} />
             <Route path="/reporting" component={Reporting} />
             <Route path="/data" component={DataManagement} />

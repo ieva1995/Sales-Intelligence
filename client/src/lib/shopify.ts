@@ -53,6 +53,23 @@ export async function getShopifyCustomers() {
   }
 }
 
+export async function getShopifyPerformance() {
+  try {
+    console.log("Fetching Shopify performance data");
+    const response = await fetch('/api/shopify/performance');
+
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching Shopify performance data:', error);
+    throw new Error(`Failed to fetch performance data: ${error.message}`);
+  }
+}
+
 // Function to authenticate with Shopify
 export function authenticateWithShopify() {
   console.log("Redirecting to Shopify authentication");

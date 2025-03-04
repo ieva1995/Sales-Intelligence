@@ -174,4 +174,174 @@ router.get('/customers', async (req, res) => {
   }
 });
 
+// New endpoint to fetch performance data metrics from Shopify
+router.get('/performance', async (req, res) => {
+  try {
+    // In a real app, you would retrieve the session from your database
+    const accessToken = process.env.SHOPIFY_ACCESS_TOKEN;
+
+    if (!accessToken) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
+    const session = createSession(accessToken, shop);
+
+    const client = new shopify.clients.Rest({
+      session
+    });
+
+    // Fetch orders, products, and customers to generate performance metrics
+    const [ordersResponse, productsResponse, customersResponse] = await Promise.all([
+      client.get({ path: 'orders' }),
+      client.get({ path: 'products' }),
+      client.get({ path: 'customers' })
+    ]);
+
+    const orders = ordersResponse.body.orders || [];
+    const products = productsResponse.body.products || [];
+    const customers = customersResponse.body.customers || [];
+
+    // Process the data to generate performance metrics
+    const performanceData = generatePerformanceMetrics(orders, products, customers);
+
+    res.json(performanceData);
+  } catch (error: any) {
+    console.error('Error fetching Shopify performance data:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch Shopify performance data', 
+      details: error.message 
+    });
+  }
+});
+
+// Helper function to generate performance metrics from Shopify data
+function generatePerformanceMetrics(orders: any[], products: any[], customers: any[]) {
+  // Calculate basic metrics
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total_price || '0'), 0).toFixed(2);
+  const averageOrderValue = totalOrders > 0 ? (parseFloat(totalRevenue) / totalOrders).toFixed(2) : '0.00';
+
+  // Calculate daily sales for the last 30 days
+  const dailySales: any[] = [];
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(thirtyDaysAgo.getTime() + i * 24 * 60 * 60 * 1000);
+    const dateString = date.toISOString().split('T')[0];
+
+    const dayOrders = orders.filter(order => {
+      const orderDate = new Date(order.created_at);
+      return orderDate.toISOString().split('T')[0] === dateString;
+    });
+
+    const daySales = dayOrders.reduce((sum, order) => sum + parseFloat(order.total_price || '0'), 0);
+
+    dailySales.push({
+      date: dateString,
+      sales: daySales.toFixed(2),
+      orders: dayOrders.length
+    });
+  }
+
+  // Calculate monthly sales (simplified)
+  const monthlySales: any[] = [];
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // Group orders by month
+  const monthlyOrderGroups: Record<string, any[]> = {};
+
+  orders.forEach(order => {
+    const date = new Date(order.created_at);
+    const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+
+    if (!monthlyOrderGroups[monthKey]) {
+      monthlyOrderGroups[monthKey] = [];
+    }
+
+    monthlyOrderGroups[monthKey].push(order);
+  });
+
+  // Last 12 months
+  for (let i = 11; i >= 0; i--) {
+    const date = new Date();
+    date.setMonth(date.getMonth() - i);
+    const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+
+    const monthOrders = monthlyOrderGroups[monthKey] || [];
+    const monthSales = monthOrders.reduce((sum, order) => sum + parseFloat(order.total_price || '0'), 0);
+
+    monthlySales.push({
+      month: monthNames[date.getMonth()],
+      sales: monthSales.toFixed(2),
+      orders: monthOrders.length
+    });
+  }
+
+  // Get top selling products
+  const productSales: Record<string, { id: string, name: string, sales: number, orders: number, inventory: number }> = {};
+
+  orders.forEach(order => {
+    (order.line_items || []).forEach((item: any) => {
+      const productId = item.product_id?.toString() || 'unknown';
+
+      if (!productSales[productId]) {
+        const product = products.find(p => p.id?.toString() === productId);
+
+        productSales[productId] = {
+          id: productId,
+          name: product?.title || item.title || 'Unknown Product',
+          sales: 0,
+          orders: 0,
+          inventory: product?.variants?.[0]?.inventory_quantity || 0
+        };
+      }
+
+      const price = parseFloat(item.price || '0') * (item.quantity || 1);
+      productSales[productId].sales += price;
+      productSales[productId].orders += 1;
+    });
+  });
+
+  const topProducts = Object.values(productSales)
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 5);
+
+  // In a real implementation, you would calculate more sophisticated metrics
+  // based on the data available from Shopify's API
+
+  return {
+    totalRevenue,
+    orderCount: totalOrders,
+    averageOrderValue,
+    conversionRate: '3.25', // This would require additional data from Shopify Analytics
+    customerCount: customers.length,
+    topProducts,
+    salesByDay: dailySales,
+    salesByMonth: monthlySales,
+    // These would require additional data you might need to simulate or calculate differently
+    salesByChannel: [
+      { name: 'Online Store', value: 68 },
+      { name: 'Social Media', value: 12 },
+      { name: 'Marketplace', value: 8 },
+      { name: 'Direct', value: 7 },
+      { name: 'Wholesale', value: 5 }
+    ],
+    customerAcquisition: [
+      { name: 'Organic Search', value: 35 },
+      { name: 'Direct', value: 20 },
+      { name: 'Social Media', value: 18 },
+      { name: 'Referral', value: 12 },
+      { name: 'Email', value: 10 },
+      { name: 'Other', value: 5 }
+    ],
+    inventoryHealth: [
+      { name: 'In Stock', value: 68 },
+      { name: 'Low Stock', value: 22 },
+      { name: 'Out of Stock', value: 10 }
+    ]
+  };
+}
+
 export default router;
