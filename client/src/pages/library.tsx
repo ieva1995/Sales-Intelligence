@@ -25,7 +25,7 @@ export default function Library() {
         {libraryItems.map((item) => (
           <Link key={item.label} href={item.href}>
             <a className={cn(
-              "block px-6 py-5 text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
+              "block px-6 py-5 mt-[1px] text-gray-100 transition-all duration-200 hover:bg-slate-700/50",
               "text-sm font-medium border-b border-slate-700/50 last:border-0"
             )}>
               {item.label}
