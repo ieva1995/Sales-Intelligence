@@ -27,7 +27,11 @@ import {
   Package,
   AlertCircle,
   RefreshCw,
-  Check
+  Check,
+  CreditCard,
+  BarChart as BarChartIcon,
+  Activity,
+  FileSpreadsheet
 } from "lucide-react";
 import { getShopifyPerformance } from "@/lib/shopify";
 
@@ -52,7 +56,33 @@ export default function ShopifyPerformance() {
     salesByMonth: [] as any[],
     salesByChannel: [] as any[],
     customerAcquisition: [] as any[],
-    inventoryHealth: [] as any[]
+    inventoryHealth: [] as any[],
+    // Financial metrics
+    financialMetrics: {
+      mrr: 5250.00,
+      arr: 63000.00,
+      arpu: 47.50,
+      clv: 845.50,
+      cac: 32.40,
+      grossMargin: 73.5,
+      cacPayback: 3.2
+    },
+    // Growth metrics
+    growthMetrics: {
+      customerGrowthRate: 12.8,
+      churnRate: 4.2,
+      nrr: 108.5,
+      leadConversionRate: 3.25,
+      trialToPaidRate: 42.0
+    },
+    // Engagement metrics
+    engagementMetrics: {
+      dau: 85,
+      mau: 310,
+      featureAdoptionRate: 68.0,
+      averageSessionDuration: 8.5,
+      csat: 4.3
+    }
   });
 
   // Function to fetch and process Shopify data
@@ -152,6 +182,35 @@ export default function ShopifyPerformance() {
     const orderCount = salesByDay.reduce((sum, day) => sum + day.orders, 0);
     const averageOrderValue = (parseFloat(totalRevenue) / orderCount).toFixed(2);
 
+    // Financial metrics
+    const financialMetrics = {
+      mrr: 5250.00,
+      arr: 63000.00,
+      arpu: 47.50,
+      clv: 845.50,
+      cac: 32.40,
+      grossMargin: 73.5,
+      cacPayback: 3.2
+    };
+
+    // Growth metrics
+    const growthMetrics = {
+      customerGrowthRate: 12.8,
+      churnRate: 4.2,
+      nrr: 108.5,
+      leadConversionRate: 3.25,
+      trialToPaidRate: 42.0
+    };
+
+    // Engagement metrics
+    const engagementMetrics = {
+      dau: 85,
+      mau: 310,
+      featureAdoptionRate: 68.0,
+      averageSessionDuration: 8.5,
+      csat: 4.3
+    };
+
     return {
       totalRevenue,
       orderCount,
@@ -163,7 +222,10 @@ export default function ShopifyPerformance() {
       salesByMonth,
       salesByChannel,
       customerAcquisition,
-      inventoryHealth
+      inventoryHealth,
+      financialMetrics,
+      growthMetrics,
+      engagementMetrics
     };
   };
 
@@ -243,6 +305,10 @@ export default function ShopifyPerformance() {
           <TabsTrigger value="customers" onClick={() => setActiveTab("customers")} className="h-10">
             <Users className="mr-2 h-4 w-4" />
             Customers
+          </TabsTrigger>
+          <TabsTrigger value="financial" onClick={() => setActiveTab("financial")} className="h-10">
+            <FileSpreadsheet className="mr-2 h-4 w-4" />
+            Financial
           </TabsTrigger>
         </TabsList>
 
@@ -698,6 +764,253 @@ export default function ShopifyPerformance() {
                       <div className="text-xl font-bold text-blue-400 mr-2">72.3%</div>
                       <TrendingUp className="h-4 w-4 text-green-400" />
                       <span className="text-sm text-green-400 ml-1">+1.4% from last month</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Financial Metrics Tab */}
+        <TabsContent value="financial" className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <Card className="bg-slate-800 text-white border-0 col-span-3">
+              <CardHeader className="pb-2">
+                <CardTitle>Financial & Revenue Metrics</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Monthly Recurring Revenue (MRR)</h4>
+                    <p className="text-sm text-gray-300 mb-2">Total predictable monthly revenue</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">${metrics.financialMetrics.mrr.toFixed(2)}</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+5.2% from last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Annual Recurring Revenue (ARR)</h4>
+                    <p className="text-sm text-gray-300 mb-2">Yearly revenue based on subscriptions</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">${metrics.financialMetrics.arr.toFixed(2)}</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+4.8% from last quarter</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Average Revenue Per User (ARPU)</h4>
+                    <p className="text-sm text-gray-300 mb-2">MRR divided by total number of customers</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">${metrics.financialMetrics.arpu.toFixed(2)}</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+$3.25 from last month</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 text-white border-0">
+              <CardHeader className="pb-2">
+                <CardTitle>Customer Lifetime Value</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={[
+                        { quarter: 'Q1', value: metrics.financialMetrics.clv - 145 },
+                        { quarter: 'Q2', value: metrics.financialMetrics.clv - 75 },
+                        { quarter: 'Q3', value: metrics.financialMetrics.clv - 25 },
+                        { quarter: 'Q4', value: metrics.financialMetrics.clv }
+                      ]}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                      <XAxis dataKey="quarter" stroke="#888" />
+                      <YAxis stroke="#888" />
+                      <Tooltip formatter={(value) => [`$${value}`, 'CLV']} />
+                      <Bar dataKey="value" name="CLV" fill="#8884d8" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4">
+                  <h4 className="font-medium text-white mb-1">Customer Lifetime Value (CLV)</h4>
+                  <p className="text-sm text-gray-300 mb-2">Predicted revenue from a customer over their lifetime</p>
+                  <div className="flex items-center">
+                    <div className="text-xl font-bold text-blue-400 mr-2">${metrics.financialMetrics.clv.toFixed(2)}</div>
+                    <TrendingUp className="h-4 w-4 text-green-400" />
+                    <span className="text-sm text-green-400 ml-1">+$35.20 from last quarter</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 text-white border-0">
+              <CardHeader className="pb-2">
+                <CardTitle>CAC & Gross Margin</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-4">
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Customer Acquisition Cost (CAC)</h4>
+                    <p className="text-sm text-gray-300 mb-2">Total cost to acquire a new customer</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">${metrics.financialMetrics.cac.toFixed(2)}</div>
+                      <TrendingUp className="h-4 w-4 text-red-400 transform rotate-180" />
+                      <span className="text-sm text-green-400 ml-1">-$1.85 from last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Gross Margin</h4>
+                    <p className="text-sm text-gray-300 mb-2">(Total Revenue - Cost of Goods Sold) ÷ Total Revenue</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">{metrics.financialMetrics.grossMargin.toFixed(1)}%</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+1.2% from last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">CAC Payback Period</h4>
+                    <p className="text-sm text-gray-300 mb-2">Time to recover the customer acquisition cost</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">{metrics.financialMetrics.cacPayback.toFixed(1)} months</div>
+                      <TrendingUp className="h-4 w-4 text-red-400 transform rotate-180" />
+                      <span className="text-sm text-green-400 ml-1">-0.3 months from last quarter</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 text-white border-0">
+              <CardHeader className="pb-2">
+                <CardTitle>Growth & Customer Metrics</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-400">Customer Growth Rate</span>
+                      <span className="font-medium">{metrics.growthMetrics.customerGrowthRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full">
+                      <div
+                        className="h-full bg-blue-500 rounded-full"
+                        style={{ width: `${Math.min(metrics.growthMetrics.customerGrowthRate * 5, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-400">Customer Churn Rate</span>
+                      <span className="font-medium">{metrics.growthMetrics.churnRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full">
+                      <div
+                        className="h-full bg-red-500 rounded-full"
+                        style={{ width: `${Math.min(metrics.growthMetrics.churnRate * 10, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-400">Net Revenue Retention (NRR)</span>
+                      <span className="font-medium">{metrics.growthMetrics.nrr.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full">
+                      <div
+                        className="h-full bg-green-500 rounded-full"
+                        style={{ width: `${Math.min(metrics.growthMetrics.nrr - 50, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-400">Lead Conversion Rate</span>
+                      <span className="font-medium">{metrics.growthMetrics.leadConversionRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full">
+                      <div
+                        className="h-full bg-purple-500 rounded-full"
+                        style={{ width: `${Math.min(metrics.growthMetrics.leadConversionRate * 10, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-gray-400">Trial-to-Paid Conversion Rate</span>
+                      <span className="font-medium">{metrics.growthMetrics.trialToPaidRate.toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-800 rounded-full">
+                      <div
+                        className="h-full bg-amber-500 rounded-full"
+                        style={{ width: `${Math.min(metrics.growthMetrics.trialToPaidRate, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800 text-white border-0">
+              <CardHeader className="pb-2">
+                <CardTitle>Engagement & Usage Metrics</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-4">
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium text-white">Daily Active Users (DAU)</h4>
+                      <div className="text-xl font-bold text-blue-400">{metrics.engagementMetrics.dau}</div>
+                    </div>
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="font-medium text-white">Monthly Active Users (MAU)</h4>
+                      <div className="text-xl font-bold text-blue-400">{metrics.engagementMetrics.mau}</div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <h4 className="font-medium text-white">DAU/MAU Ratio (Stickiness)</h4>
+                      <div className="text-xl font-bold text-blue-400">{(metrics.engagementMetrics.dau / metrics.engagementMetrics.mau * 100).toFixed(1)}%</div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Feature Adoption Rate</h4>
+                    <p className="text-sm text-gray-300 mb-2">Percentage of users actively using specific features</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">{metrics.engagementMetrics.featureAdoptionRate.toFixed(1)}%</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+5.3% from last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Average Session Duration</h4>
+                    <p className="text-sm text-gray-300 mb-2">How long users engage with the platform</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">{metrics.engagementMetrics.averageSessionDuration.toFixed(1)} min</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+1.2 min from last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-700 rounded-lg">
+                    <h4 className="font-medium text-white mb-1">Customer Satisfaction Score (CSAT)</h4>
+                    <p className="text-sm text-gray-300 mb-2">Customer feedback on satisfaction after interactions</p>
+                    <div className="flex items-center">
+                      <div className="text-xl font-bold text-blue-400 mr-2">{metrics.engagementMetrics.csat.toFixed(1)}/5</div>
+                      <TrendingUp className="h-4 w-4 text-green-400" />
+                      <span className="text-sm text-green-400 ml-1">+0.2 from last quarter</span>
                     </div>
                   </div>
                 </div>

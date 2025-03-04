@@ -43,6 +43,7 @@ import { Button } from "@/components/ui/button";
 export default function Router() {
   console.log("Router component mounting");
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     console.log("Router useEffect running - checking environment variables");
@@ -52,25 +53,52 @@ export default function Router() {
       key.startsWith(envPrefix) && key.includes("SHOPIFY")
     );
     console.log("Has Shopify environment variables:", hasShopifyKeys);
+
+    // For demo purposes, check if there's a stored auth token
+    const hasAuthToken = localStorage.getItem('auth_token');
+    setIsAuthenticated(!!hasAuthToken);
   }, []);
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed top-4 left-4 md:hidden z-50"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Menu className="h-6 w-6" />
-      </Button>
+  // Check if the current path should display the app shell (sidebar and header)
+  const shouldShowAppShell = () => {
+    const pathname = window.location.pathname;
+    // Don't show app shell on login page or root path (landing page)
+    return pathname !== '/login' && pathname !== '/';
+  };
 
-      <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      <Header />
-      <main className="main-content">
-        <div className="page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8">
+  // If the route requires authentication but user is not authenticated, redirect to login page
+  // This is simplified authentication for demo purposes
+  if (window.location.pathname !== '/' && window.location.pathname !== '/login' && !isAuthenticated) {
+    // Mock authentication for demo - in a real app, you would check actual auth state
+    // For demo, store a token so we can navigate through the app
+    localStorage.setItem('auth_token', 'demo_token');
+    setIsAuthenticated(true);
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-gray-100">
+      {shouldShowAppShell() && (
+        <>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="fixed top-4 left-4 md:hidden z-50"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+
+          <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+          <Header />
+        </>
+      )}
+
+      <main className={shouldShowAppShell() ? "main-content" : ""}>
+        <div className={shouldShowAppShell() ? "page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8" : ""}>
           <Switch>
-            <Route path="/" component={Dashboard} />
+            <Route path="/" component={Login} />
+            <Route path="/login" component={Login} />
+            <Route path="/dashboard" component={Dashboard} />
             <Route path="/trend-analysis" component={TrendAnalysis} />
             <Route path="/predictions" component={Predictions} />
             <Route path="/crm" component={CRM} />
@@ -96,7 +124,6 @@ export default function Router() {
             <Route path="/library/coaching" component={Coaching} />
 
             <Route path="/settings" component={Settings} />
-            <Route path="/settings/login" component={Login} />
             <Route path="/contacts" component={Contacts} />
             <Route path="/workflows" component={Workflows} />
             <Route path="/reports" component={Reports} />

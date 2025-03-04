@@ -22,7 +22,7 @@ interface SidebarProps {
 }
 
 const mainNavItems = [
-  { href: "/", icon: BarChart2, label: "Dashboard" },
+  { href: "/dashboard", icon: BarChart2, label: "Dashboard" },
   { href: "/crm", icon: Users, label: "CRM" },
   { href: "/marketing", icon: MessageSquare, label: "Marketing" },
   { href: "/content", icon: FileText, label: "Content" },
