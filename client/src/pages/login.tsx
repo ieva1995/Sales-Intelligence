@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Building2,
   Users,
@@ -330,7 +329,7 @@ const TokenLogin = () => {
           setTokenExpiry(result.expiresAt);
         }
 
-        // Key change: Explicitly set step to token
+        // Explicitly set step to token
         setStep("token");
         console.log("Set step to token");
 
