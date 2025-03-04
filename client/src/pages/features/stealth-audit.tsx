@@ -10,9 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 
 export default function StealthAudit() {
   const { toast } = useToast();
@@ -40,7 +43,9 @@ export default function StealthAudit() {
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [scanDepth, setScanDepth] = useState("Deep Analysis");
   const [securityLevel, setSecurityLevel] = useState("Enterprise Grade");
-  const [showScanDialog, setShowScanDialog] = useState(false);
+  const [scanTimeout, setScanTimeout] = useState(30);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [showScanConfigDialog, setShowScanConfigDialog] = useState(false);
   const [showSecurityDialog, setShowSecurityDialog] = useState(false);
 
   // Simulate progress updates
@@ -96,6 +101,18 @@ export default function StealthAudit() {
     toast({
       title: "Security Level Updated",
       description: `Security level upgraded to: ${value}`,
+    });
+  };
+
+  const handleScanTimeoutChange = (value: number[]) => {
+    setScanTimeout(value[0]);
+  };
+
+  const handleAutoRefreshChange = (checked: boolean) => {
+    setAutoRefresh(checked);
+    toast({
+      title: "Auto Refresh",
+      description: checked ? "Enabled automatic scan updates" : "Disabled automatic scan updates",
     });
   };
 
@@ -269,7 +286,7 @@ export default function StealthAudit() {
                     <div className="flex items-center space-x-3">
                       <Settings className="h-5 w-5 text-blue-400" />
                       <div>
-                        <h4 className="font-medium">Scan Depth</h4>
+                        <h4 className="font-medium">Scan Configuration</h4>
                         <p className="text-sm text-gray-400">{scanDepth}</p>
                       </div>
                     </div>
@@ -278,23 +295,55 @@ export default function StealthAudit() {
                     </Button>
                   </div>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
-                    <DialogTitle>Configure Scan Depth</DialogTitle>
+                    <DialogTitle>Scan Configuration</DialogTitle>
                     <DialogDescription>
-                      Select the depth level for system analysis
+                      Adjust scan depth and timing settings
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <RadioGroup value={scanDepth} onValueChange={handleScanDepthChange}>
-                      {["Quick Scan", "Standard Analysis", "Deep Analysis", "Comprehensive Audit"].map((depth) => (
-                        <div key={depth} className="flex items-center space-x-2">
-                          <RadioGroupItem value={depth} id={depth} />
-                          <Label htmlFor={depth}>{depth}</Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
+                  <div className="space-y-6 py-4">
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-sm">Scan Depth</h4>
+                      <RadioGroup value={scanDepth} onValueChange={handleScanDepthChange}>
+                        {["Quick Scan", "Standard Analysis", "Deep Analysis", "Comprehensive Audit"].map((depth) => (
+                          <div key={depth} className="flex items-center space-x-2">
+                            <RadioGroupItem value={depth} id={depth} />
+                            <Label htmlFor={depth}>{depth}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-sm">Scan Timeout (seconds)</h4>
+                      <Slider
+                        value={[scanTimeout]}
+                        onValueChange={handleScanTimeoutChange}
+                        max={120}
+                        min={10}
+                        step={5}
+                      />
+                      <p className="text-sm text-gray-400">{scanTimeout} seconds</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-medium text-sm">Auto Refresh</h4>
+                        <p className="text-sm text-gray-400">Update scans automatically</p>
+                      </div>
+                      <Switch
+                        checked={autoRefresh}
+                        onCheckedChange={handleAutoRefreshChange}
+                      />
+                    </div>
                   </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowScanConfigDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => setShowScanConfigDialog(false)}>
+                      Save Changes
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
 
@@ -315,21 +364,48 @@ export default function StealthAudit() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Configure Security Level</DialogTitle>
+                    <DialogTitle>Security Configuration</DialogTitle>
                     <DialogDescription>
-                      Select the security level for analysis
+                      Configure security levels and rules
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <RadioGroup value={securityLevel} onValueChange={handleSecurityLevelChange}>
-                      {["Standard", "Enhanced", "Enterprise Grade", "Military Grade"].map((level) => (
-                        <div key={level} className="flex items-center space-x-2">
-                          <RadioGroupItem value={level} id={level} />
-                          <Label htmlFor={level}>{level}</Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
+                  <div className="space-y-6 py-4">
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-sm">Security Level</h4>
+                      <RadioGroup value={securityLevel} onValueChange={handleSecurityLevelChange}>
+                        {["Standard", "Enhanced", "Enterprise Grade", "Military Grade"].map((level) => (
+                          <div key={level} className="flex items-center space-x-2">
+                            <RadioGroupItem value={level} id={level} />
+                            <Label htmlFor={level}>{level}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-sm">Additional Security Options</h4>
+                      <div className="space-y-2">
+                        {[
+                          "Enable Deep Packet Inspection",
+                          "Use Advanced Threat Detection",
+                          "Apply Zero Trust Policy",
+                          "Enable Audit Logging"
+                        ].map((option) => (
+                          <div key={option} className="flex items-center justify-between">
+                            <Label htmlFor={option}>{option}</Label>
+                            <Switch id={option} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setShowSecurityDialog(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => setShowSecurityDialog(false)}>
+                      Apply Security Settings
+                    </Button>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
