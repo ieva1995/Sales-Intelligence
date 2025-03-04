@@ -3,10 +3,10 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import {
   BarChart2,
-  ShoppingBag,
   Users,
   MessageSquare,
   FileText,
+  ShoppingBag,
   Zap,
   TrendingUp,
   Database,
@@ -19,17 +19,6 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const libraryItems = [
-  { label: "Templates", href: "/library/templates" },
-  { label: "Meetings Scheduler", href: "/library/meetings" },
-  { label: "Files", href: "/library/files" },
-  { label: "Documents", href: "/library/documents" },
-  { label: "Google Trends Explorer", href: "/library/trends" },
-  { label: "Playbooks", href: "/library/playbooks" },
-  { label: "Snippets", href: "/library/snippets" },
-  { label: "Coaching Playlists", href: "/library/coaching" },
-];
-
 const mainNavItems = [
   { href: "/", icon: BarChart2, label: "Dashboard" },
   { href: "/crm", icon: Users, label: "CRM" },
@@ -39,7 +28,7 @@ const mainNavItems = [
   { href: "/automations", icon: Zap, label: "Automations" },
   { href: "/reporting", icon: TrendingUp, label: "Reporting" },
   { href: "/data", icon: Database, label: "Data Management" },
-  { href: "/library", icon: Library, label: "Library", submenuItems: libraryItems },
+  { href: "/library", icon: Library, label: "Library" },
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
@@ -60,50 +49,22 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         <nav className="space-y-1">
-          {mainNavItems.map((item) => {
-            const isActive = location === item.href;
-            const isLibrary = item.label === "Library";
-            const showSubmenu = isLibrary && (location.startsWith("/library") || isOpen);
-
-            return (
-              <div key={item.label}>
-                <Link href={item.href}>
-                  <a
-                    className={cn(
-                      "flex items-center px-6 py-3 text-sm font-medium",
-                      isActive
-                        ? "text-white bg-slate-700"
-                        : "text-gray-300 hover:text-white hover:bg-slate-700/50"
-                    )}
-                    onClick={onClose}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    <span>{item.label}</span>
-                  </a>
-                </Link>
-
-                {showSubmenu && item.submenuItems && (
-                  <div className="pl-4 py-2 space-y-1">
-                    {item.submenuItems.map((subItem) => (
-                      <Link key={subItem.label} href={subItem.href}>
-                        <a
-                          className={cn(
-                            "block px-6 py-2 text-sm",
-                            location === subItem.href
-                              ? "text-white bg-slate-700"
-                              : "text-gray-300 hover:text-white hover:bg-slate-700/50"
-                          )}
-                          onClick={onClose}
-                        >
-                          {subItem.label}
-                        </a>
-                      </Link>
-                    ))}
-                  </div>
+          {mainNavItems.map((item) => (
+            <Link key={item.label} href={item.href}>
+              <a
+                className={cn(
+                  "flex items-center px-6 py-3 text-sm font-medium",
+                  location === item.href
+                    ? "text-white bg-slate-700"
+                    : "text-gray-300 hover:text-white hover:bg-slate-700/50"
                 )}
-              </div>
-            );
-          })}
+                onClick={onClose}
+              >
+                <item.icon className="mr-3 h-5 w-5" />
+                <span>{item.label}</span>
+              </a>
+            </Link>
+          ))}
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
