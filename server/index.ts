@@ -110,10 +110,8 @@ process.on('unhandledRejection', (reason, promise) => {
       // Implement a healthcheck timeout to give the server more time to start
       const healthcheckTimeout = 5000; // 5 seconds timeout for server health check
 
-      const serverInstance = server.listen({
-        port,
-        host: "0.0.0.0",
-        reusePort: true,
+      const serverInstance = server.listen(port, "0.0.0.0", () => {
+        console.log(`Server is running at http://0.0.0.0:${port}`);
       });
 
       serverInstance.on('listening', () => {
