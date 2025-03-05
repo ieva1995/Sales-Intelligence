@@ -1,7 +1,5 @@
 import express from 'express';
-import { shopifyApi } from '@shopify/shopify-api';
-// Assuming LATEST_API_VERSION and restResources are defined elsewhere.  Add import if necessary.
-// Example: import { LATEST_API_VERSION, restResources } from './shopify-config';
+import { shopifyApi, LATEST_API_VERSION, restResources } from '@shopify/shopify-api';
 
 const router = express.Router();
 
@@ -34,8 +32,10 @@ if (hasShopifyCredentials) {
       hostName: (process.env.SHOPIFY_SHOP_DOMAIN || '').replace(/^https?:\/\//, ''),
       scopes: ['read_products', 'read_orders', 'read_customers'],
       isEmbeddedApp: false,
-      apiVersion: LATEST_API_VERSION, // Update to a stable version, ideally dynamically fetched
-      restResources
+      apiVersion: LATEST_API_VERSION,
+      restResources,
+      hostScheme: 'https',
+      isCustomStoreApp: true
     };
 
     shopifyClient = shopifyApi(shopifyConfig);
