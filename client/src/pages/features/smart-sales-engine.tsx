@@ -496,11 +496,11 @@ export default function SmartSalesEngine() {
               { product: 'Enterprise Package', stock: 'low' }
             ],
             priceChanges: [
-              { 
-                product: 'Enterprise License', 
-                oldPrice: 599, 
-                newPrice: 649, 
-                changeDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString() 
+              {
+                product: 'Enterprise License',
+                oldPrice: 599,
+                newPrice: 649,
+                changeDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
               }
             ],
             collectedAt: new Date().toISOString()
@@ -851,7 +851,7 @@ export default function SmartSalesEngine() {
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-slate-400">Coverage</span>
-                            <span<span className="text-sm">3 Competitors</span>
+                            <span className="text-sm">3 Competitors</span>
                           </div>
                         </div>
                         <div className="bg-slate-800 p-3 rounded-lg">
@@ -867,8 +867,8 @@ export default function SmartSalesEngine() {
                       </div>
 
                       <div className="pt-3">
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           onClick={() => setActiveTab("deep-learning")}
                           className="w-full"
                         >
@@ -894,7 +894,7 @@ export default function SmartSalesEngine() {
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
                     <div className="md:col-span-3">
                       <Label htmlFor="targetAudience" className="text-sm font-medium mb-2 block">Target Audience</Label>
-                      <Input 
+                      <Input
                         id="targetAudience"
                         value={targetAudience}
                         onChange={(e) => setTargetAudience(e.target.value)}
@@ -902,8 +902,8 @@ export default function SmartSalesEngine() {
                       />
                     </div>
                     <div className="flex items-end">
-                      <Button 
-                        onClick={generatePredictiveStrategy} 
+                      <Button
+                        onClick={generatePredictiveStrategy}
                         disabled={isLoading}
                         className="w-full"
                       >
@@ -965,8 +965,8 @@ export default function SmartSalesEngine() {
                                   <span>Conversion Rate</span>
                                   <span>{(predictiveStrategy.estimatedConversionRate * 100).toFixed(1)}%</span>
                                 </div>
-                                <Progress 
-                                  value={predictiveStrategy.estimatedConversionRate * 100} 
+                                <Progress
+                                  value={predictiveStrategy.estimatedConversionRate * 100}
                                   className="h-2"
                                 />
                               </div>
@@ -974,8 +974,8 @@ export default function SmartSalesEngine() {
                                 <span className="text-xs text-slate-400 mr-2">Suggested Timing:</span>
                                 <Badge className="bg-blue-600">
                                   {predictiveStrategy.suggestedTiming === 'immediate' ? 'Immediate' :
-                                   predictiveStrategy.suggestedTiming === 'thisWeek' ? 'This Week' :
-                                   predictiveStrategy.suggestedTiming === 'thisMonth' ? 'This Month' : 'Next Quarter'}
+                                    predictiveStrategy.suggestedTiming === 'thisWeek' ? 'This Week' :
+                                    predictiveStrategy.suggestedTiming === 'thisMonth' ? 'This Month' : 'Next Quarter'}
                                 </Badge>
                               </div>
                             </div>
@@ -1004,8 +1004,8 @@ export default function SmartSalesEngine() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {aiTools.filter(tool => !tool.isEnterprise).map(tool => (
-                    <div 
-                      key={tool.id} 
+                    <div
+                      key={tool.id}
                       className="bg-slate-800 rounded-lg p-4 border border-slate-700 hover:border-blue-500 transition-all cursor-pointer"
                     >
                       <div className="flex items-start">
@@ -1034,8 +1034,8 @@ export default function SmartSalesEngine() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {enterpriseTools.map(tool => (
-                    <div 
-                      key={tool.id} 
+                    <div
+                      key={tool.id}
                       className="bg-slate-800 rounded-lg p-4 border border-slate-700 hover:border-purple-500 transition-all cursor-pointer"
                     >
                       <div className="flex items-start">
@@ -1068,7 +1068,7 @@ export default function SmartSalesEngine() {
                       <Network className="h-5 w-5 mr-2 text-blue-500" />
                       Deep Learning Core
                     </div>
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={trainDeepLearningCore}
                       disabled={isTraining}
@@ -1120,8 +1120,8 @@ export default function SmartSalesEngine() {
                       <div>
                         <h3 className="text-sm font-medium mb-2">Accuracy Score</h3>
                         <div className="flex items-center">
-                          <Progress 
-                            value={deepLearningMetrics.accuracyScore * 100} 
+                          <Progress
+                            value={deepLearningMetrics.accuracyScore * 100}
                             className="h-2 flex-1"
                           />
                           <span className="ml-2 text-sm font-medium">
@@ -1246,8 +1246,8 @@ export default function SmartSalesEngine() {
                                         <div className="flex items-center">
                                           <span className="text-xs text-slate-400 mr-2">{trend.volume.toLocaleString()}</span>
                                           <Badge className={`
-                                            ${trend.trend === 'up' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                                              trend.trend === 'down' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 
+                                            ${trend.trend === 'up' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                                              trend.trend === 'down' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' :
                                               'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'}
                                           `}>
                                             {trend.trend}
@@ -1268,13 +1268,13 @@ export default function SmartSalesEngine() {
                                         <div key={i} className="flex justify-between items-center text-sm">
                                           <span>{stock.product}</span>
                                           <Badge className={`
-                                            ${stock.stock === 'high' ? 'bg-green-900 text-green-300' : 
-                                              stock.stock === 'medium' ? 'bg-blue-900 text-blue-300' : 
-                                              stock.stock === 'low' ? 'bg-amber-900 text-amber-300' : 
-                                              'bg-red-900 text-red-300'} 
+                                            ${stock.stock === 'high' ? 'bg-green-900 text-green-300' :
+                                              stock.stock === 'medium' ? 'bg-blue-900 text-blue-300' :
+                                              stock.stock === 'low' ? 'bg-amber-900 text-amber-300' :
+                                              'bg-red-900 text-red-300'}
                                             px-2 py-0.5 text-xs`}
                                           >
-                                             {stock.stock}
+                                            {stock.stock}
                                           </Badge>
                                         </div>
                                       ))}
@@ -1366,8 +1366,8 @@ export default function SmartSalesEngine() {
                           <div>
                             <h4 className="text-sm font-medium text-pink-400 mb-2">Emotional Sentiment</h4>
                             <Badge className={`
-                              ${customerBehavior.emotionalSentiment === 'positive' ? 'bg-green-900 text-green-300' : 
-                                customerBehavior.emotionalSentiment === 'negative' ? 'bg-red-900 text-red-300' : 
+                              ${customerBehavior.emotionalSentiment === 'positive' ? 'bg-green-900 text-green-300' :
+                                customerBehavior.emotionalSentiment === 'negative' ? 'bg-red-900 text-red-300' :
                                 'bg-blue-900 text-blue-300'}
                             `}>
                               {customerBehavior.emotionalSentiment}
@@ -1381,8 +1381,8 @@ export default function SmartSalesEngine() {
                       </div>
 
                       <div className="mb-5">
-                        <Button 
-                          onClick={generateEmotionalTrigger} 
+                        <Button
+                          onClick={generateEmotionalTrigger}
                           disabled={isLoading}
                           className="w-full sm:w-auto"
                         >
@@ -1541,8 +1541,8 @@ export default function SmartSalesEngine() {
                                   <span>Score</span>
                                   <span>{crossPlatformAnalysis.conversionIntent}%</span>
                                 </div>
-                                <Progress 
-                                  value={crossPlatformAnalysis.conversionIntent} 
+                                <Progress
+                                  value={crossPlatformAnalysis.conversionIntent}
                                   className="h-2"
                                 />
                               </div>
