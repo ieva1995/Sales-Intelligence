@@ -17,6 +17,13 @@ import {
   LineChart,
   Activity,
   Zap,
+  Target,
+  ClipboardCheck,
+  UserPlus,
+  Mail
+  LineChart,
+  Activity,
+  Zap,
   Target as Milestone,
   ClipboardCheck,
   UserPlus,
