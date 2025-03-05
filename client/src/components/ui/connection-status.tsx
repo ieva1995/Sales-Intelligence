@@ -97,7 +97,7 @@ export function ConnectionStatus({
         {statusMessage}
       </span>
 
-      {(connectionError || isOfflineMode) && connectionAttempts < maxAttempts && (
+      {(connectionError || isOfflineMode) && (
         <Button
           variant="outline"
           size="sm"

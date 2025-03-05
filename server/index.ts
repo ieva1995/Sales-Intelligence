@@ -38,6 +38,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// Global promise rejection handler
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 (async () => {
   try {
     // Initialize database tables
