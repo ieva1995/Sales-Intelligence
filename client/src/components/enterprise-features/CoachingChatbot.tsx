@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Send, Bot, Zap, User, BookOpen, Award, Settings } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import axios from 'axios';
 
 interface Message {
   id: string;
@@ -25,7 +26,7 @@ export default function CoachingChatbot() {
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   const coachingTopics = [
     { 
       id: 'objections', 
@@ -54,10 +55,10 @@ export default function CoachingChatbot() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  
-  const handleSendMessage = () => {
+
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
-    
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -65,13 +66,53 @@ export default function CoachingChatbot() {
       sender: 'user',
       timestamp: new Date()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setMessage('');
     setIsTyping(true);
-    
-    // Simulate bot response
-    setTimeout(() => {
+
+    try {
+      // Send message to the ChatGPT API
+      const response = await axios.post('/api/chat', { message });
+
+      // Also analyze sentiment for personalized coaching
+      const sentimentResponse = await axios.post('/api/autonomous-sales/sentiment', { message });
+
+      // Get sentiment
+      const sentiment = sentimentResponse.data.sentiment;
+
+      // Add AI coach response
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        content: response.data.reply,
+        sender: 'bot',
+        timestamp: new Date()
+      };
+
+      // Add slight delay to simulate typing
+      setTimeout(() => {
+        setMessages(prev => [...prev, botMessage]);
+        setIsTyping(false);
+
+        // Show sentiment-based toast for coaching feedback
+        if (sentiment === 'negative') {
+          toast({
+            title: "Sentiment Analysis",
+            description: "I notice you seem frustrated. Let's work through this challenge together.",
+            variant: "default"
+          });
+        } else if (sentiment === 'positive') {
+          toast({
+            title: "Sentiment Analysis",
+            description: "Great enthusiasm! Let's build on this positive energy.",
+            variant: "default"
+          });
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Fallback to pre-defined responses if API fails
       const responses = [
         "That's a great question! When dealing with this scenario, I recommend focusing on value rather than price. Could you tell me more about the specific objection you're facing?",
         "Based on my analysis of top performers, the most effective approach is to use open-ended questions that encourage prospects to elaborate on their needs. Would you like me to provide some examples?",
@@ -79,19 +120,21 @@ export default function CoachingChatbot() {
         "Looking at industry benchmarks, your conversion rate is above average, but your deal cycle could be shortened. Have you considered implementing a more streamlined qualification process?",
         "One technique that's proven effective is the 'feel, felt, found' method for addressing concerns. Would you like me to explain how to apply this to your specific situation?"
       ];
-      
+
       const botMessage: Message = {
         id: Date.now().toString(),
         content: responses[Math.floor(Math.random() * responses.length)],
         sender: 'bot',
         timestamp: new Date()
       };
-      
-      setMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
+
+      setTimeout(() => {
+        setMessages(prev => [...prev, botMessage]);
+        setIsTyping(false);
+      }, 1000);
+    }
   };
-  
+
   const handleTopicClick = (topic: string) => {
     // Simulate selecting a coaching topic
     const topicQuestions = {
@@ -99,10 +142,10 @@ export default function CoachingChatbot() {
       'closing': "What closing techniques work best for high-value deals?",
       'negotiation': "How can I negotiate better terms without reducing price?"
     };
-    
+
     setMessage(topicQuestions[topic as keyof typeof topicQuestions] || '');
   };
-  
+
   return (
     <Card className="border-0 bg-slate-800/60">
       <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 sm:p-6">
@@ -125,7 +168,7 @@ export default function CoachingChatbot() {
                 <Settings className="h-4 w-4" />
               </Button>
             </div>
-            
+
             <div className="space-y-2">
               {coachingTopics.map(topic => (
                 <Button
@@ -146,7 +189,7 @@ export default function CoachingChatbot() {
                 </Button>
               ))}
             </div>
-            
+
             <div className="mt-6">
               <h3 className="font-medium text-white mb-3">Your Performance</h3>
               <div className="bg-slate-800 p-3 rounded-md">
@@ -157,7 +200,7 @@ export default function CoachingChatbot() {
                 <div className="w-full bg-slate-600 rounded-full h-1.5 mb-4">
                   <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: '32%' }}></div>
                 </div>
-                
+
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-slate-400">Deal Size</span>
                   <span className="text-sm font-medium text-white">$8,450</span>
@@ -165,7 +208,7 @@ export default function CoachingChatbot() {
                 <div className="w-full bg-slate-600 rounded-full h-1.5 mb-4">
                   <div className="bg-green-500 h-1.5 rounded-full" style={{ width: '67%' }}></div>
                 </div>
-                
+
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm text-slate-400">Follow-ups</span>
                   <span className="text-sm font-medium text-white">4.2/week</span>
@@ -176,7 +219,7 @@ export default function CoachingChatbot() {
               </div>
             </div>
           </div>
-          
+
           <div className="flex flex-col md:col-span-3">
             <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: 'calc(600px - 70px)' }}>
               <div className="space-y-4">
@@ -223,11 +266,11 @@ export default function CoachingChatbot() {
                     </div>
                   </div>
                 )}
-                
+
                 <div ref={messagesEndRef} />
               </div>
             </div>
-            
+
             <div className="p-4 border-t border-slate-600">
               <div className="flex gap-2">
                 <Input 

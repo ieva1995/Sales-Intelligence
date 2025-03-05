@@ -15,6 +15,7 @@ import stripeRouter from './routes/stripe';
 import authRouter from './routes/auth'; 
 import { newsService } from "./services/newsService";
 import { recommendationService } from "./services/recommendationService"; 
+import autonomousSalesRouter from './routes/autonomousSales'; // Import the new router
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -69,6 +70,7 @@ export async function registerRoutes(app: Express) {
   app.use(stripeRouter); 
   // Temporarily comment out Shopify router to get app running
   // app.use('/api/shopify', createShopifyRouter(app.constructor)); 
+  app.use(autonomousSalesRouter); // Register the autonomous sales router
 
   // Add a simple mock Shopify endpoint to avoid client-side errors
   app.get('/api/shopify/*', (req, res) => {
