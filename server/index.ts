@@ -94,7 +94,10 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log('Vite middleware setup complete');
 
     // Return to the standard port 5000 as required by Replit
-    const port = 5000;
+    const port = process.env.PORT || 5000;
+    const maxRetries = 3;
+    let currentRetry = 0;
+    
     console.log(`Using standard port ${port} for Replit applications...`);
 
     // Add a pre-flight check for port availability
