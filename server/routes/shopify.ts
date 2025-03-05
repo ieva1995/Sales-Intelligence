@@ -9,7 +9,7 @@ const shopifyConfig = {
   scopes: ['read_products', 'read_orders', 'read_customers']
 };
 
-const shopify = shopifyApi(shopifyConfig);
+const shopifyClient = shopifyApi(shopifyConfig);
 
 function createSession(accessToken: string, shop: string): any {
   return {
@@ -65,7 +65,7 @@ router.get('/products', async (req, res) => {
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
     const session = createSession(accessToken, shop);
-    const client = new shopify.clients.Rest({ session });
+    const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'products' });
     res.json(response.body);
   } catch (error: any) {
@@ -83,7 +83,7 @@ router.get('/orders', async (req, res) => {
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
     const session = createSession(accessToken, shop);
-    const client = new shopify.clients.Rest({ session });
+    const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'orders' });
     res.json(response.body);
   } catch (error: any) {
@@ -101,7 +101,7 @@ router.get('/customers', async (req, res) => {
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
     const session = createSession(accessToken, shop);
-    const client = new shopify.clients.Rest({ session });
+    const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'customers' });
     res.json(response.body);
   } catch (error: any) {
@@ -128,4 +128,4 @@ router.get('/performance', async (req, res) => {
   }
 });
 
-export default router;
+export { router as shopify };
