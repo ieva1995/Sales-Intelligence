@@ -1,0 +1,59 @@
+
+> rest-express@1.0.0 dev
+Port 5000 is now available && tsx server/index.ts
+[shopify-api/INFO] version 11.9.0, environment Node v20.18.1
+[shopify-api/INFO] Future flag lineItemBilling is disabled.
+
+  Enable this flag to use the new billing API, that supports multiple line items per plan.
+
+[shopify-api/INFO] Future flag customerAddressDefaultFix is disabled.
+
+  Enable this flag to change the CustomerAddress classes to expose a 'is_default' property instead of 'default' when fetching data.
+
+[shopify-api/INFO] Future flag unstable_managedPricingSupport is disabled.
+
+  Enable this flag to support managed pricing, so apps can check for payments without needing a billing config. Learn more at https://shopify.dev/docs/apps/launch/billing/managed-pricing
+
+Shopify API client initialized successfully
+NewsService initialized
+Starting news polling service
+Initializing database tables...
+Creating database tables if they do not exist...
+Database connection successful
+Database tables created successfully
+Database tables initialized successfully
+Seeding initial users...
+Users already exist, skipping seeding
+Users seeded successfully
+Registering routes and creating HTTP server...
+WebSocket server initialized
+WebSocket server for device connections initialized on path /ws
+WebSocket server initialized on path /ws-feed
+Routes registered successfully
+Setting up Vite middleware...
+Vite middleware setup complete
+Using standard port 5000 for Replit applications...
+Preparing to start server on port 5000...
+Attempt #1 to bind to port 5000...
+6:08:18 PM [express] Server running on port 5000
+Error:   Failed to scan for dependencies from entries:
+  /home/runner/workspace/client/index.html
+
+  ✘ [ERROR] Expected ";" but found "edited"
+
+    client/src/pages/landing.tsx:1:15:
+      1 │ Reasoning: The edited snippet provides a revised footer section.  T...
+        │                ~~~~~~
+        ╵                ;
+
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:945:25
+    at runOnEndCallbacks (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1315:45)
+    at buildResponseToResult (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:943:7)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:955:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:954:54)
+    at handleRequest (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:647:17)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:672:7)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
