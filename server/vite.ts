@@ -27,12 +27,28 @@ export async function setupVite(app: Express, server: Server) {
     middlewareMode: true,
     hmr: { 
       server,
-      timeout: 10000,
+      timeout: 30000,
       port: 24678,
       protocol: 'ws',
-      host: '0.0.0.0'
+      host: '0.0.0.0',
+      clientPort: 443,
+      path: '/hmr/',
+      reconnect: true,
+      maxRetries: 10,
+      heartbeat: 5000
     },
     allowedHosts: true,
+    server: {
+      watch: {
+        ignored: ['**/node_modules/**', '**/.git/**'],
+        usePolling: true,
+        interval: 1000,
+      },
+      hmr: {
+        overlay: true,
+        errorOverlay: true,
+      }
+    }
   };
 
   const vite = await createViteServer({

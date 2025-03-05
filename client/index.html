@@ -2,6 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script type="module">
+      window.addEventListener('vite:ws:error', () => {
+        console.log('Vite WebSocket error, attempting reconnect...');
+        setTimeout(() => window.location.reload(), 1000);
+      });
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
   </head>
   <body>
