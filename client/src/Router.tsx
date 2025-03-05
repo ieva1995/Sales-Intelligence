@@ -47,11 +47,13 @@ import { useAuth } from "./hooks/use-auth";
 import PageTransition from "./components/PageTransition";
 import AppMobileMenu from "./components/AppMobileMenu";
 import EnterpriseToolbar from "./components/EnterpriseToolbar"; // Import the EnterpriseToolbar component
+import SalesPerformanceToolbar from "./components/enterprise-features/SalesPerformanceToolbar"; // Import the new SalesPerformanceToolbar
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
+  const [showSalesToolbar, setShowSalesToolbar] = useState(false);
 
   // Check if the current path should display the app shell (sidebar and header)
   const shouldShowAppShell = () => {
@@ -59,6 +61,21 @@ export default function Router() {
     // Don't show app shell on login page or root path (landing page)
     return pathname !== '/login' && pathname !== '/';
   };
+
+  // Check if current path should show the Sales Performance Toolbar
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    // Show toolbar on sales-related pages and S.L.A.S.E
+    const salesPages = [
+      '/crm', 
+      '/features/smart-sales-engine', 
+      '/features/deal-predictor', 
+      '/commerce',
+      '/contacts'
+    ];
+    const shouldShow = salesPages.some(page => pathname.startsWith(page));
+    setShowSalesToolbar(shouldShow);
+  }, []);
 
   // If the route requires authentication but user is not authenticated, redirect to login page
   useEffect(() => {
@@ -100,6 +117,9 @@ export default function Router() {
 
           {/* Mobile Menu - Only shown for authenticated users */}
           <AppMobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+
+          {/* Sales Performance Toolbar - Only shown on specific pages */}
+          {isAuthenticated && showSalesToolbar && <SalesPerformanceToolbar />}
         </>
       )}
 
