@@ -14,6 +14,7 @@ import {
   Settings,
   Sparkles,
   Rocket,
+  PieChart,
 } from "lucide-react";
 import NavigationPreview from "./NavigationPreview";
 
@@ -37,6 +38,7 @@ const mainNavItems = [
 const premiumFeatures = [
   { href: "/features/smart-tools", icon: Sparkles, label: "Advanced Sales Tools" },
   { href: "/features/enterprise-turbo", icon: Rocket, label: "Enterprise Turbo" },
+  { href: "/features/analytics-suite", icon: PieChart, label: "Analytics Suite" },
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
