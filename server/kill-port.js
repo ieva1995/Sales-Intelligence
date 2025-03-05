@@ -1,4 +1,3 @@
-
 import { createServer } from 'net';
 import { exit } from 'process';
 
@@ -6,7 +5,7 @@ async function killPort(port) {
   return new Promise((resolve) => {
     // First try to create a server on the port
     const server = createServer();
-    
+
     server.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
         console.log(`Port ${port} is busy. Attempting to free it...`);
