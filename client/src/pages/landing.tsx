@@ -18,7 +18,8 @@ import {
   MessageCircle,
   BookOpen,
   BarChart2,
-  PieChart
+  PieChart,
+  TrendingUp
 } from "lucide-react";
 
 export default function LandingPage() {
@@ -475,58 +476,58 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section id="cta" className="py-24 bg-blue-600 text-white">
+      {/* CTA Section - With proper padding and responsive design */}
+      <section id="cta" className="py-24 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                Ready to transform your sales process?
-              </h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-xl">
-                Schedule a personalized demo to see how SalesBoost AI can help your team drive more revenue with less effort.
-              </p>
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button 
-                  size="lg" 
-                  className="bg-white text-blue-600 hover:bg-blue-50 text-lg font-medium"
-                  onClick={() => setLocation('/login')}
-                >
-                  Request Demo
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="border-white text-white hover:bg-blue-700 text-lg font-medium"
-                  onClick={() => setLocation('/login')}
-                >
-                  Sign In
-                </Button>
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to transform your sales process?</h2>
+                <p className="text-xl text-blue-100 mb-8">
+                  Join thousands of sales professionals who use SalesBoost AI to close more deals and grow revenue.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    size="lg" 
+                    className="bg-white text-blue-700 hover:bg-blue-50 text-lg font-medium"
+                    onClick={() => setLocation('/login')}
+                  >
+                    Request Demo
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-white text-white hover:bg-blue-700 text-lg font-medium"
+                    onClick={() => setLocation('/login')}
+                  >
+                    Sign In
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            <div className="bg-blue-500/30 p-8 rounded-xl backdrop-blur-sm">
-              <h3 className="text-2xl font-bold mb-6">What you'll see in your demo</h3>
-              <ul className="space-y-4">
-                {[
-                  "How SalesBoost AI integrates with your existing tools",
-                  "Personalized workflows tailored to your sales process",
-                  "AI-powered insights that drive more closed deals",
-                  "ROI calculator based on your team's specific metrics",
-                  "Implementation timeline and customer success plan"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start">
-                    <CheckCircle className="h-5 w-5 text-blue-200 mt-0.5 mr-3 flex-shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="bg-blue-500/30 p-8 rounded-xl backdrop-blur-sm">
+                <h3 className="text-2xl font-bold mb-6">What you'll see in your demo</h3>
+                <ul className="space-y-4">
+                  {[
+                    "How SalesBoost AI integrates with your existing tools",
+                    "Personalized workflows tailored to your sales process",
+                    "AI-powered insights that drive more closed deals",
+                    "ROI calculator based on your team's specific metrics",
+                    "Implementation timeline and customer success plan"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-blue-200 mt-0.5 mr-3 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer with improved structure and consistent padding */}
       <footer className="bg-slate-900 text-white py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-12">
