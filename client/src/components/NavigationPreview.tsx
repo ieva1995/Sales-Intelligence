@@ -103,12 +103,14 @@ interface NavigationPreviewProps {
   path: string;
   isVisible: boolean;
   position?: { x: number; y: number };
+  data?: PreviewData; // Added the data prop as optional
 }
 
-const NavigationPreview = ({ path, isVisible, position }: NavigationPreviewProps) => {
+const NavigationPreview = ({ path, isVisible, position, data }: NavigationPreviewProps) => {
   // Extract the main section from the path
   const section = path.split("/")[1] || "dashboard";
-  const previewData = navigationPreviews[section] || {
+  // Use the provided data or fall back to the default preview data
+  const previewData = data || navigationPreviews[section] || {
     title: "SalesBoost AI",
     description: "Navigate to view detailed information and analytics",
     stats: [
