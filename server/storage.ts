@@ -21,6 +21,16 @@ import { eq, and, desc, sql, lt, isNull, or } from "drizzle-orm";
 import crypto from 'crypto';
 
 export interface IStorage {
+  // AI Sales Engine (SLASE)
+  getSalesOpportunities(): Promise<any[]>;
+  predictSalesOutcome(opportunityData: any): Promise<any>;
+  generateSalesStrategy(customerId: string): Promise<any>;
+  
+  // GhostGuard Security
+  logSecurityEvent(event: any): Promise<void>;
+  getSecurityAlerts(): Promise<any[]>;
+  validateTransaction(txData: any): Promise<boolean>;
+  
   // Existing methods
   getTrends(): Promise<Trend[]>;
   getTrendByKeyword(keyword: string): Promise<Trend | undefined>;
@@ -77,6 +87,84 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // AI Sales Engine (SLASE)
+  async getSalesOpportunities(): Promise<any[]> {
+    try {
+      return await db.select().from(predictions)
+        .where(sql`type = 'sales_opportunity'`);
+    } catch (error) {
+      console.error('Error fetching sales opportunities:', error);
+      return [];
+    }
+  }
+
+  async predictSalesOutcome(opportunityData: any): Promise<any> {
+    try {
+      const [prediction] = await db.insert(predictions)
+        .values({
+          type: 'sales_prediction',
+          data: opportunityData,
+          createdAt: new Date()
+        })
+        .returning();
+      return prediction;
+    } catch (error) {
+      console.error('Error creating sales prediction:', error);
+      throw new Error('Failed to predict sales outcome');
+    }
+  }
+
+  async generateSalesStrategy(customerId: string): Promise<any> {
+    try {
+      const [customer] = await db.select().from(customers)
+        .where(eq(customers.id, customerId));
+      return {
+        customerId,
+        strategy: `AI generated strategy for ${customer.name}`,
+        generatedAt: new Date()
+      };
+    } catch (error) {
+      console.error('Error generating sales strategy:', error);
+      throw new Error('Failed to generate sales strategy');
+    }
+  }
+
+  // GhostGuard Security
+  async logSecurityEvent(event: any): Promise<void> {
+    try {
+      await db.insert(alerts).values({
+        type: 'security',
+        message: event.message,
+        data: event,
+        createdAt: new Date(),
+        active: true
+      });
+    } catch (error) {
+      console.error('Error logging security event:', error);
+    }
+  }
+
+  async getSecurityAlerts(): Promise<any[]> {
+    try {
+      return await db.select().from(alerts)
+        .where(eq(alerts.type, 'security'))
+        .orderBy(desc(alerts.createdAt));
+    } catch (error) {
+      console.error('Error fetching security alerts:', error);
+      return [];
+    }
+  }
+
+  async validateTransaction(txData: any): Promise<boolean> {
+    try {
+      // Implement GhostGuard transaction validation logic
+      return true;
+    } catch (error) {
+      console.error('Error validating transaction:', error);
+      return false;
+    }
+  }
+
   async getTrends(): Promise<Trend[]> {
     try {
       return await db.select().from(trends);
