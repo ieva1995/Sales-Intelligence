@@ -41,9 +41,11 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "./hooks/use-auth";
 import PageTransition from "./components/PageTransition";
+import AppMobileMenu from "./components/AppMobileMenu";
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, isAuthenticated, isLoading } = useAuth();
 
   // Check if the current path should display the app shell (sidebar and header)
@@ -80,13 +82,16 @@ export default function Router() {
             variant="ghost"
             size="icon"
             className="fixed top-4 left-4 md:hidden z-50"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsMobileMenuOpen(true)}
           >
             <Menu className="h-6 w-6" />
           </Button>
 
           <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
           <Header />
+
+          {/* Mobile Menu - Only shown for authenticated users */}
+          <AppMobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         </>
       )}
 

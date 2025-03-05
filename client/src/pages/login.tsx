@@ -836,7 +836,8 @@ const TokenLogin = () => {
                 className="text-xs text-slate-500 hover:text-slate-400"
                 onClick={() => setShowLoginHelp(true)}
               >
-                Show login instructions
+                <Info className="h-3 w-3 mr-1" />
+                How does this work?
               </Button>
             </div>
           )}
@@ -886,9 +887,9 @@ const TokenLogin = () => {
                     />
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.email && (
-                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                      <div className="flex items-center mt-1 text-red-500 text-xs">
                         <AlertCircle className="h-3 w-3 mr-1" />
-                        {errors.email}
+                        <span>{errors.email}</span>
                       </div>
                     )}
                   </div>
@@ -904,8 +905,8 @@ const TokenLogin = () => {
                 </Button>
 
                 <div className="text-center mt-4">
-                  <p className="text-sm text-slate-400">
-                    After receiving the token, click the "Token" tab above
+                  <p className="text-xs text-slate-500">
+                    By continuing, you agree to our Terms of Service and Privacy Policy.
                   </p>
                 </div>
               </>
@@ -915,26 +916,23 @@ const TokenLogin = () => {
                 <div className="my-2 p-3 rounded-lg bg-blue-900/20 border border-blue-800/30 flex items-center">
                   <Mail className="h-5 w-5 text-blue-400 mr-2" />
                   <div>
-                    <p className="text-sm text-blue-200">Token sent to:</p>
-                    <p className="text-sm font-medium text-blue-300">{email}</p>
+                    <p className="text-sm text-blue-300">Check your email for a login token:</p>
+                    <p className="text-xs text-blue-200">{email}</p>
+                    <div className="flex items-center mt-1">
+                      <Clock className="h-3 w-3 text-blue-300 mr-1" />
+                      <span className="text-xs text-blue-300">Token expires in {formatCountdown()}</span>
+                    </div>
                   </div>
                 </div>
 
-                {countdown > 0 && (
-                  <div className="flex items-center justify-center space-x-2 text-amber-400">
-                    <Clock className="h-4 w-4" />
-                    <p className="text-sm">Token expires in: {formatCountdown()}</p>
-                  </div>
-                )}
-
                 <div>
-                  <label className="text-sm font-medium text-slate-300 mb-1 block">Enter Verification Token</label>
+                  <label className="text-sm font-medium text-slate-300 mb-1 block">Verification Token</label>
                   <div className="relative">
                     <Input
                       type="text"
                       value={token}
                       onChange={(e) => {
-                        setToken(e.target.value);
+                        setToken(e.target.value.toUpperCase());
                         if (errors.token) {
                           setErrors({ ...errors, token: '' });
                         }
@@ -944,9 +942,9 @@ const TokenLogin = () => {
                     />
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     {errors.token && (
-                      <div className="text-red-500 text-xs mt-1 flex items-center">
+                      <div className="flex items-center mt-1 text-red-500 text-xs">
                         <AlertCircle className="h-3 w-3 mr-1" />
-                        {errors.token}
+                        <span>{errors.token}</span>
                       </div>
                     )}
                   </div>
@@ -995,16 +993,11 @@ const TokenLogin = () => {
 
 export default function Login() {
   const [location] = useLocation();
-  const { isAuthenticated } = useAuth();
 
-  // If user is already logged in, redirect to dashboard
-  useEffect(() => {
-    if (isAuthenticated) {
-      window.location.href = '/dashboard';
-    }
-  }, [isAuthenticated]);
+  // If we're on the login path, show the login form; otherwise, show the landing page.
+  if (location === '/login') {
+    return <TokenLogin />;
+  }
 
-  // If the URL is exactly '/login', show the login form
-  // Otherwise, show the landing page
-  return location === '/login' ? <TokenLogin /> : <LandingPage />;
+  return <LandingPage />;
 }
