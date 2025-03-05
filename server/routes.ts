@@ -12,24 +12,11 @@ import chatRouter from './routes/chat';
 import stripeRouter from './routes/stripe';
 import shopifyRouter from './routes/shopify';
 import authRouter from './routes/auth'; 
-import deviceRouter from './routes/devices'; // Import the new device routes
-import { setupWebSocketServer } from './websocket'; // Import the WebSocket setup
 import { newsService } from "./services/newsService";
 import { recommendationService } from "./services/recommendationService"; 
-import aiRoutes from './routes/ai';
-import sapRoutes from './routes/sap';
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
-
-  // Setup WebSocket server for device connections
-  try {
-    setupWebSocketServer(httpServer);
-    console.log('WebSocket server for device connections initialized on path /ws');
-  } catch (error) {
-    console.error('Failed to initialize device WebSocket server:', error);
-    // Continue running the REST API even if WebSocket fails
-  }
 
   // Setup WebSocket server for real-time updates with proper error handling
   try {
@@ -81,14 +68,6 @@ export async function registerRoutes(app: Express) {
   app.use(stripeRouter); 
   app.use('/api/shopify', shopifyRouter); 
   app.use(authRouter); 
-  app.use('/api/devices', deviceRouter); // Register the new device routes
-  app.use('/api/ai', aiRoutes);
-  app.use('/api/sap', sapRoutes);
-
-  // API endpoint for network connectivity check
-  app.get('/api/network-check', (req, res) => {
-    res.status(200).json({ status: 'connected' });
-  });
 
   // Middleware to handle database maintenance
   app.use(async (req, res, next) => {

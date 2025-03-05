@@ -1,57 +1,12 @@
 import express, { type Request, Response, NextFunction } from "express";
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import tunnel from 'node-tunnel';
-import cors from 'cors';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
-import hpp from 'hpp';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
-import { createTables } from './createTables';
+import { createTables } from './createTables'; // Added import for database table creation
 
-// Initialize HTTP tunnel
-const tunnelConfig = {
-  host: '0.0.0.0',
-  port: 8000,
-  secure: true
-};
-
-// Error handling will be done at the Express level
 const app = express();
-
-// Rate limiting with higher limits and proper proxy trust
-app.set('trust proxy', 1);
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // increased limit
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: 'Too many requests, please try again in 15 minutes'
-});
-
-// Security middleware
-app.use(helmet());
-app.use(limiter);
-app.use(express.json({ limit: '10kb' })); // Limit body size
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Security headers with relaxed CSP for development
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-
-  // Updated CSP with necessary permissions for modern web applications
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' ws: wss:; object-src 'none'"
-  );
-
-  next();
-});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -128,14 +83,23 @@ app.use((req, res, next) => {
     }
     console.log('Vite middleware setup complete');
 
-    // Define an array of ports to try
-    const ports = [5000, 3000, 8080, 4000];
-    let portIndex = 0;
-    let serverStarted = false;
+    // Return to the standard port 5000 as required by Replit
+    const port = 5000;
+    console.log(`Using standard port ${port} for Replit applications...`);
 
-    // Function to try starting the server on a specific port
-    function tryPort(port: number) {
-      console.log(`Attempting to start server on port ${port}...`);
+    // Add a pre-flight check for port availability
+    console.log(`Preparing to start server on port ${port}...`);
+
+    // Maximum number of retry attempts
+    const maxRetries = 5;
+    // Initial retry delay in milliseconds (3 seconds)
+    const initialRetryDelay = 3000;
+    // Counter for tracking retries
+    let retryCount = 0;
+
+    // Function to start the server with retry logic
+    function startServerWithRetry(retryCount: number, retryDelay: number) {
+      console.log(`Attempt #${retryCount + 1} to bind to port ${port}...`);
 
       // Attempt to start server with better error handling
       server.listen({
@@ -143,35 +107,26 @@ app.use((req, res, next) => {
         host: "0.0.0.0",
         reusePort: true,
       }, () => {
-        serverStarted = true;
         log(`Server running on port ${port}`);
-        console.log(`🚀 Server is running at http://localhost:${port}`);
       });
     }
 
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${ports[portIndex]} is already in use.`);
-        portIndex++;
+        console.error(`Port ${port} is already in use. Please restart your workspace to clear all processes.`);
+        console.error('If the issue persists after restart, please manually kill any process using port 5000.');
 
-        if (portIndex < ports.length) {
-          // Try the next port
-          tryPort(ports[portIndex]);
-        } else {
-          console.error('All ports are in use. Please free a port manually or restart your workspace.');
-          console.error('To free ports, you can run: bash server/kill-port.sh');
-          process.exit(1);
-        }
+        // Exit process after logging clear instructions
+        process.exit(1);
       } else {
         console.error('Server error:', error);
         process.exit(1);
       }
     });
 
-    // Start with the first port
-    tryPort(ports[portIndex]);
-
+    // Start the initial attempt
+    startServerWithRetry(retryCount, initialRetryDelay);
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);

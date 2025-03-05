@@ -96,16 +96,6 @@ export const navigationPreviews: Record<string, PreviewData> = {
       { label: "Low Stock", value: "24", trend: "up" },
       { label: "Top Seller", value: "Premium Plan", trend: "neutral" }
     ]
-  },
-  // Add preview for S.L.A.S.E feature
-  "autonomous-sales-engine": {
-    title: "S.L.A.S.E",
-    description: "Self-Learning Autonomous Sales Engine with advanced AI",
-    stats: [
-      { label: "AI Performance", value: "96.8%", trend: "up" },
-      { label: "Security Level", value: "Maximum", trend: "up" },
-      { label: "Strategy Success", value: "83.5%", trend: "up" }
-    ]
   }
 };
 
@@ -118,10 +108,7 @@ interface NavigationPreviewProps {
 const NavigationPreview = ({ path, isVisible, position }: NavigationPreviewProps) => {
   // Extract the main section from the path
   const section = path.split("/")[1] || "dashboard";
-  // Handle special cases for features
-  const previewKey = path.includes("autonomous-sales-engine") ? "autonomous-sales-engine" : section;
-
-  const previewData = navigationPreviews[previewKey] || {
+  const previewData = navigationPreviews[section] || {
     title: "SalesBoost AI",
     description: "Navigate to view detailed information and analytics",
     stats: [
