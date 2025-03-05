@@ -5,8 +5,12 @@ const router = express.Router();
 
 // Create shopify API client once
 const shopifyConfig = {
-  // Config will be loaded from env vars
-  scopes: ['read_products', 'read_orders', 'read_customers']
+  apiKey: process.env.SHOPIFY_API_KEY || '',
+  apiSecretKey: process.env.SHOPIFY_API_SECRET || '',
+  hostName: process.env.SHOPIFY_SHOP_DOMAIN || '',
+  scopes: ['read_products', 'read_orders', 'read_customers'],
+  isEmbeddedApp: false,
+  apiVersion: '2024-01'
 };
 
 const shopifyClient = shopifyApi(shopifyConfig);
@@ -18,7 +22,7 @@ function createSession(accessToken: string, shop: string): any {
     state: 'active',
     isOnline: false,
     accessToken: accessToken,
-    scope: Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers',
+    scope: shopifyConfig.scopes.join(','),
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     onlineAccessInfo: null,
     isActive: () => true,
@@ -28,7 +32,7 @@ function createSession(accessToken: string, shop: string): any {
       state: 'active',
       isOnline: false,
       accessToken: accessToken,
-      scope: Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers',
+      scope: shopifyConfig.scopes.join(','),
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     })
   };
@@ -45,7 +49,7 @@ router.get('/auth', async (req, res) => {
 
     const authUrl = `https://${shop}/admin/oauth/authorize?` +
       `client_id=${process.env.SHOPIFY_API_KEY}` +
-      `&scope=${Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers'}` +
+      `&scope=${shopifyConfig.scopes.join(',')}` +
       `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
       `&state=${Date.now()}`;
 
@@ -128,4 +132,4 @@ router.get('/performance', async (req, res) => {
   }
 });
 
-export { router as shopify };
+export default router;
