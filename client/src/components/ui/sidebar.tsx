@@ -649,7 +649,6 @@ const SidebarMenuSkeleton = React.forwardRef<
     showIcon?: boolean
   }
 >(({ className, showIcon = false, ...props }, ref) => {
-  // Random width between 50 to 90%.
   const width = React.useMemo(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`
   }, [])
@@ -658,17 +657,22 @@ const SidebarMenuSkeleton = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="menu-skeleton"
-      className={cn("rounded-md h-8 flex gap-2 px-2 items-center", className)}
+      className={cn(
+        "rounded-lg h-8 flex gap-2 px-3 items-center",
+        "bg-gradient-to-r from-slate-800/30 to-transparent",
+        "hover:from-slate-700/40 transition-colors duration-300",
+        className
+      )}
       {...props}
     >
       {showIcon && (
         <Skeleton
-          className="size-4 rounded-md"
+          className="size-4 rounded-full bg-cyan-500/20"
           data-sidebar="menu-skeleton-icon"
         />
       )}
       <Skeleton
-        className="h-4 flex-1 max-w-[--skeleton-width]"
+        className="h-4 flex-1 max-w-[--skeleton-width] rounded-full bg-gradient-to-r from-cyan-500/20 to-slate-700/20"
         data-sidebar="menu-skeleton-text"
         style={
           {
@@ -689,7 +693,10 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5",
+      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-2 border-l-2 border-cyan-500/30 px-3 py-1",
+      "bg-gradient-to-r from-slate-900/20 to-transparent backdrop-blur-sm",
+      "rounded-r-lg shadow-[inset_1px_0_0_rgba(148,163,184,0.1)]",
+      "group-hover:border-cyan-400/40 transition-all duration-300",
       "group-data-[collapsible=icon]:hidden",
       className
     )}
