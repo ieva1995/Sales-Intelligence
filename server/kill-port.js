@@ -1,3 +1,4 @@
+
 import { exec } from 'child_process';
 
 const port = 5000;
@@ -19,7 +20,5 @@ exec(`lsof -i :${port} | grep LISTEN | awk '{print $2}' | xargs -r kill -9`, (er
     } else {
       console.log(`Process using port ${port} killed successfully with fuser`);
     }
-
-    console.log('Now the server should be able to start on port 5000');
   });
 });
