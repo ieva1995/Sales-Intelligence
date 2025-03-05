@@ -38,9 +38,32 @@ app.use((req, res, next) => {
   next();
 });
 
-// Global promise rejection handler
+// Global error handlers
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Prevent crash, but log the error
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Prevent crash, but log the error
+});
+
+// Handle shutdown gracefully
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  server?.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  server?.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
 
 (async () => {

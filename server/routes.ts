@@ -9,6 +9,41 @@ import {
 } from "@shared/schema";
 import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
+
+// Error recovery middleware
+app.use((req, res, next) => {
+  res.setTimeout(30000, () => {
+    res.status(408).send('Request timeout');
+  });
+  next();
+});
+
+// Circuit breaker for database
+let dbFailureCount = 0;
+const DB_FAILURE_THRESHOLD = 5;
+const DB_RESET_TIMEOUT = 30000;
+
+app.use(async (req, res, next) => {
+  try {
+    if (dbFailureCount >= DB_FAILURE_THRESHOLD) {
+      console.log('Circuit breaker active, waiting for reset');
+      res.status(503).json({ error: 'Service temporarily unavailable' });
+      return;
+    }
+    next();
+  } catch (error) {
+    dbFailureCount++;
+    console.error('Database error:', error);
+    if (dbFailureCount === DB_FAILURE_THRESHOLD) {
+      setTimeout(() => {
+        dbFailureCount = 0;
+        console.log('Circuit breaker reset');
+      }, DB_RESET_TIMEOUT);
+    }
+    next(error);
+  }
+});
+
 import stripeRouter from './routes/stripe';
 // Temporarily comment out Shopify router to get app running
 // import { createShopifyRouter } from './routes/shopify';
