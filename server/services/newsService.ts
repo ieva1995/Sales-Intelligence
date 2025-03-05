@@ -26,6 +26,9 @@ export class NewsService {
     try {
       console.log("New WebSocket client connected");
       this.clients.add(ws);
+      
+      // Send immediate connection confirmation
+      ws.send(JSON.stringify({ type: 'connection-status', status: 'connected' }));
 
       // Send initial data to newly connected client
       this.fetchLatestNews()

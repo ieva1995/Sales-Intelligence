@@ -17,6 +17,11 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 pool.connect((err, client, release) => {
   if (err) {
     console.error('Error acquiring client', err.stack);
+    // Attempt reconnection
+    setTimeout(() => {
+      console.log('Attempting database reconnection...');
+      pool.connect();
+    }, 5000);
     return;
   }
   client.query('SELECT NOW()', (err, result) => {

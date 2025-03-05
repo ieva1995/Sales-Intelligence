@@ -150,8 +150,9 @@ process.on('SIGINT', () => {
 
     // Use PORT environment variable or fallback to 8080 for deployments
     const port = process.env.PORT || 8080;
-    const maxRetries = 6; // Increased from 3 to 6 retries
+    const maxRetries = 3; // Reduced retries for faster fallback
     let currentRetry = 0;
+    const fallbackPorts = [8080, 3000, 5000];
 
     console.log(`Using standard port ${port} for Replit applications...`);
 
