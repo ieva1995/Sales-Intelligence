@@ -21,10 +21,7 @@ import {
   ClipboardCheck,
   UserPlus,
   Mail,
-  Target as Milestone,
-  ClipboardCheck,
-  UserPlus,
-  Mail
+  Target as Milestone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NavigationPreview from './NavigationPreview';
