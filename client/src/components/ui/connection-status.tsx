@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./button";
-import { RefreshCw, Wifi, WifiOff, AlertCircle } from "lucide-react";
+import { RefreshCw, Wifi, WifiOff, AlertCircle, Monitor } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 interface ConnectionStatusProps {
