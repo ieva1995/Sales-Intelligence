@@ -172,8 +172,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 30
+        stiffness: 400,
+        damping: 40,
+        mass: 1,
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     },
     closed: { 
@@ -181,10 +184,32 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       opacity: 0,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 30
+        stiffness: 400,
+        damping: 40,
+        mass: 1
       }
     },
+  };
+
+  const itemVariants = {
+    open: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 40
+      }
+    },
+    closed: {
+      x: -20,
+      opacity: 0,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 40
+      }
+    }
   };
 
   const overlayVariants = {
@@ -224,7 +249,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       {isOpen && (
         <>
           <motion.div 
-            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/40 z-40 backdrop-blur-md transition-all duration-300"
             initial="closed"
             animate="open"
             exit="closed"
@@ -243,14 +268,25 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
               <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                 SalesBoost AI
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={onClose}
-                className="text-slate-400 hover:text-white active:scale-95 transition-transform"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <X className="h-5 w-5" />
-              </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={onClose}
+                  className="text-slate-400 hover:text-white transition-all duration-200 hover:bg-white/10 rounded-full"
+                >
+                <motion.div
+                    initial={{ rotate: 0 }}
+                    animate={{ rotate: isOpen ? 90 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <X className="h-5 w-5" />
+                  </motion.div>
+                </Button>
+              </motion.div>
             </div>
 
             <div className="flex-1 overflow-y-auto py-2 overscroll-contain">
@@ -258,7 +294,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 {menuItems.map((item) => (
                   <li key={item.title} className="rounded-lg overflow-hidden">
                     {item.children ? (
-                      <div>
+                      <motion.div
+                        variants={itemVariants}
+                        initial="closed"
+                        animate="open"
+                      >
                         <motion.button
                           whileTap={{ scale: 0.98 }}
                           className="w-full flex items-center justify-between p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors"
