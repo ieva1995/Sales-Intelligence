@@ -83,9 +83,9 @@ app.use((req, res, next) => {
     }
     console.log('Vite middleware setup complete');
 
-    // SWITCH TO A DIFFERENT PORT to avoid port 5000 conflicts
-    const port = 3000; // Changed from 5000 to 3000 to avoid port conflicts
-    console.log(`Switching to port ${port} to avoid conflicts...`);
+    // Return to the standard port 5000 as required by Replit
+    const port = 5000;
+    console.log(`Using standard port ${port} for Replit applications...`);
 
     // Add a pre-flight check for port availability
     console.log(`Preparing to start server on port ${port}...`);
@@ -114,18 +114,11 @@ app.use((req, res, next) => {
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        if (retryCount < maxRetries) {
-          retryCount++;
-          const retryDelay = initialRetryDelay * Math.pow(1.5, retryCount - 1); // Exponential backoff
-          console.error(`Port ${port} is already in use. Retrying in ${retryDelay/1000} seconds... (Attempt ${retryCount}/${maxRetries})`);
+        console.error(`Port ${port} is already in use. Please restart your workspace to clear all processes.`);
+        console.error('If the issue persists after restart, please manually kill any process using port 5000.');
 
-          setTimeout(() => {
-            startServerWithRetry(retryCount, retryDelay);
-          }, retryDelay);
-        } else {
-          console.error(`Port ${port} is still in use after ${maxRetries} attempts. Please close the other application using this port or change the port number.`);
-          process.exit(1);
-        }
+        // Exit process after logging clear instructions
+        process.exit(1);
       } else {
         console.error('Server error:', error);
         process.exit(1);
