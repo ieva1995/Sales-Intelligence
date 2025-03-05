@@ -88,9 +88,18 @@ process.on('unhandledRejection', (reason, promise) => {
     console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
       await setupVite(app, server);
+      console.log('Development server with Vite HMR enabled');
     } else {
       serveStatic(app);
+      console.log('Production static server enabled');
     }
+    app.get('*', (req, res, next) => {
+      if (req.path.includes('.') || req.path.startsWith('/api')) {
+        next();
+      } else {
+        res.sendFile('index.html', { root: './dist' });
+      }
+    });
     console.log('Vite middleware setup complete');
 
     // Use PORT environment variable or fallback to 8080 for deployments
