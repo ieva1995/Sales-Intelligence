@@ -1,74 +1,37 @@
-// Support both CommonJS and ES modules
-const { execSync } = typeof require !== 'undefined' ? require('child_process') : (async () => { const { execSync } = await import('child_process'); return { execSync }; })();
+const { execSync } = require('child_process');
 
 function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);
 
+  // First try to kill any Node processes
   try {
-    // Try using lsof (available on most Unix systems)
-    const lsofCommand = `lsof -i :${port} -t`;
-    const pids = execSync(lsofCommand).toString().trim().split('\n');
-
-    if (pids && pids.length && pids[0]) {
-      pids.forEach(pid => {
-        try {
-          console.log(`Killing process ${pid} using port ${port}`);
-          execSync(`kill -9 ${pid}`);
-        } catch (err) {
-          console.log(`Failed to kill process ${pid}: ${err.message}`);
-        }
-      });
-      console.log(`Process using port ${port} killed successfully`);
-      return true;
-    }
+    execSync('pkill -f "node|tsx"');
+    console.log('Killed all Node processes');
   } catch (err) {
-    console.log(`No process found using lsof on port ${port}`);
+    console.log('No Node processes found');
   }
 
+  // Force kill anything on port 5000
   try {
-    // Try using fuser as an alternative (available on many Linux systems)
-    execSync(`fuser -k ${port}/tcp`);
-    console.log(`Process using port ${port} killed successfully using fuser`);
+    execSync(`kill -9 $(lsof -t -i:${port}) 2>/dev/null || true`);
+    console.log(`Killed process on port ${port}`);
+  } catch (err) {
+    console.log(`No process found on port ${port}`);
+  }
+
+  // Wait a moment
+  execSync('sleep 1');
+
+  // Verify port is free
+  try {
+    execSync(`lsof -i:${port}`);
+    console.log(`WARNING: Port ${port} still in use`);
+    return false;
+  } catch (err) {
+    console.log(`Port ${port} is now free`);
     return true;
-  } catch (err) {
-    console.log(`No process found on port ${port} using fuser`);
   }
-
-  try {
-    // Another approach with netstat and grep (works on most systems)
-    const netstatCommand = `netstat -ano | grep ${port}`;
-    const output = execSync(netstatCommand).toString();
-
-    // Parse the output to find PIDs
-    const lines = output.split('\n');
-    const pidRegex = /(\d+)$/;
-
-    for (const line of lines) {
-      const match = line.match(pidRegex);
-      if (match && match[1]) {
-        const pid = match[1];
-        try {
-          console.log(`Killing process ${pid} using port ${port} (found via netstat)`);
-          execSync(`kill -9 ${pid}`);
-          console.log(`Process ${pid} killed successfully`);
-          return true;
-        } catch (killErr) {
-          console.log(`Failed to kill process ${pid}: ${killErr.message}`);
-        }
-      }
-    }
-  } catch (err) {
-    console.log(`No process found using netstat on port ${port}`);
-  }
-
-  console.log(`No process found using port ${port} or failed to kill it.`);
-  return false;
 }
 
 // Kill process on port 5000
 killPort(5000);
-
-// Support both module systems
-if (typeof module !== 'undefined') {
-  module.exports = { killPort };
-}
