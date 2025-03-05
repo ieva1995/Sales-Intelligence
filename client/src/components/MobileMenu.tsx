@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -44,7 +43,7 @@ interface MenuItem {
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const [, setLocation] = useLocation();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [touchStart, setTouchStart] = useState<number | null>(null);
+  // Remove touch handlers to prevent unwanted navigation
 
   // Platform menu items to match PlatformDropdown component
   const platformItems: MenuItem[] = [
@@ -152,21 +151,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.touches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStart) {
-      const currentTouch = e.touches[0].clientX;
-      const diff = touchStart - currentTouch;
-      
-      if (diff > 50) { // Swipe left threshold
-        onClose();
-        setTouchStart(null);
-      }
-    }
-  };
 
   const toggleExpand = (title: string) => {
     setExpandedItems(prev => ({
@@ -254,8 +238,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             animate="open"
             exit="closed"
             variants={variants}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-800">
               <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
