@@ -291,7 +291,7 @@ export default function SmartSalesEngine() {
             pricingStrategy: 'Value-based pricing with ROI guarantee',
             estimatedConversionRate: 0.12,
             confidenceScore: 0.78,
-            suggestedTiming: 'thisMonth',
+            suggestedTiming: 'thisMonth' as 'thisMonth',
             generatedAt: new Date()
           };
 
@@ -438,25 +438,25 @@ export default function SmartSalesEngine() {
     console.log("SmartSalesEngine rendering JSX"); // Diagnostic log
 
     return (
-      <div className="space-y-6">
-        <div className="flex flex-col space-y-2">
+      <div className="container mx-auto px-6 py-8 max-w-[1200px]">
+        <div className="flex flex-col space-y-4 mb-6">
           <h1 className="text-3xl font-bold tracking-tight flex items-center">
-            <Brain className="h-8 w-8 mr-2 text-blue-500" />
+            <Brain className="h-8 w-8 mr-3 text-blue-500" />
             S.L.A.S.E (Self-Learning Autonomous Sales Engine)
           </h1>
-          <p className="text-slate-400">
+          <p className="text-slate-400 text-lg">
             An advanced AI system that autonomously generates and optimizes sales strategies with built-in cybersecurity.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <Tabs
             defaultValue="overview"
             value={activeTab}
             onValueChange={setActiveTab}
-            className="space-y-4"
+            className="space-y-6"
           >
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2 p-1">
               <TabsTrigger value="overview" className="text-xs sm:text-sm">
                 <Bot className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Overview</span>
@@ -480,10 +480,10 @@ export default function SmartSalesEngine() {
             </TabsList>
 
             {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
+            <TabsContent value="overview" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="shadow-md border-slate-700">
+                  <CardHeader className="pb-4">
                     <CardTitle className="text-xl flex items-center">
                       <Shield className="h-5 w-5 mr-2 text-emerald-500" />
                       GhostGuard AI Protection
@@ -493,13 +493,13 @@ export default function SmartSalesEngine() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm">
                           <Lock className="h-4 w-4 mr-2 text-emerald-500" />
                           Zero Trust Architecture
                         </div>
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
                           Active
                         </Badge>
                       </div>
@@ -508,7 +508,7 @@ export default function SmartSalesEngine() {
                           <Server className="h-4 w-4 mr-2 text-emerald-500" />
                           Honeypot Traps
                         </div>
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
                           Monitoring
                         </Badge>
                       </div>
@@ -517,7 +517,7 @@ export default function SmartSalesEngine() {
                           <Activity className="h-4 w-4 mr-2 text-emerald-500" />
                           Behavioral Firewall
                         </div>
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800">
                           Active
                         </Badge>
                       </div>
@@ -526,7 +526,7 @@ export default function SmartSalesEngine() {
                           <Command className="h-4 w-4 mr-2 text-emerald-500" />
                           Polymorphic Encryption
                         </div>
-                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200">
+                        <Badge variant="outline" className="bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800">
                           Standby
                         </Badge>
                       </div>
@@ -534,8 +534,8 @@ export default function SmartSalesEngine() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader className="pb-2">
+                <Card className="shadow-md border-slate-700">
+                  <CardHeader className="pb-4">
                     <CardTitle className="text-xl flex items-center">
                       <Brain className="h-5 w-5 mr-2 text-purple-500" />
                       Autonomous Sales Engine
@@ -579,7 +579,7 @@ export default function SmartSalesEngine() {
                         </div>
                       </div>
 
-                      <div className="pt-2">
+                      <div className="pt-3">
                         <Button 
                           variant="outline" 
                           onClick={() => setActiveTab("deep-learning")}
@@ -592,11 +592,118 @@ export default function SmartSalesEngine() {
                   </CardContent>
                 </Card>
               </div>
+
+              <Card className="shadow-md border-slate-700">
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center">
+                    <TrendingUp className="h-5 w-5 mr-2 text-blue-500" />
+                    Predictive Sales Strategy Generator
+                  </CardTitle>
+                  <CardDescription>
+                    Automatically generates personalized sales funnels and strategies based on data
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+                    <div className="md:col-span-3">
+                      <Label htmlFor="targetAudience" className="text-sm font-medium mb-2 block">Target Audience</Label>
+                      <Input 
+                        id="targetAudience"
+                        value={targetAudience}
+                        onChange={(e) => setTargetAudience(e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="flex items-end">
+                      <Button 
+                        onClick={generatePredictiveStrategy} 
+                        disabled={isLoading}
+                        className="w-full"
+                      >
+                        {isLoading ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="h-4 w-4 mr-2" />
+                            Generate Strategy
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {predictiveStrategy && (
+                    <div className="bg-slate-800 rounded-lg p-5 space-y-5">
+                      <div className="flex justify-between items-center border-b border-slate-700 pb-3">
+                        <h3 className="text-lg font-semibold text-white">Strategy for {predictiveStrategy.targetAudience}</h3>
+                        <Badge className="bg-blue-600">
+                          {(predictiveStrategy.confidenceScore * 100).toFixed(0)}% Confidence
+                        </Badge>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="text-sm font-medium text-blue-400 mb-3">Recommended Content</h4>
+                          <ul className="space-y-2">
+                            {predictiveStrategy.contentIdeas.map((idea, index) => (
+                              <li key={index} className="bg-slate-700 p-2 rounded-md flex items-center text-sm">
+                                <span className="h-5 w-5 rounded-full bg-blue-500 flex items-center justify-center mr-2 text-xs font-bold">
+                                  {index + 1}
+                                </span>
+                                {idea}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="text-sm font-medium text-blue-400 mb-2">Promotion Strategy</h4>
+                            <p className="bg-slate-700 p-3 rounded-md text-sm">{predictiveStrategy.promotionType}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-medium text-blue-400 mb-2">Pricing Approach</h4>
+                            <p className="bg-slate-700 p-3 rounded-md text-sm">{predictiveStrategy.pricingStrategy}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-medium text-blue-400 mb-2">Estimated Metrics</h4>
+                            <div className="bg-slate-700 p-3 rounded-md space-y-3">
+                              <div>
+                                <div className="flex justify-between text-xs text-slate-400 mb-1">
+                                  <span>Conversion Rate</span>
+                                  <span>{(predictiveStrategy.estimatedConversionRate * 100).toFixed(1)}%</span>
+                                </div>
+                                <Progress 
+                                  value={predictiveStrategy.estimatedConversionRate * 100} 
+                                  className="h-2"
+                                />
+                              </div>
+                              <div className="flex items-center">
+                                <span className="text-xs text-slate-400 mr-2">Suggested Timing:</span>
+                                <Badge className="bg-blue-600">
+                                  {predictiveStrategy.suggestedTiming === 'immediate' ? 'Immediate' :
+                                   predictiveStrategy.suggestedTiming === 'thisWeek' ? 'This Week' :
+                                   predictiveStrategy.suggestedTiming === 'thisMonth' ? 'This Month' : 'Next Quarter'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Deep Learning Tab */}
-            <TabsContent value="deep-learning" className="space-y-4">
-              <Card>
+            <TabsContent value="deep-learning" className="space-y-6">
+              <Card className="shadow-md border-slate-700">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center">
@@ -702,8 +809,8 @@ export default function SmartSalesEngine() {
             </TabsContent>
 
             {/* Dark Intelligence Tab */}
-            <TabsContent value="dark-intelligence" className="space-y-4">
-              <Card>
+            <TabsContent value="dark-intelligence" className="space-y-6">
+              <Card className="shadow-md border-slate-700">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <SearchCode className="h-5 w-5 mr-2 text-emerald-500" />
@@ -715,15 +822,15 @@ export default function SmartSalesEngine() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:bg-slate-800 p-4 rounded-lg border border-emerald-100 dark:border-slate-700">
+                    <div className="bg-gradient-to-r from-emerald-950 to-green-950 dark:bg-slate-800 p-5 rounded-lg border border-emerald-900 dark:border-slate-700">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                         <div>
-                          <h3 className="text-sm font-medium text-emerald-800 dark:text-emerald-400 mb-1">
+                          <h3 className="text-sm font-medium text-emerald-400 mb-2">
                             Competitor Tracking
                           </h3>
                           <div className="flex flex-wrap gap-2">
                             {competitors.map((competitor, index) => (
-                              <Badge key={index} variant="outline" className="bg-white dark:bg-slate-700">
+                              <Badge key={index} variant="outline" className="bg-slate-900 border-emerald-700">
                                 {competitor}
                               </Badge>
                             ))}
@@ -751,18 +858,18 @@ export default function SmartSalesEngine() {
                       </div>
 
                       {competitorData.length > 0 && (
-                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+<div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           {competitorData.map((competitor, index) => (
-                            <div key={index} className="bg-white dark:bg-slate-800 rounded-lg border border-emerald-100 dark:border-slate-700 overflow-hidden">
-                              <div className="p-3 bg-emerald-50 dark:bg-slate-700 border-b border-emerald-100 dark:border-slate-600">
-                                <h4 className="font-medium text-emerald-800 dark:text-emerald-400 flex items-center">
+                            <div key={index} className="bg-slate-900 rounded-lg border border-emerald-900 overflow-hidden">
+                              <div className="p-3 bg-emerald-950 border-b border-emerald-900">
+                                <h4 className="font-medium text-emerald-400 flex items-center">
                                   <Building className="h-4 w-4 mr-2" />
                                   {competitor.competitorName}
                                 </h4>
                               </div>
                               <div className="p-3">
                                 <div className="mb-3">
-                                  <span className="text-xs uppercase tracking-wide text-emerald-700 dark:text-emerald-500 font-semibold mb-2 block">
+                                  <span className="text-xs uppercase tracking-wide text-emerald-500 font-semibold mb-2 block">
                                     Keyword Trends
                                   </span>
                                   <div className="space-y-1">
@@ -782,7 +889,7 @@ export default function SmartSalesEngine() {
 
                                 {competitor.stockLevels && competitor.stockLevels.length > 0 && (
                                   <div className="mb-3">
-                                    <span className="text-xs uppercase tracking-wide text-emerald-700 dark:text-emerald-500 font-semibold mb-2 block">
+                                    <span className="text-xs uppercase tracking-wide text-emerald-500 font-semibold mb-2 block">
                                       Product Stock Levels
                                     </span>
                                     <div className="space-y-1">
@@ -790,13 +897,13 @@ export default function SmartSalesEngine() {
                                         <div key={i} className="flex justify-between items-center text-sm">
                                           <span>{stock.product}</span>
                                           <Badge className={`
-                                            ${stock.stock === 'high' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                                              stock.stock === 'medium' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' : 
-                                              stock.stock === 'low' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' : 
-                                              'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'} 
+                                            ${stock.stock === 'high' ? 'bg-green-900 text-green-300' : 
+                                              stock.stock === 'medium' ? 'bg-blue-900 text-blue-300' : 
+                                              stock.stock === 'low' ? 'bg-amber-900 text-amber-300' : 
+                                              'bg-red-900 text-red-300'} 
                                             px-2 py-0.5 text-xs`}
                                           >
-                                            {stock.stock}
+                                             {stock.stock}
                                           </Badge>
                                         </div>
                                       ))}
@@ -806,7 +913,7 @@ export default function SmartSalesEngine() {
 
                                 {competitor.priceChanges && competitor.priceChanges.length > 0 && (
                                   <div>
-                                    <span className="text-xs uppercase tracking-wide text-emerald-700 dark:text-emerald-500 font-semibold mb-2 block">
+                                    <span className="text-xs uppercase tracking-wide text-emerald-500 font-semibold mb-2 block">
                                       Recent Price Changes
                                     </span>
                                     <div className="space-y-1">
@@ -816,10 +923,10 @@ export default function SmartSalesEngine() {
                                           <div className="flex items-center text-xs">
                                             <span className="text-slate-500">${price.oldPrice}</span>
                                             <span className="mx-1">→</span>
-                                            <span className={`font-medium ${price.newPrice > price.oldPrice ? 'text-red-600' : 'text-green-600'}`}>
+                                            <span className={`font-medium ${price.newPrice > price.oldPrice ? 'text-red-400' : 'text-green-400'}`}>
                                               ${price.newPrice}
                                             </span>
-                                            <span className="ml-2 text-slate-400">
+                                            <span className="ml-2 text-slate-500">
                                               ({new Date(price.changeDate).toLocaleDateString()})
                                             </span>
                                           </div>
@@ -840,38 +947,39 @@ export default function SmartSalesEngine() {
             </TabsContent>
 
             {/* Emotional Triggers Tab */}
-            <TabsContent value="emotional-triggers" className="space-y-4">
-              <Card>
+            <TabsContent value="emotional-triggers" className="space-y-6">
+              <Card className="shadow-md border-slate-700">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Heart className="h-5 w-5 mr-2 text-pink-500" />
                     Emotional Sentiment Analysis
                   </CardTitle>
-                  <CardDescription>                    Analyze customer behavior to detect purchase readiness and trigger personalized offers
+                  <CardDescription>
+                    Analyze customer behavior to detect purchase readiness and trigger personalized offers
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-pink-50 to-purple-50 dark:bg-slate-800 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-pink-900 dark:text-pink-400 mb-3">Customer Behavior Analysis</h3>
+                  <div className="space-y-5">
+                    <div className="bg-gradient-to-r from-pink-950 to-purple-950 p-5 rounded-lg">
+                      <h3 className="text-sm font-medium text-pink-400 mb-4">Customer Behavior Analysis</h3>
 
-                      <div className="bg-white dark:bg-slate-800 rounded-lg border border-pink-100 dark:border-slate-700 p-4 mb-4">
+                      <div className="bg-slate-900 rounded-lg border border-pink-900 p-4 mb-5">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                           <div>
-                            <h4 className="text-sm font-medium text-pink-800 dark:text-pink-400 mb-2">Pages Visited</h4>
+                            <h4 className="text-sm font-medium text-pink-400 mb-2">Pages Visited</h4>
                             <div className="flex flex-wrap gap-1">
                               {customerBehavior.visitedPages.map((page, index) => (
-                                <Badge key={index} variant="outline" className="bg-white dark:bg-slate-700">
+                                <Badge key={index} variant="outline" className="bg-slate-800 border-pink-800">
                                   {page}
                                 </Badge>
                               ))}
                             </div>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-pink-800 dark:text-pink-400 mb-2">Interactions</h4>
+                            <h4 className="text-sm font-medium text-pink-400 mb-2">Interactions</h4>
                             <div className="flex flex-wrap gap-1">
                               {customerBehavior.interactions.map((interaction, index) => (
-                                <Badge key={index} variant="outline" className="bg-white dark:bg-slate-700">
+                                <Badge key={index} variant="outline" className="bg-slate-800 border-pink-800">
                                   {interaction}
                                 </Badge>
                               ))}
@@ -881,27 +989,27 @@ export default function SmartSalesEngine() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <h4 className="text-sm font-medium text-pink-800 dark:text-pink-400 mb-2">Time on Site</h4>
+                            <h4 className="text-sm font-medium text-pink-400 mb-2">Time on Site</h4>
                             <p className="text-sm">{Math.floor(customerBehavior.timeOnSite / 60)}m {customerBehavior.timeOnSite % 60}s</p>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-pink-800 dark:text-pink-400 mb-2">Emotional Sentiment</h4>
+                            <h4 className="text-sm font-medium text-pink-400 mb-2">Emotional Sentiment</h4>
                             <Badge className={`
-                              ${customerBehavior.emotionalSentiment === 'positive' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 
-                                customerBehavior.emotionalSentiment === 'negative' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' : 
-                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'}
+                              ${customerBehavior.emotionalSentiment === 'positive' ? 'bg-green-900 text-green-300' : 
+                                customerBehavior.emotionalSentiment === 'negative' ? 'bg-red-900 text-red-300' : 
+                                'bg-blue-900 text-blue-300'}
                             `}>
                               {customerBehavior.emotionalSentiment}
                             </Badge>
                           </div>
                           <div>
-                            <h4 className="text-sm font-medium text-pink-800 dark:text-pink-400 mb-2">Device Type</h4>
+                            <h4 className="text-sm font-medium text-pink-400 mb-2">Device Type</h4>
                             <p className="text-sm capitalize">{customerBehavior.deviceType}</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mb-4">
+                      <div className="mb-5">
                         <Button 
                           onClick={generateEmotionalTrigger} 
                           disabled={isLoading}
@@ -922,24 +1030,24 @@ export default function SmartSalesEngine() {
                       </div>
 
                       {emotionalTrigger && (
-                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-pink-200 dark:border-slate-700 overflow-hidden">
-                          <div className="p-3 bg-pink-50 dark:bg-slate-700 border-b border-pink-100 dark:border-slate-600">
-                            <h4 className="font-medium text-pink-800 dark:text-pink-400 flex items-center">
+                        <div className="bg-slate-900 rounded-lg border border-pink-900 overflow-hidden">
+                          <div className="p-3 bg-pink-950 border-b border-pink-900">
+                            <h4 className="font-medium text-pink-400 flex items-center">
                               <Heart className="h-4 w-4 mr-2 text-pink-500" />
                               Emotional Trigger Generated
                             </h4>
                           </div>
                           <div className="p-4">
-                            <div className="mb-2">
-                              <span className="text-xs uppercase tracking-wide text-pink-700 dark:text-pink-500 font-semibold">Trigger Type</span>
+                            <div className="mb-3">
+                              <span className="text-xs uppercase tracking-wide text-pink-500 font-semibold">Trigger Type</span>
                               <div className="text-sm mt-1 capitalize">
                                 {emotionalTrigger.triggerType.replace('_', ' ')}
                               </div>
                             </div>
 
-                            <div className="mb-2">
-                              <span className="text-xs uppercase tracking-wide text-pink-700 dark:text-pink-500 font-semibold">Message</span>
-                              <div className="text-sm font-medium mt-1 p-2 bg-pink-50 dark:bg-slate-700 rounded border border-pink-100 dark:border-slate-600">
+                            <div className="mb-4">
+                              <span className="text-xs uppercase tracking-wide text-pink-500 font-semibold">Message</span>
+                              <div className="text-sm font-medium mt-1 p-3 bg-pink-950 rounded border border-pink-900">
                                 {emotionalTrigger.message}
                               </div>
                             </div>
@@ -947,14 +1055,14 @@ export default function SmartSalesEngine() {
                             <div className="grid grid-cols-2 gap-4">
                               {emotionalTrigger.discount && (
                                 <div>
-                                  <span className="text-xs uppercase tracking-wide text-pink-700 dark:text-pink-500 font-semibold">Discount</span>
+                                  <span className="text-xs uppercase tracking-wide text-pink-500 font-semibold">Discount</span>
                                   <div className="text-sm mt-1">{emotionalTrigger.discount}%</div>
                                 </div>
                               )}
 
                               {emotionalTrigger.expiryTime && (
                                 <div>
-                                  <span className="text-xs uppercase tracking-wide text-pink-700 dark:text-pink-500 font-semibold">Expires</span>
+                                  <span className="text-xs uppercase tracking-wide text-pink-500 font-semibold">Expires</span>
                                   <div className="text-sm mt-1">{new Date(emotionalTrigger.expiryTime).toLocaleString()}</div>
                                 </div>
                               )}
@@ -969,8 +1077,8 @@ export default function SmartSalesEngine() {
             </TabsContent>
 
             {/* Cross-Platform Tab */}
-            <TabsContent value="cross-platform" className="space-y-4">
-              <Card>
+            <TabsContent value="cross-platform" className="space-y-6">
+              <Card className="shadow-md border-slate-700">
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Globe className="h-5 w-5 mr-2 text-blue-500" />
@@ -981,44 +1089,44 @@ export default function SmartSalesEngine() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-violet-50 to-indigo-50 dark:bg-slate-800 p-4 rounded-lg">
-                      <h3 className="text-sm font-medium text-indigo-900 dark:text-indigo-400 mb-3">User Behavior Across Platforms</h3>
+                  <div className="space-y-5">
+                    <div className="bg-gradient-to-r from-violet-950 to-indigo-950 p-5 rounded-lg">
+                      <h3 className="text-sm font-medium text-indigo-400 mb-4">User Behavior Across Platforms</h3>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
                         {sampleBehaviors.map((behavior, index) => (
-                          <div key={index} className="bg-white dark:bg-slate-800 rounded-lg border border-indigo-100 dark:border-slate-700 overflow-hidden">
-                            <div className="p-3 bg-indigo-50 dark:bg-slate-700 border-b border-indigo-100 dark:border-slate-600">
-                              <h4 className="font-medium text-indigo-800 dark:text-indigo-400 flex items-center capitalize">
+                          <div key={index} className="bg-slate-900 rounded-lg border border-indigo-900 overflow-hidden">
+                            <div className="p-3 bg-indigo-950 border-b border-indigo-900">
+                              <h4 className="font-medium text-indigo-400 flex items-center capitalize">
                                 <Globe className="h-4 w-4 mr-2 text-indigo-500" />
                                 {behavior.platform}
                               </h4>
                             </div>
                             <div className="p-3">
                               <div className="mb-2">
-                                <span className="text-xs text-slate-500">Keywords</span>
+                                <span className="text-xs text-slate-400">Keywords</span>
                                 <div className="flex flex-wrap gap-1 mt-1">
                                   {behavior.keywords.map((keyword, i) => (
-                                    <Badge key={i} variant="outline" className="text-xs bg-slate-50 dark:bg-slate-700">
+                                    <Badge key={i} variant="outline" className="text-xs bg-slate-800 border-indigo-900">
                                       {keyword}
                                     </Badge>
                                   ))}
                                 </div>
                               </div>
                               <div className="mb-2">
-                                <span className="text-xs text-slate-500">Interactions</span>
+                                <span className="text-xs text-slate-400">Interactions</span>
                                 <div className="mt-1 text-sm">
                                   {behavior.interactions.join(', ')}
                                 </div>
                               </div>
                               <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                  <span className="text-xs text-slate-500">Time Spent</span>
+                                  <span className="text-xs text-slate-400">Time Spent</span>
                                   <div className="mt-1 text-sm">{behavior.timeSpent} seconds</div>
                                 </div>
                                 <div>
-                                  <span className="text-xs text-slate-500">Conversion Intent</span>
-                                  <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 mt-2">
+                                  <span className="text-xs text-slate-400">Conversion Intent</span>
+                                  <div className="w-full bg-slate-800 rounded-full h-1.5 mt-2">
                                     <div 
                                       className={`h-1.5 rounded-full ${
                                         behavior.conversionIntent > 70 ? 'bg-green-500' : 
@@ -1034,7 +1142,7 @@ export default function SmartSalesEngine() {
                         ))}
                       </div>
 
-                      <div className="mb-4">
+                      <div className="mb-5">
                         <Button 
                           onClick={trackCrossPlatformBehavior} 
                           disabled={isLoading}
@@ -1055,16 +1163,16 @@ export default function SmartSalesEngine() {
                       </div>
 
                       {crossPlatformAnalysis && (
-                        <div className="bg-white dark:bg-slate-800 rounded-lg border border-indigo-200 dark:border-slate-700 overflow-hidden">
-                          <div className="p-3 bg-indigo-50 dark:bg-slate-700 border-b border-indigo-100 dark:border-slate-600">
-                            <h4 className="font-medium text-indigo-800 dark:text-indigo-400 flex items-center">
+                        <div className="bg-slate-900 rounded-lg border border-indigo-900 overflow-hidden">
+                          <div className="p-3 bg-indigo-950 border-b border-indigo-900">
+                            <h4 className="font-medium text-indigo-400 flex items-center">
                               <TrendingUp className="h-4 w-4 mr-2 text-indigo-500" />
                               Cross-Platform Analysis Results
                             </h4>
                           </div>
                           <div className="p-4">
                             <div className="mb-4">
-                              <span className="text-xs uppercase tracking-wide text-indigo-700 dark:text-indigo-500 font-semibold">Overall Conversion Intent</span>
+                              <span className="text-xs uppercase tracking-wide text-indigo-500 font-semibold">Overall Conversion Intent</span>
                               <div className="mt-2">
                                 <div className="flex items-center">
                                   <Progress 
@@ -1079,15 +1187,15 @@ export default function SmartSalesEngine() {
                             </div>
 
                             <div className="mb-4">
-                              <span className="text-xs uppercase tracking-wide text-indigo-700 dark:text-indigo-500 font-semibold">Recommended Platform</span>
+                              <span className="text-xs uppercase tracking-wide text-indigo-500 font-semibold">Recommended Platform</span>
                               <div className="text-sm mt-1 font-medium capitalize">
                                 {crossPlatformAnalysis.recommendedPlatform}
                               </div>
                             </div>
 
                             <div>
-                              <span className="text-xs uppercase tracking-wide text-indigo-700 dark:text-indigo-500 font-semibold">Recommended Action</span>
-                              <div className="text-sm mt-1 p-2 bg-indigo-50 dark:bg-slate-700 rounded border border-indigo-100 dark:border-slate-600">
+                              <span className="text-xs uppercase tracking-wide text-indigo-500 font-semibold">Recommended Action</span>
+                              <div className="text-sm mt-1 p-3 bg-indigo-950 rounded border border-indigo-900">
                                 {crossPlatformAnalysis.recommendedAction}
                               </div>
                             </div>
@@ -1107,12 +1215,9 @@ export default function SmartSalesEngine() {
     console.error("Error rendering SmartSalesEngine:", error);
     return (
       <div className="p-8 text-center">
-        <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold mb-2">Something went wrong</h2>
-        <p className="text-slate-400 mb-4">
-          There was an error loading the S.L.A.S.E interface. Please try refreshing the page.
-        </p>
-        <pre className="bg-slate-800 p-4 rounded text-left overflow-auto max-h-[300px] text-red-400 text-xs">
+        <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
+        <p className="text-slate-400 mb-4">There was an error loading the S.L.A.S.E interface.</p>
+        <pre className="bg-slate-800 p-4 rounded text-left overflow-auto max-h-[400px] text-sm">
           {error instanceof Error ? error.message : String(error)}
         </pre>
       </div>
