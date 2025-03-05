@@ -45,6 +45,11 @@ process.on('unhandledRejection', (reason, promise) => {
 
 (async () => {
   try {
+    // Set default environment variables if not provided
+    process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
+    process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'dev_session_secret';
+    process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
     // Initialize database tables
     console.log('Initializing database tables...');
     await createTables();
