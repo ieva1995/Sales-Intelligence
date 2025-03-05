@@ -1,4 +1,5 @@
-import { execSync } from 'child_process';
+// Support both CommonJS and ES modules
+const { execSync } = typeof require !== 'undefined' ? require('child_process') : (async () => { const { execSync } = await import('child_process'); return { execSync }; })();
 
 function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);
@@ -66,3 +67,8 @@ function killPort(port) {
 
 // Kill process on port 5000
 killPort(5000);
+
+// Support both module systems
+if (typeof module !== 'undefined') {
+  module.exports = { killPort };
+}

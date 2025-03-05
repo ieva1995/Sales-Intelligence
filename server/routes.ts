@@ -10,7 +10,7 @@ import {
 import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
 import stripeRouter from './routes/stripe';
-import shopifyRouter from './routes/shopify';
+import { createShopifyRouter } from './routes/shopify';
 import authRouter from './routes/auth'; 
 import { newsService } from "./services/newsService";
 import { recommendationService } from "./services/recommendationService"; 
@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express) {
   // Register routers
   app.use(chatRouter);
   app.use(stripeRouter); 
-  app.use('/api/shopify', shopifyRouter); 
+  app.use('/api/shopify', createShopifyRouter(app.constructor)); 
   app.use(authRouter); 
 
   // Middleware to handle database maintenance
