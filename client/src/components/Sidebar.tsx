@@ -16,7 +16,8 @@ import {
   Rocket,
   PieChart,
   Bot,
-} from "lucide-react";
+  Monitor
+} from "lucide-react"; // Added Monitor import
 import NavigationPreview from "./NavigationPreview";
 
 interface SidebarProps {
