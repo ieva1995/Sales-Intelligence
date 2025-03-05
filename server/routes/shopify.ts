@@ -34,7 +34,8 @@ if (hasShopifyCredentials) {
       isEmbeddedApp: false,
       apiVersion: LATEST_API_VERSION,
       hostScheme: 'https',
-      isCustomStoreApp: true
+      isCustomStoreApp: true,
+      adminApiAccessToken: process.env.SHOPIFY_ADMIN_API_TOKEN
     };
 
     shopifyClient = shopifyApi(shopifyConfig);
