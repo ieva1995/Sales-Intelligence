@@ -5,9 +5,12 @@ import {
   Globe, Bell, RefreshCw, CheckCircle, AlertTriangle, Search,
   Newspaper, BarChart, BookOpen, ArrowRight
 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { ConnectionStatus } from "@/components/ui/connection-status";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Insight {
   company: string;
@@ -18,35 +21,47 @@ interface Insight {
   status?: "new" | "processing" | "actioned";
 }
 
-export default function WhisperBot() {
-  const { toast } = useToast();
-  const [insights, setInsights] = useState<Insight[]>([
-    {
-      company: "Tech Innovators Inc",
-      insight: "Announced digital transformation initiative",
-      opportunity: "Cloud migration solutions",
-      date: "2 hours ago",
-      priority: "high",
-      status: "new"
-    },
-    {
-      company: "Global Systems Ltd",
-      insight: "Published report on security challenges",
-      opportunity: "Security assessment services",
-      date: "5 hours ago",
-      priority: "medium",
-      status: "processing"
-    },
-    {
-      company: "Future Dynamics",
-      insight: "Expanding operations in APAC",
-      opportunity: "Regional scaling solutions",
-      date: "1 day ago",
-      priority: "high",
-      status: "actioned"
-    }
-  ]);
+const DEFAULT_INSIGHTS: Insight[] = [
+  {
+    company: "Tech Innovators Inc",
+    insight: "Announced digital transformation initiative",
+    opportunity: "Cloud migration solutions",
+    date: "2 hours ago",
+    priority: "high",
+    status: "new"
+  },
+  {
+    company: "Global Systems Ltd",
+    insight: "Published report on security challenges",
+    opportunity: "Security assessment services",
+    date: "5 hours ago",
+    priority: "medium",
+    status: "processing"
+  },
+  {
+    company: "Future Dynamics",
+    insight: "Expanding operations in APAC",
+    opportunity: "Regional scaling solutions",
+    date: "1 day ago",
+    priority: "high",
+    status: "actioned"
+  }
+];
 
+// Wrap WhisperBot in ErrorBoundary in a separate export function
+export default function WhisperBotWrapper() {
+  return (
+    <ErrorBoundary>
+      <WhisperBot />
+    </ErrorBoundary>
+  );
+}
+
+function WhisperBot() {
+  const { toast } = useToast();
+  // Use a ref to store our cached insights
+  const cachedInsightsRef = useRef<Insight[]>(DEFAULT_INSIGHTS);
+  const [insights, setInsights] = useState<Insight[]>(cachedInsightsRef.current);
   const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -56,6 +71,39 @@ export default function WhisperBot() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [reconnectTimer, setReconnectTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const MAX_CONNECTION_ATTEMPTS = 3;
+
+  // Update cached insights whenever insights change
+  useEffect(() => {
+    cachedInsightsRef.current = insights;
+
+    // Save to localStorage for persistent offline mode
+    try {
+      localStorage.setItem('whisper-bot-insights', JSON.stringify(insights));
+    } catch (error) {
+      console.error("Error saving insights to localStorage:", error);
+    }
+  }, [insights]);
+
+  // Try to load saved insights from localStorage on first render
+  useEffect(() => {
+    try {
+      const savedInsights = localStorage.getItem('whisper-bot-insights');
+      if (savedInsights) {
+        const parsedInsights = JSON.parse(savedInsights);
+        if (Array.isArray(parsedInsights) && parsedInsights.length > 0) {
+          setInsights(parsedInsights);
+          cachedInsightsRef.current = parsedInsights;
+        }
+      }
+    } catch (error) {
+      console.error("Error loading saved insights:", error);
+    }
+
+    // Mark initialization as complete
+    setTimeout(() => setIsInitializing(false), 500);
+  }, []);
 
   // Create a memoized connection function to prevent excessive renders
   const connectWebSocket = useCallback(() => {
@@ -87,11 +135,11 @@ export default function WhisperBot() {
           }
         }
 
-        // Notify user of offline mode
+        // Notify user of offline mode in a non-intrusive way
         toast({
           title: "Connection Timeout",
-          description: "Unable to connect to real-time feed - using offline mode",
-          variant: "destructive"
+          description: "Using cached data while trying to reconnect",
+          variant: "default"
         });
 
         // Schedule a reconnection attempt with exponential backoff
@@ -105,6 +153,8 @@ export default function WhisperBot() {
         setConnectionError(false);
         setSocket(newSocket);
         setConnectionAttempts(0); // Reset attempts on successful connection
+        setIsOfflineMode(false);
+
         toast({
           title: "Connected",
           description: "Real-time intelligence feed active",
@@ -114,13 +164,22 @@ export default function WhisperBot() {
       newSocket.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
-          if (message.type === 'news-update') {
+          if (message.type === 'news-update' && message.data) {
             setInsights(prevInsights => {
               const newInsight: Insight = {
                 ...message.data,
                 status: "new",
                 date: "Just now"
               };
+
+              // Check if we already have this insight to avoid duplicates
+              const isDuplicate = prevInsights.some(
+                insight => insight.company === newInsight.company && 
+                           insight.insight === newInsight.insight
+              );
+
+              if (isDuplicate) return prevInsights;
+
               return [newInsight, ...prevInsights.slice(0, 9)];
             });
 
@@ -146,11 +205,14 @@ export default function WhisperBot() {
         // Increment connection attempts counter
         setConnectionAttempts(prev => prev + 1);
 
-        toast({
-          title: "Connection Error",
-          description: "Unable to connect to intelligence feed - using offline mode",
-          variant: "destructive"
-        });
+        // Only show toast if not in first attempt
+        if (connectionAttempts > 0) {
+          toast({
+            title: "Connection Error",
+            description: "Using cached data while offline",
+            variant: "default"
+          });
+        }
 
         // Try to close the socket to clean up resources
         try {
@@ -172,9 +234,11 @@ export default function WhisperBot() {
         setSocket(null);
 
         if (!connectionError) {
+          // Only notify if disconnection wasn't due to an error
           toast({
             title: "Disconnected",
-            description: "Real-time intelligence feed disconnected",
+            description: "Intelligence feed disconnected - trying to reconnect",
+            variant: "default"
           });
 
           // Only schedule reconnect if not already in error state
@@ -186,12 +250,6 @@ export default function WhisperBot() {
       setConnectionError(true);
       setIsOfflineMode(true);
 
-      toast({
-        title: "Connection Setup Error",
-        description: "Failed to initialize real-time feed - using offline mode",
-        variant: "destructive"
-      });
-
       // Schedule a reconnection attempt with exponential backoff
       scheduleReconnect();
     }
@@ -199,7 +257,7 @@ export default function WhisperBot() {
 
   // Function to schedule reconnection with exponential backoff
   const scheduleReconnect = useCallback(() => {
-    if (connectionAttempts >= 3) {
+    if (connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
       console.log("Max reconnection attempts reached, staying in offline mode");
       return;
     }
@@ -219,7 +277,7 @@ export default function WhisperBot() {
   useEffect(() => {
     try {
       // Try to establish WebSocket connection, but continue to render app regardless
-      if (connectionAttempts < 3) {
+      if (connectionAttempts < MAX_CONNECTION_ATTEMPTS) {
         // Wrap WebSocket connection in try-catch to prevent white screen
         try {
           connectWebSocket();
@@ -229,7 +287,7 @@ export default function WhisperBot() {
           setConnectionError(true);
         }
       } else {
-        // After 3 failed attempts, just use offline mode
+        // After MAX_CONNECTION_ATTEMPTS failed attempts, just use offline mode
         setIsOfflineMode(true);
         console.log("Max connection attempts reached, using offline mode");
       }
@@ -273,6 +331,50 @@ export default function WhisperBot() {
       description: "Attempting to reconnect to intelligence feed..."
     });
   };
+
+  // Simulate offline AI-generated insights
+  const generateOfflineInsight = useCallback(() => {
+    const companies = ["Acme Corp", "TechFusion", "Globex", "Initech", "Stark Industries", "Wayne Enterprises"];
+    const insights = [
+      "Released new product in cloud computing space", 
+      "Acquired competitor in the AI market", 
+      "Announced strategic partnership",
+      "Reported quarterly earnings above expectations",
+      "Launched sustainability initiative",
+      "Restructuring operations in key markets"
+    ];
+    const opportunities = [
+      "Integration services for new product adoption",
+      "Consulting on merger/acquisition strategies",
+      "Partnership extension opportunities",
+      "Financial services upsell potential",
+      "ESG compliance and reporting services",
+      "Operational efficiency consulting"
+    ];
+    const priorities = ["high", "medium", "low"] as const;
+
+    return {
+      company: companies[Math.floor(Math.random() * companies.length)],
+      insight: insights[Math.floor(Math.random() * insights.length)],
+      opportunity: opportunities[Math.floor(Math.random() * opportunities.length)],
+      priority: priorities[Math.floor(Math.random() * priorities.length)],
+      date: "Generated offline",
+      status: "new"
+    } as Insight;
+  }, []);
+
+  // Add a function to generate offline insights when in offline mode
+  const addOfflineInsight = useCallback(() => {
+    if (isOfflineMode) {
+      const newInsight = generateOfflineInsight();
+      setInsights(prev => [newInsight, ...prev.slice(0, 9)]);
+
+      toast({
+        title: "Offline Intelligence",
+        description: `Generated insight for ${newInsight.company}`,
+      });
+    }
+  }, [isOfflineMode, generateOfflineInsight, toast]);
 
   const NewsAnalysis = () => (
     <div className="space-y-4">
@@ -424,10 +526,20 @@ export default function WhisperBot() {
             <Button
               className="w-full mt-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400"
               onClick={() => {
-                toast({
-                  title: "Response Copied",
-                  description: "Smart response has been copied to clipboard"
-                });
+                try {
+                  navigator.clipboard.writeText(response.suggestion);
+                  toast({
+                    title: "Response Copied",
+                    description: "Smart response has been copied to clipboard"
+                  });
+                } catch (error) {
+                  console.error("Clipboard error:", error);
+                  toast({
+                    title: "Clipboard Error",
+                    description: "Unable to copy to clipboard",
+                    variant: "destructive"
+                  });
+                }
               }}
             >
               <Search className="h-4 w-4 mr-2" />
@@ -470,6 +582,15 @@ export default function WhisperBot() {
               <Button
                 className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400"
                 onClick={() => {
+                  // Update insight status in cached data
+                  setInsights(prev => 
+                    prev.map(item => 
+                      item === selectedInsight 
+                        ? {...item, status: "processing"} 
+                        : item
+                    )
+                  );
+
                   toast({
                     title: "Creating Proposal",
                     description: "Generating AI-powered proposal..."
@@ -482,6 +603,15 @@ export default function WhisperBot() {
               <Button
                 className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400"
                 onClick={() => {
+                  // Update insight status in cached data
+                  setInsights(prev => 
+                    prev.map(item => 
+                      item === selectedInsight 
+                        ? {...item, status: "actioned"} 
+                        : item
+                    )
+                  );
+
                   toast({
                     title: "Contact Scheduled",
                     description: "Adding to outreach queue..."
@@ -494,6 +624,15 @@ export default function WhisperBot() {
               <Button
                 className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400"
                 onClick={() => {
+                  // Update insight status in cached data
+                  setInsights(prev => 
+                    prev.map(item => 
+                      item === selectedInsight 
+                        ? {...item, status: "processing"} 
+                        : item
+                    )
+                  );
+
                   toast({
                     title: "Research Started",
                     description: "Initiating deep-dive analysis..."
@@ -522,13 +661,57 @@ export default function WhisperBot() {
     );
   };
 
+  // Loading skeleton for initial content
+  if (isInitializing) {
+    return (
+      <div className="p-4 sm:p-6 space-y-6">
+        <div className="mb-6">
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+          <Skeleton className="h-28" />
+        </div>
+
+        <Card className="border-0 bg-slate-800/50">
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-24" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Render a simple fallback UI if there's a critical error
-  if (isOfflineMode && connectionAttempts >= 3) {
+  if (isOfflineMode && connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
     return (
       <div className="p-4 sm:p-6 space-y-6">
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold">AI Whisper Bot</h1>
           <p className="text-muted-foreground">Working in offline mode - using cached data</p>
+        </div>
+
+        <div className="bg-yellow-900/20 border border-yellow-900/30 rounded-lg p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <h3 className="font-medium text-white">Limited Connectivity Mode</h3>
+          </div>
+          <p className="text-sm text-gray-300 mb-3">
+            You're currently working with cached data while offline. Some features may be limited.
+          </p>
+          <Button variant="outline" size="sm" onClick={handleManualReconnect}>
+            <RefreshCw className="mr-1 h-3 w-3" /> Try Reconnecting
+          </Button>
         </div>
 
         <Card className="border-0 bg-slate-800">
@@ -538,8 +721,13 @@ export default function WhisperBot() {
                 <Activity className="h-5 w-5 mr-2 text-blue-400" />
                 Intelligence Feed (Offline)
               </div>
-              <Button variant="outline" size="sm" onClick={handleManualReconnect}>
-                <RefreshCw className="mr-1 h-3 w-3" /> Retry Connection
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={addOfflineInsight}
+                className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
+              >
+                <Bot className="mr-1 h-3 w-3" /> Generate Insight
               </Button>
             </CardTitle>
           </CardHeader>
@@ -591,27 +779,14 @@ export default function WhisperBot() {
         <p className="text-muted-foreground">Industry news analysis with targeted solution suggestions</p>
       </div>
 
-      <div className="flex items-center space-x-2 mb-4">
-        <div className={`h-2 w-2 rounded-full ${
-          isConnected ? 'bg-green-500' :
-            connectionError ? 'bg-red-500' : 'bg-yellow-500'
-        }`} />
-        <span className="text-sm text-gray-400">
-          {isConnected ? 'Connected to intelligence feed' :
-            isOfflineMode ? `Offline mode - using cached data` :
-              connectionError ? `Connection error - working in offline mode` : 'Connecting...'}
-        </span>
-        {connectionError && connectionAttempts < 3 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-2 text-xs"
-            onClick={handleManualReconnect}
-          >
-            <RefreshCw className="mr-1 h-3 w-3" /> Retry
-          </Button>
-        )}
-      </div>
+      <ConnectionStatus 
+        isConnected={isConnected}
+        isOfflineMode={isOfflineMode}
+        connectionError={connectionError}
+        connectionAttempts={connectionAttempts}
+        maxAttempts={MAX_CONNECTION_ATTEMPTS}
+        onRetry={handleManualReconnect}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card
@@ -697,47 +872,73 @@ export default function WhisperBot() {
               <Activity className="h-5 w-5 mr-2 text-blue-400" />
               Intelligence Feed
             </div>
-            {isConnected && (
+            {isConnected ? (
               <div className="flex items-center text-sm text-gray-400">
                 <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
                 Live Updates
               </div>
+            ) : isOfflineMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={addOfflineInsight}
+                className="text-xs h-7 px-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/30"
+              >
+                <Bot className="h-3 w-3 mr-1" /> Generate Insight
+              </Button>
             )}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {insights.map((item, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
-                onClick={() => handleInsightAction(item)}
-              >
-                <div className="flex items-center space-x-4">
-                  {item.status === 'new' ? (
-                    <AlertTriangle className="h-5 w-5 text-yellow-400" />
-                  ) : item.status === 'actioned' ? (
-                    <CheckCircle className="h-5 w-5 text-green-400" />
-                  ) : (
-                    <MessageSquare className="h-5 w-5 text-blue-400" />
-                  )}
-                  <div>
-                    <h4 className="font-medium">{item.company}</h4>
-                    <p className="text-sm text-gray-400">{item.insight}</p>
+          {insights.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageSquare className="h-8 w-8 text-gray-500 mx-auto mb-2" />
+              <p className="text-gray-400">No insights available yet</p>
+              {isOfflineMode && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addOfflineInsight}
+                  className="mt-4"
+                >
+                  <Bot className="h-4 w-4 mr-2" /> Generate Sample Insight
+                </Button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {insights.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
+                  onClick={() => handleInsightAction(item)}
+                >
+                  <div className="flex items-center space-x-4">
+                    {item.status === 'new' ? (
+                      <AlertTriangle className="h-5 w-5 text-yellow-400" />
+                    ) : item.status === 'actioned' ? (
+                      <CheckCircle className="h-5 w-5 text-green-400" />
+                    ) : (
+                      <MessageSquare className="h-5 w-5 text-blue-400" />
+                    )}
+                    <div>
+                      <h4 className="font-medium">{item.company}</h4>
+                      <p className="text-sm text-gray-400">{item.insight}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-green-400">{item.opportunity}</p>
+                    <p className="text-xs text-gray-400">{item.date}</p>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${
+                      item.priority === 'high' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
+                    }`}>
+                      {item.priority}
+                    </span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-green-400">{item.opportunity}</p>
-                  <p className="text-xs text-gray-400">{item.date}</p>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${
-                    item.priority === 'high' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
-                  }`}>
-                    {item.priority}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
