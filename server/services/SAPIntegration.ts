@@ -1,106 +1,69 @@
-
 import { RFC } from 'node-rfc';
 import { encrypt, decrypt } from '../utils/encryption';
 
-export class SAPIntegrationService {
-  private client: RFC.Client | null = null;
-  private connectionParams: RFC.ConnectionParameters;
+export class SAPIntegration {
+  private client: RFC.Client;
 
   constructor() {
-    this.connectionParams = {
-      ashost: process.env.SAP_HOST || '',
-      sysnr: process.env.SAP_SYSTEM_NUMBER || '00',
-      client: process.env.SAP_CLIENT || '100',
-      user: process.env.SAP_USER || '',
-      passwd: process.env.SAP_PASSWORD || '',
-    };
+    this.client = new RFC.Client({
+      ashost: process.env.SAP_HOST,
+      sysnr: process.env.SAP_SYSTEM_NUMBER,
+      client: process.env.SAP_CLIENT,
+      user: process.env.SAP_USER,
+      passwd: process.env.SAP_PASSWORD
+    });
   }
 
   async connect() {
     try {
-      this.client = new RFC.Client(this.connectionParams);
-      await this.client.open();
-      console.log('SAP connection established');
+      await this.client.connect();
       return true;
-    } catch (error) {
-      console.error('SAP connection failed:', error);
+    } catch (err) {
+      console.error('SAP connection error:', err);
       return false;
     }
   }
 
-  async getSalesData() {
-    if (!this.client) {
-      await this.connect();
-    }
-    
+  async callFunction(name: string, params: any) {
     try {
-      const result = await this.client?.call('BAPI_SALESORDER_GETLIST', {
-        CUSTOMER_NUMBER: '',
-        SALES_ORGANIZATION: '',
-        MATERIAL: '',
-      });
-      
+      const result = await this.client.call(name, params);
       return result;
-    } catch (error) {
-      console.error('Error fetching SAP sales data:', error);
-      throw error;
+    } catch (err) {
+      console.error('SAP function call error:', err);
+      throw err;
     }
+  }
+
+  async getSalesData() {
+    return this.callFunction('BAPI_SALESORDER_GETLIST', {
+      CUSTOMER_NUMBER: '',
+      SALES_ORGANIZATION: '',
+      MATERIAL: '',
+    });
   }
 
   async createSalesOrder(orderData: any) {
-    if (!this.client) {
-      await this.connect();
-    }
-
-    try {
-      const result = await this.client?.call('BAPI_SALESORDER_CREATEFROMDAT2', {
-        ORDER_HEADER_IN: {
-          DOC_TYPE: 'TA',
-          SALES_ORG: orderData.salesOrg,
-          DISTR_CHAN: orderData.distributionChannel,
-          DIVISION: orderData.division,
-          PURCH_NO_C: orderData.purchaseOrderNumber,
-        },
-        ORDER_ITEMS_IN: orderData.items,
-      });
-
-      return result;
-    } catch (error) {
-      console.error('Error creating SAP sales order:', error);
-      throw error;
-    }
+    return this.callFunction('BAPI_SALESORDER_CREATEFROMDAT2', {
+      ORDER_HEADER_IN: {
+        DOC_TYPE: 'TA',
+        SALES_ORG: orderData.salesOrg,
+        DISTR_CHAN: orderData.distributionChannel,
+        DIVISION: orderData.division,
+        PURCH_NO_C: orderData.purchaseOrderNumber,
+      },
+      ORDER_ITEMS_IN: orderData.items,
+    });
   }
 
   async getInventoryData() {
-    if (!this.client) {
-      await this.connect();
-    }
-
-    try {
-      const result = await this.client?.call('BAPI_MATERIAL_STOCK_REQ_LIST', {
-        MATERIAL: '',
-        PLANT: '',
-      });
-
-      return result;
-    } catch (error) {
-      console.error('Error fetching SAP inventory data:', error);
-      throw error;
-    }
+    return this.callFunction('BAPI_MATERIAL_STOCK_REQ_LIST', {
+      MATERIAL: '',
+      PLANT: '',
+    });
   }
 
   async testConnection() {
-    if (!this.client) {
-      await this.connect();
-    }
-    
-    try {
-      const result = await this.client?.call('STFC_CONNECTION');
-      return result;
-    } catch (error) {
-      console.error('Error testing SAP connection:', error);
-      throw error;
-    }
+    return this.callFunction('STFC_CONNECTION', {});
   }
 
   disconnect() {
@@ -111,4 +74,4 @@ export class SAPIntegrationService {
   }
 }
 
-export const sapService = new SAPIntegrationService();
+export const sapIntegration = new SAPIntegration();
