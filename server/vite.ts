@@ -27,15 +27,30 @@ export async function setupVite(app: Express, server: Server) {
     middlewareMode: true,
     hmr: { 
       server,
-      timeout: 30000,
+      timeout: 60000,
       port: 24678,
       protocol: 'ws',
       host: '0.0.0.0',
       clientPort: 443,
       path: '/hmr/',
       reconnect: true,
-      maxRetries: 10,
-      heartbeat: 5000
+      maxRetries: 20,
+      heartbeat: 3000
+    },
+    server: {
+      middlewareMode: true,
+      watch: {
+        usePolling: true,
+        interval: 1000,
+        useFsEvents: false
+      },
+      fs: {
+        strict: false,
+        allow: ['.']
+      }
+    },
+    optimizeDeps: {
+      force: true
     },
     allowedHosts: true,
     server: {

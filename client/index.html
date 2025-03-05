@@ -3,9 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <script type="module">
-      window.addEventListener('vite:ws:error', () => {
-        console.log('Vite WebSocket error, attempting reconnect...');
-        setTimeout(() => window.location.reload(), 1000);
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 10;
+      const baseDelay = 1000;
+
+      function handleWsError() {
+        if (reconnectAttempts < maxReconnectAttempts) {
+          const delay = Math.min(baseDelay * Math.pow(2, reconnectAttempts), 10000);
+          console.log(`Vite WebSocket error, attempting reconnect in ${delay}ms...`);
+          reconnectAttempts++;
+          setTimeout(() => {
+            const event = new CustomEvent('vite:ws:reconnect');
+            window.dispatchEvent(event);
+            window.location.reload();
+          }, delay);
+        } else {
+          console.log('Max reconnection attempts reached, falling back to full page reload');
+          window.location.href = window.location.href;
+        }
+      }
+
+      window.addEventListener('vite:ws:error', handleWsError);
+      window.addEventListener('vite:ws:connect', () => {
+        reconnectAttempts = 0;
       });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
