@@ -110,8 +110,22 @@ process.on('SIGINT', () => {
     // Set up Vite in development or serve static files in production
     console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
-      await setupVite(app, server);
-      console.log('Development server with Vite HMR enabled');
+      let retries = 3;
+      while (retries > 0) {
+        try {
+          await setupVite(app, server);
+          console.log('Development server with Vite HMR enabled');
+          break;
+        } catch (error) {
+          console.error(`Vite setup attempt failed, ${retries - 1} retries remaining:`, error);
+          retries--;
+          if (retries === 0) {
+            console.log('Falling back to static serving mode');
+            serveStatic(app);
+          }
+          await new Promise(resolve => setTimeout(resolve, 3000));
+        }
+      }
     } else {
       serveStatic(app);
       console.log('Production static server enabled');
