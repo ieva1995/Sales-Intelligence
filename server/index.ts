@@ -13,9 +13,11 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
 import { createTables } from './createTables';
 
-// Create VPN tunnel
-const vpnServer = tunnel.createServer();
-vpnServer.listen(8000, '0.0.0.0');
+// Create tunnel proxy
+const tunnelProxy = tunnel({
+  host: '0.0.0.0',
+  port: 8000
+});
 
 // Rate limiting
 const limiter = rateLimit({
