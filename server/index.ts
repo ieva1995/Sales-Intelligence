@@ -109,7 +109,7 @@ process.on('SIGINT', () => {
 
     // Kill any existing processes on the Vite ports
     await new Promise((resolve) => {
-      import killPort from 'kill-port';
+      const killPort = require('kill-port');
       Promise.all([
         killPort(24678).catch(() => {}),  // Vite WebSocket port
         killPort(5173).catch(() => {})    // Vite dev server port
@@ -137,7 +137,7 @@ process.on('SIGINT', () => {
       }
     } else {
       serveStatic(app);
-      console.log('Production static server enabled');
+      console.log('Production static server enabled on port', process.env.PORT || 8080);
     }
     app.get('*', (req, res, next) => {
       if (req.path.includes('.') || req.path.startsWith('/api')) {
