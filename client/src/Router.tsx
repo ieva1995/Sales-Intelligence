@@ -31,6 +31,7 @@ import StealthAudit from "@/pages/features/stealth-audit";
 import SmartTools from "@/pages/features/smart-tools";
 import EnterpriseTurbo from "@/pages/features/enterprise-turbo";
 import AnalyticsSuite from "@/pages/features/analytics-suite"; // Import the new analytics suite page
+import ProductRecommendations from "@/pages/features/product-recommendations"; // Import the new product recommendations page
 import Contacts from "@/pages/contacts";
 import Workflows from "@/pages/workflows";
 import Reports from "@/pages/reports";
@@ -145,6 +146,7 @@ export default function Router() {
               <Route path="/features/whisper-bot" component={WhisperBot} />
               <Route path="/features/stealth-audit" component={StealthAudit} />
               <Route path="/features/analytics-suite" component={AnalyticsSuite} /> {/* Add the new route for analytics suite */}
+              <Route path="/features/product-recommendations" component={ProductRecommendations} /> {/* Add the new route for product recommendations */}
 
               <Route component={NotFound} />
             </Switch>

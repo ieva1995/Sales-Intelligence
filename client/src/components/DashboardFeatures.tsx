@@ -16,7 +16,9 @@ import {
   Building,
   Users,
   Calculator,
-  Lock
+  Lock,
+  Package,
+  ShoppingCart
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -61,11 +63,17 @@ const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise
 
 const features = [
   {
+    icon: ShoppingCart,
+    title: "AI Product Recommendations",
+    description: "Increase sales with AI-powered cross-sell and upsell recommendations",
+    href: "/features/product-recommendations",
+    isNew: true
+  },
+  {
     icon: FileText,
     title: "Smart Proposal Generator",
     description: "AI-powered proposals based on client behavior and RFP documents",
-    href: "/features/smart-proposal",
-    isNew: true
+    href: "/features/smart-proposal"
   },
   {
     icon: Brain,
@@ -125,12 +133,19 @@ const features = [
 
 const enterpriseFeatures = [
   {
+    icon: Package,
+    title: "Predictive Inventory AI",
+    description: "Forecast inventory needs based on sales patterns and market trends",
+    href: "/features/predictive-inventory",
+    isEnterprise: true,
+    isNew: true
+  },
+  {
     icon: Bot,
     title: "AI Whisper Bot",
     description: "Industry news analysis with targeted solution suggestions",
     href: "/features/whisper-bot",
-    isEnterprise: true,
-    isNew: true
+    isEnterprise: true
   },
   {
     icon: Search,
