@@ -345,3 +345,169 @@ function generatePerformanceMetrics(orders: any[], products: any[], customers: a
 }
 
 export default router;
+import { Session, Shopify } from '@shopify/shopify-api';
+
+// Initialize Shopify API with environment variables
+const shopifyApi = () => {
+  // Check if required environment variables are present
+  const missingVars = [];
+  if (!process.env.SHOPIFY_API_KEY) missingVars.push('SHOPIFY_API_KEY');
+  if (!process.env.SHOPIFY_API_SECRET) missingVars.push('SHOPIFY_API_SECRET');
+  if (!process.env.SHOPIFY_SHOP_DOMAIN) missingVars.push('SHOPIFY_SHOP_DOMAIN');
+
+  // If in development or sample mode, use placeholder values
+  if (process.env.NODE_ENV === 'development' || process.env.USE_SAMPLE_DATA === 'true') {
+    console.log('Using development/sample mode for Shopify API');
+    return {
+      // Placeholder implementation for development/sample mode
+      getProducts: async () => ({ products: [] }),
+      getOrders: async () => ({ orders: [] }),
+      getCustomers: async () => ({ customers: [] }),
+      getPerformance: async () => ({
+        revenue: { total: "0.00", weekly: "0.00", monthly: "0.00" },
+        orders: { count: 0, averageValue: "0.00" }
+      })
+    };
+  }
+
+  // In production, require proper configuration
+  if (missingVars.length > 0) {
+    console.warn(`Shopify API configuration missing: ${missingVars.join(', ')}. Using sample data.`);
+    return {
+      // Same placeholder implementation as above for missing configs
+      getProducts: async () => ({ products: [] }),
+      getOrders: async () => ({ orders: [] }),
+      getCustomers: async () => ({ customers: [] }),
+      getPerformance: async () => ({
+        revenue: { total: "0.00", weekly: "0.00", monthly: "0.00" },
+        orders: { count: 0, averageValue: "0.00" }
+      })
+    };
+  }
+
+  // Initialize the actual Shopify API client
+  try {
+    const shopify = new Shopify.Clients.Rest(
+      process.env.SHOPIFY_API_KEY as string,
+      process.env.SHOPIFY_API_SECRET as string,
+      {
+        apiVersion: '2023-04', // Use appropriate API version
+        session: {
+          shop: process.env.SHOPIFY_SHOP_DOMAIN as string,
+        } as Session,
+      }
+    );
+
+    return {
+      getProducts: async () => {
+        try {
+          return await shopify.get({
+            path: 'products',
+          });
+        } catch (error) {
+          console.error('Error fetching Shopify products:', error);
+          return { products: [] };
+        }
+      },
+      getOrders: async () => {
+        try {
+          return await shopify.get({
+            path: 'orders',
+          });
+        } catch (error) {
+          console.error('Error fetching Shopify orders:', error);
+          return { orders: [] };
+        }
+      },
+      getCustomers: async () => {
+        try {
+          return await shopify.get({
+            path: 'customers',
+          });
+        } catch (error) {
+          console.error('Error fetching Shopify customers:', error);
+          return { customers: [] };
+        }
+      },
+      getPerformance: async () => {
+        try {
+          // This would typically involve multiple Shopify API calls
+          // and data processing for performance metrics
+          return {
+            revenue: { total: "0.00", weekly: "0.00", monthly: "0.00" },
+            orders: { count: 0, averageValue: "0.00" }
+          };
+        } catch (error) {
+          console.error('Error fetching Shopify performance data:', error);
+          return {
+            revenue: { total: "0.00", weekly: "0.00", monthly: "0.00" },
+            orders: { count: 0, averageValue: "0.00" }
+          };
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Error initializing Shopify API client:', error);
+    return {
+      // Fallback implementation
+      getProducts: async () => ({ products: [] }),
+      getOrders: async () => ({ orders: [] }),
+      getCustomers: async () => ({ customers: [] }),
+      getPerformance: async () => ({
+        revenue: { total: "0.00", weekly: "0.00", monthly: "0.00" },
+        orders: { count: 0, averageValue: "0.00" }
+      })
+    };
+  }
+};
+
+// Export the Shopify API client
+export const shopify = shopifyApi();
+
+// Export route handlers
+export const shopifyRoutes = {
+  getProducts: async (req: any, res: any) => {
+    try {
+      const products = await shopify.getProducts();
+      res.json(products);
+    } catch (error: any) {
+      console.error('Error in getProducts route:', error);
+      res.status(500).json({ error: error.message || 'Error fetching products' });
+    }
+  },
+  
+  getOrders: async (req: any, res: any) => {
+    try {
+      const orders = await shopify.getOrders();
+      res.json(orders);
+    } catch (error: any) {
+      console.error('Error in getOrders route:', error);
+      res.status(500).json({ error: error.message || 'Error fetching orders' });
+    }
+  },
+  
+  getCustomers: async (req: any, res: any) => {
+    try {
+      const customers = await shopify.getCustomers();
+      res.json(customers);
+    } catch (error: any) {
+      console.error('Error in getCustomers route:', error);
+      res.status(500).json({ error: error.message || 'Error fetching customers' });
+    }
+  },
+  
+  getPerformance: async (req: any, res: any) => {
+    try {
+      const performance = await shopify.getPerformance();
+      res.json(performance);
+    } catch (error: any) {
+      console.error('Error in getPerformance route:', error);
+      res.status(500).json({ error: error.message || 'Error fetching performance data' });
+    }
+  },
+  
+  auth: async (req: any, res: any) => {
+    // This is a stub for Shopify OAuth - would need to be implemented with proper OAuth flow
+    res.redirect(`https://${process.env.SHOPIFY_SHOP_DOMAIN}/admin/oauth/authorize?client_id=${process.env.SHOPIFY_API_KEY}&scope=read_products,read_orders,read_customers&redirect_uri=${encodeURIComponent(process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:5000/api/shopify/callback')}`);
+  }
+};
