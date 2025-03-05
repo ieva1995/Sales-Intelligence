@@ -13,18 +13,14 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
 import { createTables } from './createTables';
 
-// Create secure tunnel
-const tunnelProxy = tunnel({
+// Initialize HTTP tunnel
+const tunnelConfig = {
   host: '0.0.0.0',
-  port: 8000
-});
+  port: 8000,
+  secure: true
+};
 
-// Set up error handling
-if (tunnelProxy && typeof tunnelProxy.on === 'function') {
-  tunnelProxy.on('error', (err) => {
-    console.error('Tunnel error:', err);
-  });
-}
+// Error handling will be done at the Express level
 
 // Rate limiting
 const limiter = rateLimit({
