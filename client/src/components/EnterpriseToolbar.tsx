@@ -13,7 +13,7 @@ interface ToolbarItem {
 
 export default function EnterpriseToolbar() {
   const { toast } = useToast();
-  
+
   const toolbarItems: ToolbarItem[] = [
     {
       id: 'communication-hub',
@@ -57,7 +57,7 @@ export default function EnterpriseToolbar() {
   return (
     <TooltipProvider>
       <div className="fixed top-0 left-0 right-0 z-30 bg-slate-900 border-b border-slate-800 shadow-md">
-        <div className="mx-auto px-2 md:px-4 py-2 flex items-center justify-center gap-2 md:gap-4 overflow-x-auto">
+        <div className="mx-auto px-2 md:px-4 py-2 flex items-center justify-end gap-4 overflow-x-auto">
           {toolbarItems.map((item) => (
             <Tooltip key={item.id}>
               <TooltipTrigger asChild>
