@@ -83,32 +83,57 @@ app.use((req, res, next) => {
     }
     console.log('Vite middleware setup complete');
 
-    // ALWAYS serve the app on port 5000
-    // this serves both the API and the client
-    const port = 5000; // Reverted back to 5000 as required by the platform
+    // SWITCH TO A DIFFERENT PORT to avoid port 5000 conflicts
+    const port = 3000; // Changed from 5000 to 3000 to avoid port conflicts
+    console.log(`Switching to port ${port} to avoid conflicts...`);
 
     // Add a pre-flight check for port availability
     console.log(`Preparing to start server on port ${port}...`);
 
-    // Attempt to start server with better error handling
-    server.listen({
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    }, () => {
-      log(`Server running on port ${port}`);
-    });
+    // Maximum number of retry attempts
+    const maxRetries = 5;
+    // Initial retry delay in milliseconds (3 seconds)
+    const initialRetryDelay = 3000;
+    // Counter for tracking retries
+    let retryCount = 0;
+
+    // Function to start the server with retry logic
+    function startServerWithRetry(retryCount: number, retryDelay: number) {
+      console.log(`Attempt #${retryCount + 1} to bind to port ${port}...`);
+
+      // Attempt to start server with better error handling
+      server.listen({
+        port,
+        host: "0.0.0.0",
+        reusePort: true,
+      }, () => {
+        log(`Server running on port ${port}`);
+      });
+    }
 
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Please close the other application using this port or change the port number.`);
-        process.exit(1);
+        if (retryCount < maxRetries) {
+          retryCount++;
+          const retryDelay = initialRetryDelay * Math.pow(1.5, retryCount - 1); // Exponential backoff
+          console.error(`Port ${port} is already in use. Retrying in ${retryDelay/1000} seconds... (Attempt ${retryCount}/${maxRetries})`);
+
+          setTimeout(() => {
+            startServerWithRetry(retryCount, retryDelay);
+          }, retryDelay);
+        } else {
+          console.error(`Port ${port} is still in use after ${maxRetries} attempts. Please close the other application using this port or change the port number.`);
+          process.exit(1);
+        }
       } else {
         console.error('Server error:', error);
         process.exit(1);
       }
     });
+
+    // Start the initial attempt
+    startServerWithRetry(retryCount, initialRetryDelay);
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);

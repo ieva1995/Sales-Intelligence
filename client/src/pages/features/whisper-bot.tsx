@@ -117,6 +117,7 @@ function WhisperBot() {
       console.log("Attempting to connect to WebSocket");
       // Ensure correct protocol is used
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      // Use dynamic host and port from the current page to handle port changes seamlessly
       const wsUrl = `${protocol}//${window.location.host}/ws-feed`;
       console.log(`Connecting to WebSocket URL: ${wsUrl}`);
 
