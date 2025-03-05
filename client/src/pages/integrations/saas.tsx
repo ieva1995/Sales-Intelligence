@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { SiSlack, SiShopify, SiMailchimp, SiHubspot, SiSalesforce, SiZoom, SiAsana, SiGoogle, SiDropbox, SiAmazon, SiZendesk, SiIntercom, SiAdobecreativecloud } from 'react-icons/si';
-import { CheckCircle, XCircle, AlertCircle, RotateCw, Link as LinkIcon, Twitter, Windows } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, RotateCw, Link as LinkIcon, Twitter } from 'lucide-react';
 
 interface SaasIntegrationProps {
   view: 'grid' | 'list';
