@@ -68,10 +68,10 @@ const PlatformDropdown = () => {
           <Link
             key={index}
             href={item.path}
-            className="flex items-center px-4 py-3 hover:bg-indigo-50 transition-colors"
+            className="flex items-center px-4 py-3 hover:bg-indigo-50 transition-colors group"
           >
             <div className="mr-3">{item.icon}</div>
-            <span className="text-sm text-slate-800 font-medium hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-all">{item.title}</span>
+            <span className="text-sm text-slate-800 font-medium group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all">{item.title}</span>
           </Link>
         ))}
       </div>
