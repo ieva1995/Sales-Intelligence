@@ -27,6 +27,14 @@ for PORT in "${PORTS[@]}"; do
     echo "No specific process found for port $PORT using netstat"
   fi
 
+  # Try using fuser (now available from psmisc)
+  echo "Using fuser to free port $PORT"
+  fuser -k $PORT/tcp 2>/dev/null || true
+
+  # Try using killall (now available from psmisc)
+  echo "Using killall to free node processes"
+  killall -9 node 2>/dev/null || true
+
   # Try a more aggressive approach to kill node processes
   echo "Attempting to kill any node processes that might be using port $PORT"
   pkill -f "node" || true
