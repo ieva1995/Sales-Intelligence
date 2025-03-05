@@ -181,14 +181,14 @@ process.on('SIGINT', () => {
         }
       });
 
-      serverInstance.on('error', (error: NodeJS.ErrnoException) => {
+      serverInstance.on('error', async (error: NodeJS.ErrnoException) => {
         if (error.code === 'EADDRINUSE' && retries > 0) {
           console.log(`Port ${port} in use, waiting 3 seconds before retry... (${retries} attempts left)`);
           serverInstance.close();
 
           // Try to forcefully release the port
           try {
-            const { execSync } = require('child_process');
+            const { execSync } = await import('child_process');
             console.log(`Attempting to force release port ${port}...`);
             // Try multiple commands to release the port, depending on what's available
             try {
@@ -221,7 +221,7 @@ process.on('SIGINT', () => {
             // Try a different approach on the last attempt
             if (retries === 1) {
               try {
-                const { execSync } = require('child_process');
+                const { execSync } = await import('child_process');
                 console.log('Trying to kill ALL Node.js processes and restart...');
                 execSync('pkill -f node || true');
                 setTimeout(() => {
@@ -243,11 +243,11 @@ process.on('SIGINT', () => {
     };
 
     // Handle server errors properly
-    server.on('error', (error: NodeJS.ErrnoException) => {
+    server.on('error', async (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
         console.error(`Port ${port} is already in use. Attempting to force release...`);
         try {
-          const { execSync } = require('child_process');
+          const { execSync } = await import('child_process');
           console.log('Running port kill commands...');
           try {
             execSync('npx kill-port 5000 || true');
