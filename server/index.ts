@@ -54,8 +54,18 @@ app.use((req, res, next) => {
   }
 
   try {
-    const server = await registerRoutes(app);
+    // Clear any lingering processes before starting - check if we can detect and reset
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully');
+      process.exit(0);
+    });
 
+    // Register routes and create server
+    console.log('Registering routes and creating HTTP server...');
+    const server = await registerRoutes(app);
+    console.log('Routes registered successfully');
+
+    // Set up error handler for express
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
@@ -64,17 +74,21 @@ app.use((req, res, next) => {
       console.error("Server error:", err);
     });
 
-    // importantly only setup vite in development and after
-    // setting up all the other routes so the catch-all route
-    // doesn't interfere with the other routes
+    // Set up Vite in development or serve static files in production
+    console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
       await setupVite(app, server);
     } else {
       serveStatic(app);
     }
+    console.log('Vite middleware setup complete');
 
-    // Temporarily change port from 5000 to 5001 to avoid port conflict
-    const port = 5001; // Changed from 5000 to 5001 to resolve EADDRINUSE error
+    // ALWAYS serve the app on port 5000
+    // this serves both the API and the client
+    const port = 5000; // Reverted back to 5000 as required by the platform
+
+    // Add a pre-flight check for port availability
+    console.log(`Preparing to start server on port ${port}...`);
 
     // Attempt to start server with better error handling
     server.listen({
