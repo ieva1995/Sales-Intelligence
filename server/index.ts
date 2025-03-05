@@ -95,18 +95,18 @@ process.on('unhandledRejection', (reason, promise) => {
     // Add a pre-flight check for port availability
     console.log(`Preparing to start server on port ${port}...`);
 
-    // Maximum number of retry attempts
-    const maxRetries = 5;
-    // Initial retry delay in milliseconds (3 seconds)
-    const initialRetryDelay = 3000;
-    // Counter for tracking retries
-    let retryCount = 0;
+    // Kill any existing processes on port 5000
+    try {
+      const { execSync } = require('child_process');
+      execSync('fuser -k 5000/tcp || true');
+    } catch (err) {
+      console.log('Port cleanup attempt completed');
+    }
 
     // Function to start the server with retry logic
-    function startServerWithRetry(retryCount: number, retryDelay: number) {
-      console.log(`Attempt #${retryCount + 1} to bind to port ${port}...`);
-
-      // Attempt to start server with better error handling
+    function startServerWithRetry() {
+      console.log(`Attempting to bind to port ${port}...`);
+      
       server.listen({
         port,
         host: "0.0.0.0",
@@ -119,11 +119,17 @@ process.on('unhandledRejection', (reason, promise) => {
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Please restart your workspace to clear all processes.`);
-        console.error('If the issue persists after restart, please manually kill any process using port 5000.');
-
-        // Exit process after logging clear instructions
-        process.exit(1);
+        console.error(`Port ${port} is already in use. Attempting to force release...`);
+        try {
+          const { execSync } = require('child_process');
+          execSync('fuser -k 5000/tcp || true');
+          setTimeout(() => {
+            startServerWithRetry();
+          }, 1000);
+        } catch (err) {
+          console.error('Failed to release port. Please restart the repl.');
+          process.exit(1);
+        }
       } else {
         console.error('Server error:', error);
         process.exit(1);
@@ -131,7 +137,7 @@ process.on('unhandledRejection', (reason, promise) => {
     });
 
     // Start the initial attempt
-    startServerWithRetry(retryCount, initialRetryDelay);
+    startServerWithRetry();
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);
