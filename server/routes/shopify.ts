@@ -1,5 +1,5 @@
 import express from 'express';
-import { shopifyApi, LATEST_API_VERSION, restResources } from '@shopify/shopify-api';
+import { shopifyApi, LATEST_API_VERSION } from '@shopify/shopify-api';
 
 const router = express.Router();
 
@@ -33,7 +33,6 @@ if (hasShopifyCredentials) {
       scopes: ['read_products', 'read_orders', 'read_customers'],
       isEmbeddedApp: false,
       apiVersion: LATEST_API_VERSION,
-      restResources,
       hostScheme: 'https',
       isCustomStoreApp: true
     };
