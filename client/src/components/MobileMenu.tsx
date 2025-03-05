@@ -20,10 +20,7 @@ import {
   Target,
   ClipboardCheck,
   UserPlus,
-  Mail
-  LineChart,
-  Activity,
-  Zap,
+  Mail,
   Target as Milestone,
   ClipboardCheck,
   UserPlus,
