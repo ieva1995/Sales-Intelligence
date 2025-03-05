@@ -13,10 +13,25 @@ import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
 import { createTables } from './createTables';
 
-// Create tunnel proxy
-const tunnelProxy = tunnel({
+// Create secure tunnel
+const tunnelOptions = {
   host: '0.0.0.0',
-  port: 8000
+  port: 8000,
+  autoClose: true,
+  keepAlive: true,
+  debug: process.env.NODE_ENV === 'development'
+};
+
+const tunnelProxy = new tunnel.Server();
+tunnelProxy.listen(tunnelOptions.port, tunnelOptions.host);
+
+// Handle tunnel events
+tunnelProxy.on('connect', (info) => {
+  console.log(`Tunnel connected: ${info.clientAddress}`);
+});
+
+tunnelProxy.on('error', (err) => {
+  console.error('Tunnel error:', err);
 });
 
 // Rate limiting
