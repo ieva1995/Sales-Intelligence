@@ -50,4 +50,5 @@ class SAPIntegration {
   }
 }
 
+export const sapService = new SAPIntegration();
 export default SAPIntegration;
