@@ -13,7 +13,7 @@ interface ToolbarItem {
 
 export default function EnterpriseToolbar() {
   const { toast } = useToast();
-
+  
   const toolbarItems: ToolbarItem[] = [
     {
       id: 'communication-hub',
@@ -57,30 +57,28 @@ export default function EnterpriseToolbar() {
   return (
     <TooltipProvider>
       <div className="fixed top-0 left-0 right-0 z-30 bg-slate-900 border-b border-slate-800 shadow-md">
-        <div className="flex items-center justify-end pr-4 py-2">
-          <div className="flex items-center space-x-5">
-            {toolbarItems.map((item) => (
-              <Tooltip key={item.id}>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    className="text-xs sm:text-sm text-slate-300 hover:text-white flex items-center whitespace-nowrap px-2 py-1"
-                    onClick={() => handleToolClick(item)}
-                  >
-                    <item.icon className="h-4 w-4 mr-1.5" />
-                    <span className="hidden md:inline">{item.label}</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div>
-                    <p className="font-medium">{item.label}</p>
-                    <p className="text-xs text-slate-400">{item.description}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            ))}
-          </div>
+        <div className="mx-auto px-2 md:px-4 py-2 flex items-center justify-center gap-2 md:gap-4 overflow-x-auto">
+          {toolbarItems.map((item) => (
+            <Tooltip key={item.id}>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="text-xs sm:text-sm text-slate-300 hover:text-white flex items-center whitespace-nowrap px-2 py-1"
+                  onClick={() => handleToolClick(item)}
+                >
+                  <item.icon className="h-4 w-4 mr-1.5" />
+                  <span className="hidden md:inline">{item.label}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <div>
+                  <p className="font-medium">{item.label}</p>
+                  <p className="text-xs text-slate-400">{item.description}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          ))}
         </div>
       </div>
     </TooltipProvider>

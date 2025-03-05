@@ -1,32 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { 
   ChevronDown, 
   ChevronRight,
-  Menu as MenuIcon, 
+  Menu, 
   X, 
   Home,
   BarChart2, 
   Users,
-  ShoppingBag,
+  ShoppingCart,
   FileText,
   Settings,
-  Package,
-  Truck,
-  MessageCircle,
-  PieChart,
-  BarChart,
-  LineChart,
-  Activity,
-  Zap,
-  Target, // Added for Mutual Action Plans
-  ClipboardCheck,
-  UserPlus,
-  Mail
+  Box,
+  Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import NavigationPreview from './NavigationPreview';
+import NavigationPreview, { PreviewData } from './NavigationPreview';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -40,107 +30,74 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
+const menuItems: MenuItem[] = [
+  {
+    title: 'Dashboard',
+    path: '/dashboard',
+    icon: Home
+  },
+  {
+    title: 'Content',
+    icon: FileText,
+    children: [
+      { title: 'Calendar', path: '/content/calendar', icon: ChevronRight },
+      { title: 'Blog', path: '/content/blog', icon: ChevronRight },
+      { title: 'Holiday Message', path: '/content/holiday', icon: ChevronRight },
+      { title: 'Home Page', path: '/content/home', icon: ChevronRight },
+      { title: 'Menu Section', path: '/content/menu', icon: ChevronRight },
+    ]
+  },
+  {
+    title: 'Customers',
+    icon: Users,
+    children: [
+      { title: 'Brokers', path: '/customers/brokers', icon: ChevronRight },
+      { title: 'Customer Logs', path: '/customers/logs', icon: ChevronRight },
+      { title: 'Customers', path: '/customers', icon: ChevronRight },
+      { title: 'Gift Vouchers', path: '/customers/vouchers', icon: ChevronRight },
+    ]
+  },
+  {
+    title: 'Orders',
+    icon: ShoppingCart,
+    children: [
+      { title: 'Create Order', path: '/orders/create', icon: ChevronRight },
+      { title: 'Dispatch Order', path: '/orders/dispatch', icon: ChevronRight },
+      { title: 'Build Invoice', path: '/orders/invoice', icon: ChevronRight },
+      { title: 'Checkout Feedback', path: '/orders/feedback', icon: ChevronRight },
+    ]
+  },
+  {
+    title: 'Shipping',
+    path: '/shipping',
+    icon: Truck
+  },
+  {
+    title: 'Product',
+    icon: Box,
+    children: [
+      { title: 'Categories', path: '/product/categories', icon: ChevronRight },
+      { title: 'Inventory', path: '/product/inventory', icon: ChevronRight },
+      { title: 'Lookbooks', path: '/product/lookbooks', icon: ChevronRight },
+      { title: 'Models', path: '/product/models', icon: ChevronRight },
+      { title: 'Size', path: '/product/size', icon: ChevronRight },
+    ]
+  }
+];
+
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const [, setLocation] = useLocation();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  // Remove touch handlers to prevent unwanted navigation
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
-  // Platform menu items to match PlatformDropdown component
-  const platformItems: MenuItem[] = [
-    {
-      title: "What is SalesBoost?",
-      icon: MessageCircle,
-      path: "/platform/about"
-    },
-    {
-      title: "Pipeline Management",
-      icon: PieChart,
-      path: "/platform/pipeline"
-    },
-    {
-      title: "Sales Forecasting",
-      icon: BarChart,
-      path: "/platform/forecasting"
-    },
-    {
-      title: "Deal Insights",
-      icon: Activity,
-      path: "/platform/insights"
-    },
-    {
-      title: "Revenue Intelligence Software",
-      icon: LineChart,
-      path: "/platform/revenue"
-    },
-    {
-      title: "Conversation Intelligence",
-      icon: Zap,
-      path: "/platform/conversation"
-    },
-    {
-      title: "Mutual Action Plans",
-      icon: Target,
-      path: "/platform/action-plans"
-    },
-    {
-      title: "Deal Management",
-      icon: ClipboardCheck,
-      path: "/platform/deal-management"
-    },
-    {
-      title: "Rep Coaching",
-      icon: UserPlus,
-      path: "/platform/coaching"
-    }
-  ];
-
-  const solutionsItems: MenuItem[] = [
-    {
-      title: "Sales Engagement",
-      icon: Mail,
-      path: "/solutions/sales-engagement"
-    },
-    {
-      title: "Deal Management",
-      icon: PieChart,
-      path: "/solutions/deal-management"
-    },
-    {
-      title: "Account-Based Selling",
-      icon: Users,
-      path: "/solutions/account-based-selling"
-    },
-    {
-      title: "Revenue Intelligence",
-      icon: LineChart,
-      path: "/solutions/revenue-intelligence"
-    }
-  ];
-
-  const menuItems: MenuItem[] = [
-    {
-      title: "Platform",
-      icon: BarChart2,
-      children: platformItems
-    },
-    {
-      title: "Solutions",
-      icon: Users,
-      children: solutionsItems
-    },
-    {
-      title: "Resources",
-      icon: FileText,
-      path: "/resources"
-    },
-    {
-      title: "Pricing",
-      icon: Settings,
-      path: "/pricing"
-    }
-  ];
+  // Use a ref to track items being hovered
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Disable body scroll when menu is open
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -150,7 +107,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
-
 
   const toggleExpand = (title: string) => {
     setExpandedItems(prev => ({
@@ -166,61 +122,53 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const variants = {
-    open: { 
-      x: 0, 
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40,
-        mass: 1,
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    },
-    closed: { 
-      x: '-100%', 
-      opacity: 0,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40,
-        mass: 1
-      }
-    },
+  const handleMouseEnter = (item: MenuItem, event: React.MouseEvent) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    hoverTimeoutRef.current = setTimeout(() => {
+      setPreviewPosition({ 
+        x: rect.right, 
+        y: rect.top 
+      });
+
+      setPreviewData({
+        title: item.title,
+        description: `View your ${item.title.toLowerCase()} data and insights`,
+        stats: [
+          { label: 'Recent Updates', value: '24', trend: 'up' },
+          { label: 'Last Activity', value: '2h ago', trend: 'neutral' },
+          { label: 'Status', value: 'Active', trend: 'up' }
+        ]
+      });
+
+      setPreviewVisible(true);
+      setHoveredPath(item.path || `/${item.title.toLowerCase()}`);
+    }, 300); // 300ms delay before showing preview
   };
 
-  const itemVariants = {
-    open: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40
-      }
-    },
-    closed: {
-      x: -20,
-      opacity: 0,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40
-      }
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
     }
+
+    hoverTimeoutRef.current = setTimeout(() => {
+      setPreviewVisible(false);
+      setHoveredPath(null);
+    }, 100);
+  };
+
+  const variants = {
+    open: { x: 0, opacity: 1 },
+    closed: { x: '-100%', opacity: 0 },
   };
 
   const overlayVariants = {
-    open: { 
-      opacity: 1,
-      transition: { duration: 0.2 }
-    },
-    closed: { 
-      opacity: 0,
-      transition: { duration: 0.2 }
-    },
+    open: { opacity: 1 },
+    closed: { opacity: 0 },
   };
 
   const childVariants = {
@@ -228,29 +176,16 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       opacity: 1,
       height: 'auto',
       transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40
+        duration: 0.3,
+        ease: "easeOut"
       }
     },
     closed: {
       opacity: 0,
       height: 0,
       transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40
-      }
-    }
-  };
-
-  const menuItemHoverVariants = {
-    hover: {
-      x: 5,
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 40
+        duration: 0.2,
+        ease: "easeIn"
       }
     }
   };
@@ -259,70 +194,57 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* Backdrop */}
           <motion.div 
-            className="fixed inset-0 bg-black/40 z-40 backdrop-blur-md transition-all duration-300"
+            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
             initial="closed"
             animate="open"
             exit="closed"
             variants={overlayVariants}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
           />
 
+          {/* Sidebar */}
           <motion.div 
-            className="fixed inset-y-0 left-0 w-[280px] max-w-[90vw] bg-slate-900 border-r border-slate-800 z-50 flex flex-col"
+            className="fixed inset-y-0 left-0 w-[280px] max-w-[80vw] bg-slate-900 border-r border-slate-800 z-50 flex flex-col"
             initial="closed"
             animate="open"
             exit="closed"
             variants={variants}
+            transition={{ duration: 0.3, ease: "easeOut" }}
           >
+            {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-slate-800">
-              <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                 SalesBoost AI
               </div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  onClick={onClose}
-                  className="text-slate-400 hover:text-white transition-all duration-200 hover:bg-white/10 rounded-full"
-                >
-                <motion.div
-                    initial={{ rotate: 0 }}
-                    animate={{ rotate: isOpen ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <X className="h-5 w-5" />
-                  </motion.div>
-                </Button>
-              </motion.div>
+              <Button variant="ghost" size="icon" onClick={onClose} className="text-slate-400 hover:text-white">
+                <X className="h-5 w-5" />
+              </Button>
             </div>
 
-            <div className="flex-1 overflow-y-auto py-2 overscroll-contain">
-              <ul className="space-y-2 p-3">
+            {/* Menu Items */}
+            <div className="flex-1 overflow-y-auto py-2">
+              <ul className="space-y-1 p-2">
                 {menuItems.map((item) => (
-                  <li key={item.title} className="rounded-lg overflow-hidden">
+                  <li key={item.title} className="rounded-md overflow-hidden">
                     {item.children ? (
-                      <motion.div
-                        variants={itemVariants}
-                        initial="closed"
-                        animate="open"
-                      >
-                        <motion.button
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full flex items-center justify-between p-4 hover:bg-slate-800/80 active:bg-slate-800 rounded-lg transition-colors"
+                      <div>
+                        <button
+                          className="w-full flex items-center justify-between p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                           onClick={() => toggleExpand(item.title)}
+                          onMouseEnter={(e) => handleMouseEnter(item, e)}
+                          onMouseLeave={handleMouseLeave}
                         >
                           <div className="flex items-center">
                             <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                            <span className="text-sm font-medium text-slate-200">{item.title}</span>
+                            <span>{item.title}</span>
                           </div>
                           <ChevronDown 
-                            className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
+                            className={`h-4 w-4 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
                           />
-                        </motion.button>
+                        </button>
 
                         <AnimatePresence>
                           {expandedItems[item.title] && (
@@ -331,78 +253,58 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                               animate="open"
                               exit="closed"
                               variants={childVariants}
-                              className="bg-slate-800/50 rounded-lg mt-1 overflow-hidden"
+                              className="bg-slate-800/50 rounded-md mt-1 overflow-hidden"
                             >
                               {item.children.map((child) => (
-                                <motion.li key={child.title} whileTap={{ scale: 0.98 }}>
-                                  <motion.button
-                                    className="w-full flex items-center p-4 pl-12 hover:bg-slate-700/50 active:bg-slate-700/70 text-sm transition-colors group"
+                                <li key={child.title}>
+                                  <button
+                                    className="w-full flex items-center p-3 pl-11 hover:bg-slate-700/50 text-slate-300 text-sm"
                                     onClick={() => handleNavigation(child.path)}
-                                    whileHover="hover"
-                                    variants={menuItemHoverVariants}
+                                    onMouseEnter={(e) => handleMouseEnter(child, e)}
+                                    onMouseLeave={handleMouseLeave}
                                   >
-                                    <child.icon className="h-4 w-4 mr-3 text-indigo-400" />
-                                    <span className="text-slate-300 group-hover:bg-gradient-to-r from-indigo-400 to-purple-400 group-hover:bg-clip-text group-hover:text-transparent">
-                                      {child.title}
-                                    </span>
-                                  </motion.button>
-                                </motion.li>
+                                    <span>{child.title}</span>
+                                  </button>
+                                </li>
                               ))}
                             </motion.ul>
                           )}
                         </AnimatePresence>
-                      </motion.div>
+                      </div>
                     ) : (
-                      <motion.button
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full flex items-center p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors group"
+                      <button
+                        className="w-full flex items-center p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                         onClick={() => handleNavigation(item.path)}
-                        whileHover="hover"
-                        variants={menuItemHoverVariants}
+                        onMouseEnter={(e) => handleMouseEnter(item, e)}
+                        onMouseLeave={handleMouseLeave}
                       >
                         <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                        <span className="text-sm font-medium text-slate-200 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-150">
-                          {item.title}
-                        </span>
-                      </motion.button>
+                        <span>{item.title}</span>
+                      </button>
                     )}
                   </li>
                 ))}
               </ul>
             </div>
 
+            {/* Footer */}
             <div className="p-4 border-t border-slate-800">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-500"
+                onClick={() => handleNavigation('/login')}
               >
-                <Button 
-                  className="w-full mb-3 bg-indigo-600 hover:bg-indigo-700 transition-all h-12 shadow-lg hover:shadow-indigo-500/25"
-                  onClick={() => {
-                    setLocation('/login');
-                    onClose();
-                  }}
-                >
-                  Sign In
-                </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Button
-                  variant="outline"
-                  className="w-full border-white text-white hover:bg-white/10 transition-all h-12 shadow-lg hover:shadow-white/25"
-                  onClick={() => {
-                    window.open('https://calendly.com/demo', '_blank');
-                    onClose();
-                  }}
-                >
-                  Request Demo
-                </Button>
-              </motion.div>
+                Sign Out
+              </Button>
             </div>
           </motion.div>
+
+          {/* Navigation Preview */}
+          <NavigationPreview 
+            path={hoveredPath || ''}
+            isVisible={previewVisible}
+            position={previewPosition}
+            data={previewData}
+          />
         </>
       )}
     </AnimatePresence>

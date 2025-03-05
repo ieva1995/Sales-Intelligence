@@ -1,34 +1,69 @@
-import { createServer } from 'net';
-import { exit } from 'process';
 
-async function killPort(port) {
-  return new Promise((resolve) => {
-    // First try to create a server on the port
-    const server = createServer();
+const { execSync } = require('child_process');
 
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        console.log(`Port ${port} is busy. Attempting to free it...`);
-        // Try to end any existing connections
-        server.close();
-        server.listen(port, '0.0.0.0');
+function killPort(port) {
+  console.log(`Attempting to find and kill process using port ${port}...`);
+  
+  try {
+    // Try using lsof (available on most Unix systems)
+    const lsofCommand = `lsof -i :${port} -t`;
+    const pids = execSync(lsofCommand).toString().trim().split('\n');
+    
+    if (pids && pids.length && pids[0]) {
+      pids.forEach(pid => {
+        try {
+          console.log(`Killing process ${pid} using port ${port}`);
+          execSync(`kill -9 ${pid}`);
+        } catch (err) {
+          console.log(`Failed to kill process ${pid}: ${err.message}`);
+        }
+      });
+      console.log(`Process using port ${port} killed successfully`);
+      return true;
+    }
+  } catch (err) {
+    console.log(`No process found using lsof on port ${port}`);
+  }
+  
+  try {
+    // Try using fuser as an alternative (available on many Linux systems)
+    execSync(`fuser -k ${port}/tcp`);
+    console.log(`Process using port ${port} killed successfully using fuser`);
+    return true;
+  } catch (err) {
+    console.log(`No process found on port ${port} using fuser`);
+  }
+  
+  try {
+    // Another approach with netstat and grep (works on most systems)
+    const netstatCommand = `netstat -ano | grep ${port}`;
+    const output = execSync(netstatCommand).toString();
+    
+    // Parse the output to find PIDs
+    const lines = output.split('\n');
+    const pidRegex = /(\d+)$/;
+    
+    for (const line of lines) {
+      const match = line.match(pidRegex);
+      if (match && match[1]) {
+        const pid = match[1];
+        try {
+          console.log(`Killing process ${pid} using port ${port} (found via netstat)`);
+          execSync(`kill -9 ${pid}`);
+          console.log(`Process ${pid} killed successfully`);
+          return true;
+        } catch (killErr) {
+          console.log(`Failed to kill process ${pid}: ${killErr.message}`);
+        }
       }
-    });
-
-    server.on('listening', () => {
-      server.close();
-      console.log(`Port ${port} is now available`);
-      resolve(true);
-    });
-
-    // Initial attempt to listen
-    server.listen(port, '0.0.0.0');
-  });
+    }
+  } catch (err) {
+    console.log(`No process found using netstat on port ${port}`);
+  }
+  
+  console.log(`No process found using port ${port} or failed to kill it.`);
+  return false;
 }
 
-// When run directly
-if (process.argv[1].endsWith('kill-port.js')) {
-  killPort(5000).then(() => exit(0)).catch(() => exit(1));
-}
-
-export { killPort };
+// Kill process on port 5000
+killPort(5000);

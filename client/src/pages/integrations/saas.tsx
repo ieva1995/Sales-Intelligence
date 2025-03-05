@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { SiSlack, SiShopify, SiMailchimp, SiHubspot, SiSalesforce, SiZoom, SiAsana, SiGoogle, SiDropbox, SiAmazon, SiZendesk, SiIntercom, SiAdobecreativecloud } from 'react-icons/si';
-import { CheckCircle, XCircle, AlertCircle, RotateCw, Link as LinkIcon, Twitter, MonitorSmartphone } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, RotateCw, Link as LinkIcon, Twitter } from 'lucide-react';
 import { Windows } from '@/components/ui/icons'; // Updated import
 
 interface SaasIntegrationProps {
@@ -93,7 +93,7 @@ export default function SaasIntegrations({ view, searchQuery }: SaasIntegrationP
       id: 'microsoft365',
       name: 'Microsoft 365',
       description: 'Integrate with Outlook, Teams, OneDrive, and more',
-      icon: <MonitorSmartphone className="h-8 w-8 text-[#0078D4]" />,
+      icon: <Windows className="h-8 w-8 text-[#0078D4]" />,
       status: 'disconnected',
       isPopular: true,
       isEnterprise: true
