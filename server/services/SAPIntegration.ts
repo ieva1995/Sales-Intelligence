@@ -1,22 +1,25 @@
-import { RFC } from 'node-rfc';
-import { encrypt, decrypt } from '../utils/encryption';
+import axios from 'axios';
 
-export class SAPIntegration {
-  private client: RFC.Client;
+class SAPIntegration {
+  private baseUrl: string;
+  private auth: {
+    username: string;
+    password: string;
+  };
 
   constructor() {
-    this.client = new RFC.Client({
-      ashost: process.env.SAP_HOST,
-      sysnr: process.env.SAP_SYSTEM_NUMBER,
-      client: process.env.SAP_CLIENT,
-      user: process.env.SAP_USER,
-      passwd: process.env.SAP_PASSWORD
-    });
+    this.baseUrl = process.env.SAP_API_URL || '';
+    this.auth = {
+      username: process.env.SAP_USER || '',
+      password: process.env.SAP_PASSWORD || ''
+    };
   }
 
-  async connect() {
+  async connect(): Promise<boolean> {
     try {
-      await this.client.connect();
+      await axios.get(`${this.baseUrl}/api/ping`, {
+        auth: this.auth
+      });
       return true;
     } catch (err) {
       console.error('SAP connection error:', err);
@@ -24,54 +27,27 @@ export class SAPIntegration {
     }
   }
 
-  async callFunction(name: string, params: any) {
-    try {
-      const result = await this.client.call(name, params);
-      return result;
-    } catch (err) {
-      console.error('SAP function call error:', err);
-      throw err;
-    }
-  }
-
   async getSalesData() {
-    return this.callFunction('BAPI_SALESORDER_GETLIST', {
-      CUSTOMER_NUMBER: '',
-      SALES_ORGANIZATION: '',
-      MATERIAL: '',
-    });
+    return axios.get(`${this.baseUrl}/api/sales`, {
+      auth: this.auth
+    }).then(response => response.data);
   }
 
   async createSalesOrder(orderData: any) {
-    return this.callFunction('BAPI_SALESORDER_CREATEFROMDAT2', {
-      ORDER_HEADER_IN: {
-        DOC_TYPE: 'TA',
-        SALES_ORG: orderData.salesOrg,
-        DISTR_CHAN: orderData.distributionChannel,
-        DIVISION: orderData.division,
-        PURCH_NO_C: orderData.purchaseOrderNumber,
-      },
-      ORDER_ITEMS_IN: orderData.items,
-    });
+    return axios.post(`${this.baseUrl}/api/sales-orders`, orderData, {
+      auth: this.auth
+    }).then(response => response.data);
   }
 
   async getInventoryData() {
-    return this.callFunction('BAPI_MATERIAL_STOCK_REQ_LIST', {
-      MATERIAL: '',
-      PLANT: '',
-    });
+    return axios.get(`${this.baseUrl}/api/inventory`, {
+      auth: this.auth
+    }).then(response => response.data);
   }
 
   async testConnection() {
-    return this.callFunction('STFC_CONNECTION', {});
-  }
-
-  disconnect() {
-    if (this.client) {
-      this.client.close();
-      console.log('SAP connection closed');
-    }
+    return this.connect();
   }
 }
 
-export const sapIntegration = new SAPIntegration();
+export default SAPIntegration;
