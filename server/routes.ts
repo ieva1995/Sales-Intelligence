@@ -11,19 +11,21 @@ import * as googleTrends from './googleTrends';
 import chatRouter from './routes/chat';
 
 // Error recovery middleware
-app.use((req, res, next) => {
-  res.setTimeout(30000, () => {
-    res.status(408).send('Request timeout');
+export async function registerRoutes(app: Express) {
+  app.use((req, res, next) => {
+    res.setTimeout(30000, () => {
+      res.status(408).send('Request timeout');
+    });
+    next();
   });
-  next();
-});
 
 // Circuit breaker for database
 let dbFailureCount = 0;
 const DB_FAILURE_THRESHOLD = 5;
 const DB_RESET_TIMEOUT = 30000;
 
-app.use(async (req, res, next) => {
+export async function registerRoutes(app: Express) {
+  app.use(async (req, res, next) => {
   try {
     if (dbFailureCount >= DB_FAILURE_THRESHOLD) {
       console.log('Circuit breaker active, waiting for reset');
