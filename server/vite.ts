@@ -76,8 +76,31 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: serverOptions,
+    server: {
+      ...serverOptions,
+      hmr: {
+        protocol: 'ws',
+        host: '0.0.0.0',
+        port: 24678,
+        clientPort: 443,
+        timeout: 120000,
+        maxRetries: 10,
+        overlay: false
+      },
+      watch: {
+        usePolling: true,
+        interval: 1000,
+        useFsEvents: false
+      }
+    },
     appType: "custom",
+  });
+
+  app.use((req, res, next) => {
+    if (req.url.includes('/@vite/client') || req.url.includes('hmr')) {
+      res.set('Cache-Control', 'no-store');
+    }
+    next();
   });
 
   app.use(vite.middlewares);

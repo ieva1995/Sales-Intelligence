@@ -107,10 +107,19 @@ process.on('SIGINT', () => {
       console.error("Server error:", err);
     });
 
+    // Kill any existing processes on the Vite ports
+    await new Promise((resolve) => {
+      const killPort = require('kill-port');
+      Promise.all([
+        killPort(24678).catch(() => {}),  // Vite WebSocket port
+        killPort(5173).catch(() => {})    // Vite dev server port
+      ]).finally(resolve);
+    });
+
     // Set up Vite in development or serve static files in production
     console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
-      let retries = 3;
+      let retries = 5;
       while (retries > 0) {
         try {
           await setupVite(app, server);
@@ -123,7 +132,7 @@ process.on('SIGINT', () => {
             console.log('Falling back to static serving mode');
             serveStatic(app);
           }
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 5000));
         }
       }
     } else {
