@@ -21,6 +21,7 @@ const tunnelConfig = {
 };
 
 // Error handling will be done at the Express level
+const app = express();
 
 // Rate limiting with higher limits and proper proxy trust
 app.set('trust proxy', 1);
@@ -31,8 +32,6 @@ const limiter = rateLimit({
   legacyHeaders: false,
   message: 'Too many requests, please try again in 15 minutes'
 });
-
-const app = express();
 
 // Security middleware
 app.use(helmet());
