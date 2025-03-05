@@ -13,10 +13,20 @@ import {
   FileText,
   Settings,
   Box,
-  Truck
+  Truck,
+  MessageCircle,
+  PieChart,
+  BarChart,
+  LineChart,
+  Activity,
+  Zap,
+  Milestone,
+  ClipboardCheck,
+  UserPlus,
+  Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import NavigationPreview, { PreviewData } from './NavigationPreview';
+import NavigationPreview from './NavigationPreview';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -30,71 +40,107 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-const menuItems: MenuItem[] = [
-  {
-    title: 'Dashboard',
-    path: '/dashboard',
-    icon: Home
-  },
-  {
-    title: 'Content',
-    icon: FileText,
-    children: [
-      { title: 'Calendar', path: '/content/calendar', icon: ChevronRight },
-      { title: 'Blog', path: '/content/blog', icon: ChevronRight },
-      { title: 'Holiday Message', path: '/content/holiday', icon: ChevronRight },
-      { title: 'Home Page', path: '/content/home', icon: ChevronRight },
-      { title: 'Menu Section', path: '/content/menu', icon: ChevronRight },
-    ]
-  },
-  {
-    title: 'Customers',
-    icon: Users,
-    children: [
-      { title: 'Brokers', path: '/customers/brokers', icon: ChevronRight },
-      { title: 'Customer Logs', path: '/customers/logs', icon: ChevronRight },
-      { title: 'Customers', path: '/customers', icon: ChevronRight },
-      { title: 'Gift Vouchers', path: '/customers/vouchers', icon: ChevronRight },
-    ]
-  },
-  {
-    title: 'Orders',
-    icon: ShoppingCart,
-    children: [
-      { title: 'Create Order', path: '/orders/create', icon: ChevronRight },
-      { title: 'Dispatch Order', path: '/orders/dispatch', icon: ChevronRight },
-      { title: 'Build Invoice', path: '/orders/invoice', icon: ChevronRight },
-      { title: 'Checkout Feedback', path: '/orders/feedback', icon: ChevronRight },
-    ]
-  },
-  {
-    title: 'Shipping',
-    path: '/shipping',
-    icon: Truck
-  },
-  {
-    title: 'Product',
-    icon: Box,
-    children: [
-      { title: 'Categories', path: '/product/categories', icon: ChevronRight },
-      { title: 'Inventory', path: '/product/inventory', icon: ChevronRight },
-      { title: 'Lookbooks', path: '/product/lookbooks', icon: ChevronRight },
-      { title: 'Models', path: '/product/models', icon: ChevronRight },
-      { title: 'Size', path: '/product/size', icon: ChevronRight },
-    ]
-  }
-];
-
 const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
   const [, setLocation] = useLocation();
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
 
-  // Use a ref to track items being hovered
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Platform menu items to match PlatformDropdown component
+  const platformItems: MenuItem[] = [
+    {
+      title: "What is SalesBoost?",
+      icon: MessageCircle,
+      path: "/platform/about"
+    },
+    {
+      title: "Pipeline Management",
+      icon: PieChart,
+      path: "/platform/pipeline"
+    },
+    {
+      title: "Sales Forecasting",
+      icon: BarChart,
+      path: "/platform/forecasting"
+    },
+    {
+      title: "Deal Insights",
+      icon: Activity,
+      path: "/platform/insights"
+    },
+    {
+      title: "Revenue Intelligence Software",
+      icon: LineChart,
+      path: "/platform/revenue"
+    },
+    {
+      title: "Conversation Intelligence",
+      icon: Zap,
+      path: "/platform/conversation"
+    },
+    {
+      title: "Mutual Action Plans",
+      icon: Milestone,
+      path: "/platform/action-plans"
+    },
+    {
+      title: "Deal Management",
+      icon: ClipboardCheck,
+      path: "/platform/deal-management"
+    },
+    {
+      title: "Rep Coaching",
+      icon: UserPlus,
+      path: "/platform/coaching"
+    }
+  ];
+
+  // Solutions menu items to match SolutionsDropdown component
+  const solutionsItems: MenuItem[] = [
+    {
+      title: "Sales Engagement",
+      icon: Mail,
+      path: "/solutions/sales-engagement"
+    },
+    {
+      title: "Deal Management",
+      icon: PieChart,
+      path: "/solutions/deal-management"
+    },
+    {
+      title: "Account-Based Selling",
+      icon: Users,
+      path: "/solutions/account-based-selling"
+    },
+    {
+      title: "Revenue Intelligence",
+      icon: LineChart,
+      path: "/solutions/revenue-intelligence"
+    }
+  ];
+
+  // Main menu items
+  const menuItems: MenuItem[] = [
+    {
+      title: "Platform",
+      icon: BarChart2,
+      children: platformItems
+    },
+    {
+      title: "Solutions",
+      icon: Users,
+      children: solutionsItems
+    },
+    {
+      title: "Resources",
+      icon: FileText,
+      path: "/resources"
+    },
+    {
+      title: "Pricing",
+      icon: Settings,
+      path: "/pricing"
+    }
+  ];
 
   useEffect(() => {
     // Disable body scroll when menu is open
@@ -120,45 +166,6 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       setLocation(path);
       onClose();
     }
-  };
-
-  const handleMouseEnter = (item: MenuItem, event: React.MouseEvent) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-
-    hoverTimeoutRef.current = setTimeout(() => {
-      setPreviewPosition({ 
-        x: rect.right, 
-        y: rect.top 
-      });
-
-      setPreviewData({
-        title: item.title,
-        description: `View your ${item.title.toLowerCase()} data and insights`,
-        stats: [
-          { label: 'Recent Updates', value: '24', trend: 'up' },
-          { label: 'Last Activity', value: '2h ago', trend: 'neutral' },
-          { label: 'Status', value: 'Active', trend: 'up' }
-        ]
-      });
-
-      setPreviewVisible(true);
-      setHoveredPath(item.path || `/${item.title.toLowerCase()}`);
-    }, 300); // 300ms delay before showing preview
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-
-    hoverTimeoutRef.current = setTimeout(() => {
-      setPreviewVisible(false);
-      setHoveredPath(null);
-    }, 100);
   };
 
   const variants = {
@@ -216,7 +223,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-slate-800">
-              <div className="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
                 SalesBoost AI
               </div>
               <Button variant="ghost" size="icon" onClick={onClose} className="text-slate-400 hover:text-white">
@@ -234,12 +241,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         <button
                           className="w-full flex items-center justify-between p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                           onClick={() => toggleExpand(item.title)}
-                          onMouseEnter={(e) => handleMouseEnter(item, e)}
-                          onMouseLeave={handleMouseLeave}
                         >
                           <div className="flex items-center">
                             <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                            <span>{item.title}</span>
+                            <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent text-sm font-medium">{item.title}</span>
                           </div>
                           <ChevronDown 
                             className={`h-4 w-4 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
@@ -260,10 +265,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                                   <button
                                     className="w-full flex items-center p-3 pl-11 hover:bg-slate-700/50 text-slate-300 text-sm"
                                     onClick={() => handleNavigation(child.path)}
-                                    onMouseEnter={(e) => handleMouseEnter(child, e)}
-                                    onMouseLeave={handleMouseLeave}
                                   >
-                                    <span>{child.title}</span>
+                                    <child.icon className="h-4 w-4 mr-3 text-indigo-400" />
+                                    <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent">{child.title}</span>
                                   </button>
                                 </li>
                               ))}
@@ -275,11 +279,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                       <button
                         className="w-full flex items-center p-3 hover:bg-slate-800 text-slate-200 rounded-md"
                         onClick={() => handleNavigation(item.path)}
-                        onMouseEnter={(e) => handleMouseEnter(item, e)}
-                        onMouseLeave={handleMouseLeave}
                       >
                         <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                        <span>{item.title}</span>
+                        <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent text-sm font-medium">{item.title}</span>
                       </button>
                     )}
                   </li>
@@ -290,21 +292,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             {/* Footer */}
             <div className="p-4 border-t border-slate-800">
               <Button 
-                className="w-full bg-blue-600 hover:bg-blue-500"
-                onClick={() => handleNavigation('/login')}
+                className="w-full mb-3 bg-indigo-600 hover:bg-indigo-700 h-12"
+                onClick={() => {
+                  setLocation('/login');
+                  onClose();
+                }}
               >
-                Sign Out
+                Sign In
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full border-white text-white hover:bg-white/10 h-12"
+                onClick={() => {
+                  window.open('https://calendly.com/demo', '_blank');
+                  onClose();
+                }}
+              >
+                Request Demo
               </Button>
             </div>
           </motion.div>
-
-          {/* Navigation Preview */}
-          <NavigationPreview 
-            path={hoveredPath || ''}
-            isVisible={previewVisible}
-            position={previewPosition}
-            data={previewData}
-          />
         </>
       )}
     </AnimatePresence>

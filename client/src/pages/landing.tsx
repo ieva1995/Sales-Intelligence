@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import PlatformDropdown from "../components/PlatformDropdown";
 import SolutionsDropdown from "../components/SolutionsDropdown";
+import MobileMenu from "../components/MobileMenu";
 
 export default function LandingPage() {
   const [, setLocation] = useLocation();
@@ -38,114 +39,72 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden">
       {/* Mobile Menu */}
-      <div className={`fixed inset-0 bg-slate-900/95 z-50 transform transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="container mx-auto px-6 py-8">
-          <div className="flex justify-end">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-white"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <X className="h-6 w-6" />
-            </Button>
-          </div>
-          <div className="mt-8 space-y-8">
-            <ul className="space-y-6">
-              <li><a href="#" className="text-2xl font-medium text-white hover:text-indigo-400 transition-colors">Platform</a></li>
-              <li><a href="#" className="text-2xl font-medium text-white hover:text-indigo-400 transition-colors">Solutions</a></li>
-              <li><a href="#" className="text-2xl font-medium text-white hover:text-indigo-400 transition-colors">Resources</a></li>
-              <li><a href="#" className="text-2xl font-medium text-white hover:text-indigo-400 transition-colors">Pricing</a></li>
-            </ul>
-            <div className="pt-8 border-t border-slate-800">
-              <Button 
-                className="w-full mb-4 bg-indigo-600 hover:bg-indigo-700 text-white h-12"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  setLocation('/login');
-                }}
-              >
-                Sign In
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full border-white text-white hover:bg-white/10 h-12"
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  window.open('https://calendly.com/demo', '_blank');
-                }}
-              >
-                Request Demo
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Header */}
-      <header className="relative z-10 border-b border-slate-200 py-4 md:py-0">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mr-6 md:mr-10">
-              SalesBoost AI
-            </h1>
-            <nav className="hidden lg:block">
-              <ul className="flex space-x-8">
-                <li className="relative group py-6" 
-                    onMouseEnter={() => handleMouseEnter('platform')} 
-                    onMouseLeave={handleMouseLeave}>
-                  <a href="#" className="text-slate-700 hover:text-indigo-600 flex items-center transition-colors">
-                    Platform 
-                    <ChevronDown className={`ml-1 h-4 w-4 ${activeDropdown === 'platform' ? 'hidden' : 'block'}`} />
-                    <ChevronUp className={`ml-1 h-4 w-4 ${activeDropdown === 'platform' ? 'block' : 'hidden'}`} />
-                  </a>
-                  {activeDropdown === 'platform' && <PlatformDropdown />}
-                </li>
-                <li className="relative group py-6" 
-                    onMouseEnter={() => handleMouseEnter('solutions')} 
-                    onMouseLeave={handleMouseLeave}>
-                  <a href="#" className="text-slate-700 hover:text-indigo-600 flex items-center transition-colors">
-                    Solutions
-                    <ChevronDown className={`ml-1 h-4 w-4 ${activeDropdown === 'solutions' ? 'hidden' : 'block'}`} />
-                    <ChevronUp className={`ml-1 h-4 w-4 ${activeDropdown === 'solutions' ? 'block' : 'hidden'}`} />
-                  </a>
-                  {activeDropdown === 'solutions' && <SolutionsDropdown />}
-                </li>
-                <li className="py-6"><a href="#" className="text-slate-700 hover:text-indigo-600 transition-colors">Resources</a></li>
-                <li className="py-6"><a href="#" className="text-slate-700 hover:text-indigo-600 transition-colors">Pricing</a></li>
-              </ul>
-            </nav>
-          </div>
+<header className="relative z-10 border-b border-slate-200 py-4 md:py-0">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+    <div className="flex items-center">
+      <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mr-6 md:mr-10">
+        SalesBoost AI
+      </h1>
+      <nav className="hidden lg:block">
+        <ul className="flex space-x-8">
+          <li className="relative group py-6" 
+              onMouseEnter={() => handleMouseEnter('platform')} 
+              onMouseLeave={handleMouseLeave}>
+            <a href="#" className="text-slate-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent flex items-center transition-colors text-sm font-medium">
+              Platform 
+              <ChevronDown className={`ml-1 h-4 w-4 ${activeDropdown === 'platform' ? 'hidden' : 'block'}`} />
+              <ChevronUp className={`ml-1 h-4 w-4 ${activeDropdown === 'platform' ? 'block' : 'hidden'}`} />
+            </a>
+            {activeDropdown === 'platform' && <PlatformDropdown />}
+          </li>
+          <li className="relative group py-6" 
+              onMouseEnter={() => handleMouseEnter('solutions')} 
+              onMouseLeave={handleMouseLeave}>
+            <a href="#" className="text-slate-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent flex items-center transition-colors text-sm font-medium">
+              Solutions
+              <ChevronDown className={`ml-1 h-4 w-4 ${activeDropdown === 'solutions' ? 'hidden' : 'block'}`} />
+              <ChevronUp className={`ml-1 h-4 w-4 ${activeDropdown === 'solutions' ? 'block' : 'hidden'}`} />
+            </a>
+            {activeDropdown === 'solutions' && <SolutionsDropdown />}
+          </li>
+          <li className="py-6"><a href="#" className="text-slate-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent transition-colors text-sm font-medium">Resources</a></li>
+          <li className="py-6"><a href="#" className="text-slate-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent transition-colors text-sm font-medium">Pricing</a></li>
+        </ul>
+      </nav>
+    </div>
 
-          {/* Mobile menu toggle button - only visible on small screens */}
-          <div className="lg:hidden">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-slate-700 hover:text-indigo-600"
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </div>
+    {/* Mobile menu toggle button - only visible on small screens */}
+    <div className="lg:hidden">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="text-slate-700 hover:text-indigo-600"
+        onClick={() => setIsMobileMenuOpen(true)}
+      >
+        <Menu className="h-6 w-6" />
+      </Button>
+    </div>
 
-          <div className="hidden lg:flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              className="text-slate-700 hover:text-indigo-600 transition-colors"
-              onClick={() => setLocation('/login')}
-            >
-              Sign In
-            </Button>
-            <Button
-              className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
-              onClick={() => window.open('https://calendly.com/demo', '_blank')}
-            >
-              Request Demo
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="hidden lg:flex items-center space-x-4">
+      <Button
+        variant="ghost"
+        className="text-slate-700 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent transition-colors text-sm font-medium"
+        onClick={() => setLocation('/login')}
+      >
+        Sign In
+      </Button>
+      <Button
+        className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors text-sm font-medium"
+        onClick={() => window.open('https://calendly.com/demo', '_blank')}
+      >
+        Request Demo
+      </Button>
+    </div>
+  </div>
+</header>
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 lg:py-28">
@@ -566,69 +525,77 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-white py-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12 mb-12">
-            <div className="lg:col-span-2">
-              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4">
-                Discover the Sales<br />Execution Platform
-              </h2>
-              <p className="text-slate-400 max-w-sm">
-                See how SalesBoost helps your reps hit their quota and grow into sales leaders.
-              </p>
-              <div className="mt-6">
-                <Button
-                  size="sm"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
-                >
-                  Learn more
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:col-span-3 gap-8">
-              <div>
-                <h3 className="font-medium mb-4 text-indigo-400">Platform</h3>
-                <ul className="space-y-3 text-sm text-slate-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Platform overview</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Sales AI</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Analytics</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-4 text-indigo-400">Solutions</h3>
-                <ul className="space-y-3 text-sm text-slate-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Sales engagement</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Deal management</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Account-based selling</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Revenue intelligence</a></li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-4 text-indigo-400">Why SalesBoost</h3>
-                <ul className="space-y-3 text-sm text-slate-400">
-                  <li><a href="#" className="hover:text-white transition-colors">Why choose SalesBoost?</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Customer stories</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Services</a></li>
-                  <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-            <div className="mb-4 md:mb-0">© 2025 SalesBoost AI. All rights reserved.</div>
-            <div className="flex space-x-6">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-white transition-colors">Cookies</a>
-            </div>
-          </div>
+<footer className="bg-slate-900 text-white py-16">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 md:gap-12 mb-12">
+      <div className="lg:col-span-2">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mb-4">
+          Discover the Sales<br />Execution Platform
+        </h2>
+        <p className="text-slate-400 max-w-sm text-sm">
+          See how SalesBoost helps your reps hit their quota and grow into sales leaders.
+        </p>
+        <div className="mt-6">
+          <Button
+            size="sm"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
+          >
+            Learn more
+          </Button>
         </div>
-      </footer>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:col-span-3 gap-8">
+        <div>
+          <h3 className="font-medium mb-4 text-indigo-400 text-sm">Platform</h3>
+          <ul className="space-y-3 text-sm text-slate-400">
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Platform overview</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Sales AI</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Analytics</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Integrations</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-medium mb-4 text-indigo-400 text-sm">Solutions</h3>
+          <ul className="space-y-3 text-sm text-slate-400">
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Sales engagement</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Deal management</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Account-based selling</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Revenue intelligence</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-medium mb-4 text-indigo-400 text-sm">Why SalesBoost</h3>
+          <ul className="space-y-3 text-sm text-slate-400">
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Why choose SalesBoost?</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Customer stories</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Services</a></li>
+            <li><a href="#" className="hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div className="border-t border-slate-800 pt-8">
+      <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="flex items-center mb-4 md:mb-0">
+          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent mr-4">
+            SalesBoost AI
+          </h1>
+          <span className="text-slate-400 text-sm">© 2025 SalesBoost, Inc. All rights reserved.</span>
+        </div>
+        <div className="flex space-x-6 text-sm">
+          <a href="#" className="text-slate-400 hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Privacy Policy</a>
+          <a href="#" className="text-slate-400 hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Terms of Service</a>
+          <a href="#" className="text-slate-400 hover:bg-gradient-to-r hover:from-indigo-400 hover:to-purple-400 hover:bg-clip-text hover:text-transparent transition-colors">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
     </div>
   );
 }
