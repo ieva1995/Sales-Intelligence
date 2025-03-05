@@ -18,14 +18,50 @@ import { recommendationService } from "./services/recommendationService";
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
 
-  // Setup WebSocket server for real-time updates
-  // Use a specific path to avoid conflicts with Vite's HMR WebSocket
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws-feed' });
+  // Setup WebSocket server for real-time updates with proper error handling
+  try {
+    // Use a specific path to avoid conflicts with Vite's HMR WebSocket
+    const wss = new WebSocketServer({ 
+      server: httpServer, 
+      path: '/ws-feed',
+      // Add error handling options
+      clientTracking: true,
+      perMessageDeflate: {
+        zlibDeflateOptions: {
+          chunkSize: 1024,
+          memLevel: 7,
+          level: 3
+        },
+        zlibInflateOptions: {
+          chunkSize: 10 * 1024
+        },
+        // Below options specified as default values
+        concurrencyLimit: 10,
+        threshold: 1024
+      }
+    });
 
-  wss.on('connection', (ws) => {
-    console.log('Client connected to WebSocket');
-    newsService.addClient(ws);
-  });
+    wss.on('connection', (ws, req) => {
+      const clientIp = req.socket.remoteAddress;
+      console.log(`Client connected to WebSocket from ${clientIp}`);
+
+      try {
+        newsService.addClient(ws);
+      } catch (error) {
+        console.error('Error adding WebSocket client:', error);
+      }
+    });
+
+    wss.on('error', (error) => {
+      console.error('WebSocket server error:', error);
+      // Don't crash the server on WebSocket errors
+    });
+
+    console.log('WebSocket server initialized on path /ws-feed');
+  } catch (error) {
+    console.error('Failed to initialize WebSocket server:', error);
+    // Continue running the REST API even if WebSocket fails
+  }
 
   // Register routers
   app.use(chatRouter);

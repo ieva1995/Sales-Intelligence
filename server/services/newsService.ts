@@ -15,6 +15,7 @@ export class NewsService {
   private watchlist: string[] = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META']; // Example watchlist
   private isPolling: boolean = false;
   private pollingInterval: NodeJS.Timeout | null = null;
+  private maxConnectRetries: number = 3;
 
   constructor() {
     console.log("NewsService initialized");
@@ -22,30 +23,46 @@ export class NewsService {
   }
 
   addClient(ws: WebSocket) {
-    console.log("New WebSocket client connected");
-    this.clients.add(ws);
+    try {
+      console.log("New WebSocket client connected");
+      this.clients.add(ws);
 
-    // Send initial data to newly connected client
-    this.fetchLatestNews()
-      .then(news => {
-        if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ type: 'news-update', data: news[0] || this.getDefaultNews() }));
-        }
-      })
-      .catch(error => {
-        console.error("Error sending initial data:", error);
+      // Send initial data to newly connected client
+      this.fetchLatestNews()
+        .then(news => {
+          try {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'news-update', data: news[0] || this.getDefaultNews() }));
+            }
+          } catch (error) {
+            console.error("Error sending initial data to client:", error);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching initial data:", error);
+          // Send default news even if fetching fails
+          try {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'news-update', data: this.getDefaultNews() }));
+            }
+          } catch (sendError) {
+            console.error("Error sending default news:", sendError);
+          }
+        });
+
+      // Set up event listener for when client disconnects
+      ws.on("close", (code, reason) => {
+        console.log(`WebSocket client disconnected. Code: ${code}, Reason: ${reason || 'No reason provided'}`);
+        this.clients.delete(ws);
       });
 
-    // Set up event listener for when client disconnects
-    ws.on("close", (code, reason) => {
-      console.log(`WebSocket client disconnected. Code: ${code}, Reason: ${reason || 'No reason provided'}`);
-      this.clients.delete(ws);
-    });
-
-    ws.on("error", (error) => {
-      console.error("WebSocket client error:", error);
-      this.clients.delete(ws);
-    });
+      ws.on("error", (error) => {
+        console.error("WebSocket client error:", error);
+        this.clients.delete(ws);
+      });
+    } catch (error) {
+      console.error("Error setting up WebSocket client:", error);
+    }
   }
 
   private async startNewsPolling() {
@@ -57,20 +74,27 @@ export class NewsService {
     this.isPolling = true;
     console.log("Starting news polling service");
 
-    this.pollingInterval = setInterval(async () => {
-      try {
-        // Only fetch news if there are connected clients
-        if (this.clients.size > 0) {
-          console.log(`Fetching news for ${this.clients.size} connected clients`);
-          const news = await this.fetchLatestNews();
-          if (news && news.length > 0) {
-            this.broadcastNews(news);
+    try {
+      this.pollingInterval = setInterval(async () => {
+        try {
+          // Only fetch news if there are connected clients
+          if (this.clients.size > 0) {
+            console.log(`Fetching news for ${this.clients.size} connected clients`);
+            const news = await this.fetchLatestNews();
+            if (news && news.length > 0) {
+              this.broadcastNews(news);
+            }
           }
+        } catch (error) {
+          console.error("Error in news polling:", error);
+          // Continue polling despite errors
         }
-      } catch (error) {
-        console.error("Error in news polling:", error);
-      }
-    }, 30000); // Poll every 30 seconds
+      }, 30000); // Poll every 30 seconds
+    } catch (error) {
+      console.error("Critical error starting news polling:", error);
+      // Reset polling state so we can attempt to start again
+      this.isPolling = false;
+    }
   }
 
   stopNewsPolling() {
@@ -101,28 +125,36 @@ export class NewsService {
   }
 
   private broadcastNews(news: NewsUpdate[]) {
-    const message = JSON.stringify({ type: 'news-update', data: news[0] || this.getDefaultNews() });
+    if (this.clients.size === 0) {
+      return; // Don't attempt to broadcast if there are no clients
+    }
 
-    console.log(`Broadcasting news to ${this.clients.size} clients`);
-    let disconnectedClients = 0;
+    try {
+      const message = JSON.stringify({ type: 'news-update', data: news[0] || this.getDefaultNews() });
 
-    this.clients.forEach(client => {
-      try {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(message);
-        } else if (client.readyState === WebSocket.CLOSED || client.readyState === WebSocket.CLOSING) {
-          disconnectedClients++;
+      console.log(`Broadcasting news to ${this.clients.size} clients`);
+      let disconnectedClients = 0;
+
+      this.clients.forEach(client => {
+        try {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(message);
+          } else if (client.readyState === WebSocket.CLOSED || client.readyState === WebSocket.CLOSING) {
+            disconnectedClients++;
+            this.clients.delete(client);
+          }
+        } catch (error) {
+          console.error("Error sending to client:", error);
           this.clients.delete(client);
+          disconnectedClients++;
         }
-      } catch (error) {
-        console.error("Error sending to client:", error);
-        this.clients.delete(client);
-        disconnectedClients++;
-      }
-    });
+      });
 
-    if (disconnectedClients > 0) {
-      console.log(`Removed ${disconnectedClients} disconnected clients`);
+      if (disconnectedClients > 0) {
+        console.log(`Removed ${disconnectedClients} disconnected clients`);
+      }
+    } catch (error) {
+      console.error("Error broadcasting news:", error);
     }
   }
 

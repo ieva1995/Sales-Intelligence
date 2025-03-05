@@ -54,18 +54,41 @@ export default function WhisperBot() {
   const [activeQuickAction, setActiveQuickAction] = useState<string | null>(null);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   useEffect(() => {
-    // Only attempt connection if we haven't exceeded max attempts (3)
-    if (connectionAttempts < 3) {
-      connectWebSocket();
+    try {
+      // Try to establish WebSocket connection, but continue to render app regardless
+      if (connectionAttempts < 3) {
+        // Wrap WebSocket connection in try-catch to prevent white screen
+        try {
+          connectWebSocket();
+        } catch (err) {
+          console.error("Failed to initialize WebSocket:", err);
+          setIsOfflineMode(true);
+          setConnectionError(true);
+        }
+      } else {
+        // After 3 failed attempts, just use offline mode
+        setIsOfflineMode(true);
+        console.log("Max connection attempts reached, using offline mode");
+      }
+    } catch (error) {
+      // Global error handler to ensure component continues to render
+      console.error("Critical error in WhisperBot useEffect:", error);
+      setIsOfflineMode(true);
+      setConnectionError(true);
     }
 
     // Cleanup function
     return () => {
       if (socket) {
-        console.log("Closing WebSocket connection");
-        socket.close();
+        try {
+          console.log("Closing WebSocket connection");
+          socket.close();
+        } catch (error) {
+          console.error("Error closing WebSocket:", error);
+        }
       }
     };
   }, [connectionAttempts]);
@@ -78,9 +101,20 @@ export default function WhisperBot() {
       const wsUrl = `${protocol}//${window.location.host}/ws-feed`;
       console.log(`Connecting to WebSocket URL: ${wsUrl}`);
 
+      // Create new WebSocket with error handling
       const newSocket = new WebSocket(wsUrl);
 
+      let connectionTimeout = setTimeout(() => {
+        console.warn("WebSocket connection timed out");
+        setConnectionError(true);
+        setIsOfflineMode(true);
+        if (newSocket && newSocket.readyState !== WebSocket.CLOSED) {
+          newSocket.close();
+        }
+      }, 5000); // 5 second timeout
+
       newSocket.onopen = () => {
+        clearTimeout(connectionTimeout);
         console.log("WebSocket connection established");
         setIsConnected(true);
         setConnectionError(false);
@@ -115,10 +149,12 @@ export default function WhisperBot() {
       };
 
       newSocket.onerror = (error) => {
+        clearTimeout(connectionTimeout);
         console.error("WebSocket error:", error);
         setIsConnected(false);
         setConnectionError(true);
         setSocket(null);
+        setIsOfflineMode(true);
 
         // Increment connection attempts counter
         setConnectionAttempts(prev => prev + 1);
@@ -131,7 +167,8 @@ export default function WhisperBot() {
       };
 
       newSocket.onclose = (event) => {
-        console.log(`WebSocket closed with code: ${event.code}, reason: ${event.reason}`);
+        clearTimeout(connectionTimeout);
+        console.log(`WebSocket closed with code: ${event.code}, reason: ${event.reason || 'No reason provided'}`);
         setIsConnected(false);
         setSocket(null);
 
@@ -145,6 +182,7 @@ export default function WhisperBot() {
     } catch (error) {
       console.error("Error setting up WebSocket:", error);
       setConnectionError(true);
+      setIsOfflineMode(true);
 
       toast({
         title: "Connection Setup Error",
@@ -421,6 +459,7 @@ export default function WhisperBot() {
         }`} />
         <span className="text-sm text-gray-400">
           {isConnected ? 'Connected to intelligence feed' :
+            isOfflineMode ? `Offline mode - using cached data` : 
             connectionError ? `Connection error - working in offline mode` : 'Connecting...'}
         </span>
         {connectionError && connectionAttempts < 3 && (
