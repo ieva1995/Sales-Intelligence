@@ -1,12 +1,37 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import tunnel from 'node-tunnel';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
-import { createTables } from './createTables'; // Added import for database table creation
+import { createTables } from './createTables';
+
+// Create VPN tunnel
+const vpnServer = tunnel.createServer();
+vpnServer.listen(8000, '0.0.0.0');
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+}); // Added import for database table creation
 
 const app = express();
-app.use(express.json());
+
+// Security middleware
+app.use(helmet());
+app.use(limiter);
+app.use(express.json({ limit: '10kb' })); // Limit body size
 app.use(express.urlencoded({ extended: false }));
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Content-Security-Policy', "default-src 'self'");
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
