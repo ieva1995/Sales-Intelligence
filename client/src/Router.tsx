@@ -23,6 +23,7 @@ import Playbooks from "@/pages/library/playbooks";
 import Snippets from "@/pages/library/snippets";
 import Coaching from "@/pages/library/coaching";
 import Login from "@/pages/login";
+import LandingPage from "@/pages/landing";
 import Settings from "@/pages/settings";
 import SmartProposal from "@/pages/features/smart-proposal";
 import DealPredictor from "@/pages/features/deal-predictor";
@@ -105,7 +106,7 @@ export default function Router() {
         <div className={shouldShowAppShell() ? "page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8" : ""}>
           <PageTransition>
             <Switch>
-              <Route path="/" component={Login} />
+              <Route path="/" component={LandingPage} />
               <Route path="/login" component={Login} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/trend-analysis" component={TrendAnalysis} />
