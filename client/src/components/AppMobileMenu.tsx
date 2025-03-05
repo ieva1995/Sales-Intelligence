@@ -15,7 +15,8 @@ import {
   Settings,
   Sparkles,
   Rocket,
-  PieChart
+  PieChart,
+  Bot
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -45,6 +46,7 @@ const AppMobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     { href: "/features/smart-tools", icon: Sparkles, label: "Advanced Sales Tools" },
     { href: "/features/enterprise-turbo", icon: Rocket, label: "Enterprise Turbo" },
     { href: "/features/analytics-suite", icon: PieChart, label: "Analytics Suite" },
+    { href: "/features/autonomous-sales-engine", icon: Bot, label: "S.L.A.S.E" }, // Add the new autonomous sales engine feature
   ];
 
   useEffect(() => {

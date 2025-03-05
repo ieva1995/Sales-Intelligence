@@ -21,15 +21,14 @@ import {
   AlertTriangle,
   Clock,
   RefreshCw,
-  code,
+  Code,
   MessageSquare,
   Users,
   Globe,
   LineChart,
   PenTool,
   Network,
-  Database,
-  Code
+  Database
 } from "lucide-react";
 
 export default function AutonomousSalesEngine() {
@@ -57,7 +56,7 @@ export default function AutonomousSalesEngine() {
   const startBiometricScan = () => {
     setScanProgress(0);
     setScanComplete(false);
-    
+
     const interval = setInterval(() => {
       setScanProgress(prev => {
         if (prev >= 100) {
@@ -74,7 +73,7 @@ export default function AutonomousSalesEngine() {
   const handleAuthorize = () => {
     setBiometricScanDialog(false);
     setMasterControlDialog(true);
-    
+
     toast({
       title: "Access Granted",
       description: "Biometric verification successful",
@@ -161,7 +160,6 @@ export default function AutonomousSalesEngine() {
                 <Progress
                   value={systemStatus.engineHealth}
                   className="mt-2 h-1.5 bg-slate-700"
-                  indicatorClassName={systemStatus.engineHealth > 90 ? 'bg-green-500' : 'bg-yellow-500'}
                 />
               </CardContent>
             </Card>
@@ -282,19 +280,19 @@ export default function AutonomousSalesEngine() {
                         <span className="text-gray-400">Pattern Recognition</span>
                         <span className="text-white">87%</span>
                       </div>
-                      <Progress value={87} className="h-1 bg-slate-700" indicatorClassName="bg-blue-500" />
-                      
+                      <Progress value={87} className="h-1 bg-slate-700" />
+
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Data Processing</span>
                         <span className="text-white">92%</span>
                       </div>
-                      <Progress value={92} className="h-1 bg-slate-700" indicatorClassName="bg-blue-500" />
-                      
+                      <Progress value={92} className="h-1 bg-slate-700" />
+
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Learning Rate</span>
                         <span className="text-white">78%</span>
                       </div>
-                      <Progress value={78} className="h-1 bg-slate-700" indicatorClassName="bg-blue-500" />
+                      <Progress value={78} className="h-1 bg-slate-700" />
                     </div>
                   </div>
                 </CardContent>
@@ -343,7 +341,7 @@ export default function AutonomousSalesEngine() {
                             <span className="text-xs text-gray-400">AI Confidence</span>
                             <span className="text-xs text-yellow-400">{strategy.confidence}%</span>
                           </div>
-                          <Progress value={strategy.confidence} className="h-1 mt-1 bg-slate-700" indicatorClassName="bg-yellow-500" />
+                          <Progress value={strategy.confidence} className="h-1 mt-1 bg-slate-700" />
                         </div>
                       ))}
                     </div>
@@ -390,7 +388,7 @@ export default function AutonomousSalesEngine() {
                             <h5 className="text-xs font-medium text-white">{platform.platform}</h5>
                           </div>
                           <div className="flex items-end justify-between">
-                            <Progress value={platform.value} className="h-1 w-full bg-slate-700 mr-2" indicatorClassName="bg-purple-500" />
+                            <Progress value={platform.value} className="h-1 w-full bg-slate-700 mr-2" />
                             <span className="text-xs text-purple-400">{platform.value}%</span>
                           </div>
                         </div>
@@ -455,13 +453,13 @@ export default function AutonomousSalesEngine() {
 
                   <div className="p-4 bg-green-950/20 rounded-lg border border-green-900/30 space-y-4">
                     <h4 className="text-sm font-medium text-green-400">Sentiment Detection</h4>
-                    
+
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Current Visitor Sentiment</span>
                         <span className="text-white">Curious</span>
                       </div>
-                      
+
                       <div className="grid grid-cols-3 gap-2">
                         {[
                           { label: "Positive", value: 32 },
@@ -478,7 +476,7 @@ export default function AutonomousSalesEngine() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="space-y-2">
                       <h5 className="text-xs font-medium text-green-400">Active Optimizations</h5>
                       <div className="p-3 bg-slate-800/50 rounded-lg">
@@ -491,7 +489,7 @@ export default function AutonomousSalesEngine() {
                         </div>
                         <p className="text-xs text-gray-400">AI optimized copy performed 37% better than original</p>
                       </div>
-                      
+
                       <div className="p-3 bg-slate-800/50 rounded-lg">
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex items-center">
@@ -608,7 +606,7 @@ export default function AutonomousSalesEngine() {
                       <h4 className="text-sm font-medium text-red-400">Honeytrap Status</h4>
                       <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Active</span>
                     </div>
-                    
+
                     <div className="space-y-3">
                       {[
                         { name: "Fake Admin Dashboard", status: "Deployed", triggers: 3 },
@@ -621,8 +619,7 @@ export default function AutonomousSalesEngine() {
                             <h5 className="text-sm font-medium text-white">{trap.name}</h5>
                             <div className="flex items-center mt-1">
                               <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
-                              <span className="text-xs text-gray-400">{trap.status}</span>
-                            </div>
+                              <span className="text-xs text-gray-400">{trap.status}</span></div>
                           </div>
                           <div className="text-right">
                             <span className="text-xs text-gray-400">Triggers</span>
@@ -637,16 +634,18 @@ export default function AutonomousSalesEngine() {
                     <Label htmlFor="honeytrap-deployment" className="text-sm text-gray-400">Active Deployment</Label>
                     <div className="flex items-center space-x-2">
                       <Switch id="honeytrap-deployment" defaultChecked />
-                      <span className="text-sm font-medium text-white">Enabled</span>
+                      <span className="text-sm font-medium text-white">
+                        Enabled
+                      </span>
                     </div>
                   </div>
 
                   <Button 
-                    className="w-full bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600"
+                    className="w-full bg-gradient-to-r from-red-500 to-rose-500 text-white hover:from-red-600 hover:to-rose-600"
                     onClick={() => {
                       toast({
                         title: "New Honeytrap Deployed",
-                        description: "Fake vulnerability created for intruder tracking",
+                        description: "Fake customer database decoy activated",
                       });
                     }}
                   >
@@ -656,123 +655,141 @@ export default function AutonomousSalesEngine() {
                 </CardContent>
               </Card>
 
-              {/* Zero Trust Architecture */}
+              {/* Self-Destruct Protocol */}
               <Card className="bg-gradient-to-br from-slate-800 to-slate-900/80 border border-slate-700/50">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Lock className="mr-2 h-5 w-5 text-yellow-400" />
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-amber-400">
-                      Zero Trust Architecture
+                    <AlertTriangle className="mr-2 h-5 w-5 text-red-400" />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-rose-400">
+                      Self-Destruct Protocol
                     </span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 bg-amber-950/20 rounded-lg border border-amber-900/30 space-y-2">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="text-sm font-medium text-yellow-400">Trust Verification</h4>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Operating</span>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Identity Verification</span>
-                        <span className="text-white">Strict</span>
+                  <div className="p-4 bg-red-950/20 rounded-lg border border-red-900/30 space-y-3">
+                    <h4 className="text-sm font-medium text-red-400">Critical Threat Response</h4>
+                    <p className="text-sm text-gray-300">Auto-wipe sensitive data and analytics patterns in case of critical attacks.</p>
+
+                    <div className="space-y-3 mt-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <AlertTriangle className="h-4 w-4 text-yellow-400 mr-2" />
+                          <span className="text-sm text-gray-300">Auto-Destruct Sensitive Data</span>
+                        </div>
+                        <Switch defaultChecked />
                       </div>
-                      <Progress value={90} className="h-1 bg-slate-700" indicatorClassName="bg-yellow-500" />
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Request Authentication</span>
-                        <span className="text-white">Per-Action</span>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Database className="h-4 w-4 text-yellow-400 mr-2" />
+                          <span className="text-sm text-gray-300">Purge Pattern Memory</span>
+                        </div>
+                        <Switch defaultChecked />
                       </div>
-                      <Progress value={100} className="h-1 bg-slate-700" indicatorClassName="bg-yellow-500" />
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Session Monitoring</span>
-                        <span className="text-white">Continuous</span>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <Lock className="h-4 w-4 text-yellow-400 mr-2" />
+                          <span className="text-sm text-gray-300">Quantum Encryption Lock</span>
+                        </div>
+                        <Switch defaultChecked />
                       </div>
-                      <Progress value={100} className="h-1 bg-slate-700" indicatorClassName="bg-yellow-500" />
                     </div>
                   </div>
 
-                  <div className="p-4 bg-slate-700/30 rounded-lg space-y-3">
-                    <h4 className="text-sm font-medium text-yellow-400">Access Controls</h4>
-                    <div className="space-y-2">
-                      {[
-                        { resource: "Customer Data", verification: "Multi-factor + Behavioral" },
-                        { resource: "Sales Strategies", verification: "Multi-factor" },
-                        { resource: "System Settings", verification: "Biometric" },
-                        { resource: "Analytics", verification: "Standard" },
-                      ].map((item, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 bg-slate-800/40 rounded-lg">
-                          <span className="text-sm text-white">{item.resource}</span>
-                          <span className="text-xs text-yellow-400">{item.verification}</span>
+                  <div className="bg-slate-800/40 p-4 rounded-lg">
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="text-sm font-medium text-red-400">Threat Level Indicators</h4>
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Normal</span>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-400">Infiltration Attempts</span>
+                          <span className="text-white">0%</span>
                         </div>
-                      ))}
+                        <Progress value={0} className="h-1 bg-slate-700" />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-400">Data Extraction Patterns</span>
+                          <span className="text-white">2%</span>
+                        </div>
+                        <Progress value={2} className="h-1 bg-slate-700" />
+                      </div>
+
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-gray-400">Critical Vulnerability Probes</span>
+                          <span className="text-white">1%</span>
+                        </div>
+                        <Progress value={1} className="h-1 bg-slate-700" />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Polymorphic Code Protection */}
+              {/* Zero Trust Architecture */}
               <Card className="bg-gradient-to-br from-slate-800 to-slate-900/80 border border-slate-700/50">
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Code className="mr-2 h-5 w-5 text-blue-400" />
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-sky-400">
-                      Polymorphic Code Encryption
+                    <Fingerprint className="mr-2 h-5 w-5 text-cyan-400" />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">
+                      Zero Trust Architecture
                     </span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 bg-blue-950/20 rounded-lg border border-blue-900/30 space-y-3">
-                    <div className="flex justify-between items-center mb-2">
-                      <h4 className="text-sm font-medium text-blue-400">Encryption Status</h4>
-                      <span className="px-2 py-0.5 text-xs rounded-full bg-green-500/20 text-green-400">Active</span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Key Rotation</span>
-                        <span className="text-white">24 hours</span>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Next Key Change</span>
-                        <span className="text-white">12:14:36</span>
-                      </div>
-                      
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Encryption Strength</span>
-                        <span className="text-white">Military Grade</span>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="p-4 bg-cyan-950/20 rounded-lg border border-cyan-900/30 space-y-3">
+                    <h4 className="text-sm font-medium text-cyan-400">Verification Status</h4>
+                    <p className="text-sm text-gray-300">Every system request must pass multi-factor verification.</p>
 
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="self-rewrite" className="text-sm text-gray-400">Code Self-Rewrite</Label>
-                    <div className="flex items-center space-x-2">
-                      <Switch id="self-rewrite" defaultChecked />
-                      <span className="text-sm font-medium text-white">Enabled</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-slate-700/30 rounded-lg space-y-2">
-                    <h4 className="text-sm font-medium text-blue-400">Protected Components</h4>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-3 mt-3">
                       {[
-                        { name: "Core Engine", status: "Encrypted" },
-                        { name: "Strategy Database", status: "Encrypted" },
-                        { name: "User Authentication", status: "Encrypted" },
-                        { name: "API Endpoints", status: "Encrypted" },
-                        { name: "ML Models", status: "Encrypted" },
-                        { name: "Behavioral Data", status: "Encrypted" },
-                      ].map((component, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-slate-800/40 rounded-lg">
-                          <span className="text-xs text-white">{component.name}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400">{component.status}</span>
+                        { name: "API Requests", verified: 328, total: 328, percentage: 100 },
+                        { name: "Database Calls", verified: 1042, total: 1042, percentage: 100 },
+                        { name: "Admin Actions", verified: 47, total: 47, percentage: 100 },
+                        { name: "Model Updates", verified: 12, total: 12, percentage: 100 },
+                      ].map((item, index) => (
+                        <div key={index} className="p-3 bg-slate-800/50 rounded-lg">
+                          <h5 className="text-xs font-medium text-white mb-2">{item.name}</h5>
+                          <div className="flex items-center justify-between text-xs mb-1">
+                            <span className="text-gray-400">Verified</span>
+                            <span className="text-cyan-400">{item.verified}/{item.total}</span>
+                          </div>
+                          <Progress value={item.percentage} className="h-1 bg-slate-700" />
                         </div>
                       ))}
                     </div>
+                  </div>
+
+                  <div className="p-4 bg-slate-700/30 rounded-lg space-y-3">
+                    <h4 className="text-sm font-medium text-cyan-400">Polymorphic Code Status</h4>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm text-gray-300">Last Encryption Cycle</span>
+                      <span className="text-sm text-cyan-400">Today, 14:32</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">Next Cycle</span>
+                      <span className="text-sm text-cyan-400">1h 28m</span>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="w-full mt-2 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                      onClick={() => {
+                        toast({
+                          title: "Force Encryption Cycle",
+                          description: "System code is rewriting itself now",
+                        });
+                      }}
+                    >
+                      <Code className="mr-2 h-4 w-4" />
+                      Force Encryption Cycle
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -783,70 +800,68 @@ export default function AutonomousSalesEngine() {
 
       {/* Biometric Scan Dialog */}
       <Dialog open={biometricScanDialog} onOpenChange={setBiometricScanDialog}>
-        <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800">
+        <DialogContent className="bg-slate-900 border-slate-700">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Biometric Security Verification</DialogTitle>
-            <DialogDescription className="text-center">
-              Security access requires biometric verification
+            <DialogTitle className="text-white">Biometric Authentication Required</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Master controls require advanced security verification.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-6 py-4">
-            <div className="flex flex-col items-center justify-center">
-              {!scanComplete ? (
-                <div className="relative w-32 h-32 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                  <Fingerprint className="h-16 w-16 text-blue-400 animate-pulse" />
-                  <svg className="absolute inset-0 w-full h-full">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="60"
-                      fill="none"
-                      strokeWidth="4"
-                      stroke="#3b82f6"
-                      strokeDasharray="377"
-                      strokeDashoffset={377 - (377 * scanProgress) / 100}
-                      className="transition-all duration-100 ease-linear"
-                      transform="rotate(-90, 64, 64)"
-                    />
-                  </svg>
-                </div>
-              ) : (
-                <div className="w-32 h-32 bg-slate-800 rounded-full flex items-center justify-center mb-4 border-4 border-green-500">
-                  <Fingerprint className="h-16 w-16 text-green-400" />
-                </div>
-              )}
-              
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-medium text-white mb-1">
-                  {scanComplete ? "Verification Complete" : "Scanning Fingerprint"}
-                </h3>
-                <p className="text-sm text-gray-400">
-                  {scanComplete 
-                    ? "Biometric match confirmed" 
-                    : "Please place your finger on the scanner"}
-                </p>
+            <div className="flex justify-center">
+              <div className="w-32 h-32 rounded-full bg-slate-800 flex items-center justify-center relative overflow-hidden">
+                <Fingerprint className="w-16 h-16 text-indigo-400" />
+                {scanProgress > 0 && (
+                  <div className="absolute inset-0 bg-indigo-400/20 flex items-center justify-center">
+                    <svg className="w-24 h-24" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="rgba(129, 140, 248, 0.2)"
+                        strokeWidth="8"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke="rgba(129, 140, 248, 0.8)"
+                        strokeWidth="8"
+                        strokeDasharray={`${scanProgress * 2.83} 283`}
+                        style={{ transformOrigin: "center", transform: "rotate(-90deg)" }}
+                      />
+                    </svg>
+                  </div>
+                )}
               </div>
             </div>
-            
+            <Progress value={scanProgress} className="h-2 bg-slate-700" />
             {scanComplete ? (
-              <Button 
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                onClick={handleAuthorize}
-              >
-                <Lock className="mr-2 h-4 w-4" />
-                Access Master Controls
-              </Button>
+              <div className="text-center space-y-4">
+                <p className="text-green-400">Biometric scan complete. Identity verified.</p>
+                <Button onClick={handleAuthorize} className="bg-indigo-600 hover:bg-indigo-700">
+                  Access Master Controls
+                </Button>
+              </div>
             ) : (
-              <Button 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={startBiometricScan}
-                disabled={scanProgress > 0 && scanProgress < 100}
-              >
-                <Fingerprint className="mr-2 h-4 w-4" />
-                {scanProgress > 0 && scanProgress < 100 
-                  ? `Scanning (${scanProgress}%)` 
-                  : "Start Scan"}
-              </Button>
+              <div className="text-center">
+                <Button
+                  onClick={startBiometricScan}
+                  className="bg-indigo-600 hover:bg-indigo-700"
+                  disabled={scanProgress > 0 && scanProgress < 100}
+                >
+                  {scanProgress > 0 && scanProgress < 100 ? (
+                    <span className="flex items-center">
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Scanning... ({scanProgress}%)
+                    </span>
+                  ) : (
+                    "Start Biometric Scan"
+                  )}
+                </Button>
+              </div>
             )}
           </div>
         </DialogContent>
@@ -854,77 +869,174 @@ export default function AutonomousSalesEngine() {
 
       {/* Master Control Dialog */}
       <Dialog open={masterControlDialog} onOpenChange={setMasterControlDialog}>
-        <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800">
+        <DialogContent className="bg-slate-900 border-slate-700 max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-xl">Master Control System</DialogTitle>
-            <DialogDescription>
-              Advanced system controls with biometric authorization
+            <DialogTitle className="text-white">S.L.A.S.E Master Control Panel</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Critical system control options. Use with extreme caution.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="p-4 bg-amber-950/20 rounded-lg border border-amber-900/30 mb-2">
-              <div className="flex items-center mb-2">
-                <AlertTriangle className="h-5 w-5 text-amber-500 mr-2" />
-                <h3 className="text-sm font-medium text-white">Warning: Restricted Access</h3>
-              </div>
-              <p className="text-xs text-gray-400">
-                These controls are restricted to authorized personnel. All actions are logged and monitored.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-3">
-              <Button
-                variant="outline"
-                className="justify-start border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
-                onClick={() => {
-                  toast({
-                    title: "Quantum Backup Created",
-                    description: "System backup encrypted with biometric key",
-                  });
-                }}
-              >
-                <Database className="mr-2 h-4 w-4" />
-                Create Quantum Backup
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="justify-start border-red-500/30 text-red-400 hover:bg-red-500/10"
-                onClick={() => {
-                  activateTimeLock(24);
-                }}
-              >
-                <Clock className="mr-2 h-4 w-4" />
-                Activate Time-Lock (24h)
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="justify-start border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
-                onClick={() => {
-                  activateTimeLock(48);
-                }}
-              >
-                <Clock className="mr-2 h-4 w-4" />
-                Activate Time-Lock (48h)
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="justify-start border-red-500/30 text-red-400 hover:bg-red-500/10"
-                onClick={() => {
-                  setMasterControlDialog(false);
-                  toast({
-                    title: "Dead Man Switch Activated",
-                    description: "System will rebuild on pre-approved devices",
-                    variant: "destructive",
-                  });
-                }}
-              >
-                <AlertTriangle className="mr-2 h-4 w-4" />
-                Activate Dead Man Switch
-              </Button>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+            <Card className="bg-red-900/20 border-red-800/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center text-red-400">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  System Override Controls
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Lock className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-300">AI Learning Override</span>
+                  </div>
+                  <Switch />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Database className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-300">Force Data Purge</span>
+                  </div>
+                  <Switch />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <AlertTriangle className="h-4 w-4 text-red-400 mr-2" />
+                    <span className="text-sm text-red-300">Self-Destruct Protocol</span>
+                  </div>
+                  <Switch />
+                </div>
+
+                <Button variant="destructive" size="sm" className="w-full mt-2">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Execute Override
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-amber-900/20 border-amber-800/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center text-amber-400">
+                  <Clock className="h-4 w-4 mr-2" />
+                  Time Lock Security
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-xs text-gray-400">Temporarily disable system for security purposes.</p>
+
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    onClick={() => activateTimeLock(1)}
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Lock for 1 Hour
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    onClick={() => activateTimeLock(8)}
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Lock for 8 Hours
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                    onClick={() => activateTimeLock(24)}
+                  >
+                    <Clock className="h-4 w-4 mr-2" />
+                    Lock for 24 Hours
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-indigo-900/20 border-indigo-800/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center text-indigo-400">
+                  <Fingerprint className="h-4 w-4 mr-2" />
+                  Biometric Access Management
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Fingerprint className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-300">Primary Biometric</span>
+                  </div>
+                  <span className="text-sm text-indigo-400">Active</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Fingerprint className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-sm text-gray-300">Backup Biometric</span>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-indigo-400 h-8 px-2">
+                    Register
+                  </Button>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2 border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
+                >
+                  <Key className="h-4 w-4 mr-2" />
+                  Reset Biometric Keys
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-green-900/20 border-green-800/30">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center text-green-400">
+                  <Database className="h-4 w-4 mr-2" />
+                  Quantum Backup Vault
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Last Backup</span>
+                  <span className="text-green-400">Today, 12:42</span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Backup Count</span>
+                  <span className="text-green-400">12</span>
+                </div>
+
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Encryption</span>
+                  <span className="text-green-400">AES-512</span>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full mt-2 border-green-500/30 text-green-400 hover:bg-green-500/10"
+                  onClick={() => {
+                    toast({
+                      title: "Quantum Backup Initiated",
+                      description: "Creating encrypted system image",
+                    });
+                    setMasterControlDialog(false);
+                  }}
+                >
+                  <Database className="h-4 w-4 mr-2" />
+                  Create Quantum Backup
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </DialogContent>
       </Dialog>

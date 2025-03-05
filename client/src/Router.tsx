@@ -33,6 +33,7 @@ import SmartTools from "@/pages/features/smart-tools";
 import EnterpriseTurbo from "@/pages/features/enterprise-turbo";
 import AnalyticsSuite from "@/pages/features/analytics-suite"; // Import the new analytics suite page
 import ProductRecommendations from "@/pages/features/product-recommendations"; // Import the new product recommendations page
+import AutonomousSalesEngine from "@/pages/features/autonomous-sales-engine"; // Import the new autonomous sales engine page
 import Contacts from "@/pages/contacts";
 import Workflows from "@/pages/workflows";
 import Reports from "@/pages/reports";
@@ -148,6 +149,7 @@ export default function Router() {
               <Route path="/features/stealth-audit" component={StealthAudit} />
               <Route path="/features/analytics-suite" component={AnalyticsSuite} /> {/* Add the new route for analytics suite */}
               <Route path="/features/product-recommendations" component={ProductRecommendations} /> {/* Add the new route for product recommendations */}
+              <Route path="/features/autonomous-sales-engine" component={AutonomousSalesEngine} /> {/* Add the new route for autonomous sales engine */}
 
               <Route component={NotFound} />
             </Switch>
