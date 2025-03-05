@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { SiHeroku, SiVercel, SiNetlify, SiGooglecloud, SiDigitalocean, SiRailway, SiRender, SiFirebase, SiCloudflare, SiDatadog } from 'react-icons/si';
-import { CheckCircle, XCircle, AlertCircle, RotateCw, Cloud, Server, Box, Database, Azure } from 'lucide-react';
+import { SiHeroku, SiVercel, SiNetlify, SiGooglecloud, SiDigitalocean, SiRailway, SiRender, SiFirebase, SiCloudflare, SiDatadog, SiMicrosoftazure } from 'react-icons/si';
+import { CheckCircle, XCircle, AlertCircle, RotateCw, Cloud, Server, Box, Database } from 'lucide-react';
 
 interface PaasIntegrationProps {
   view: 'grid' | 'list';
