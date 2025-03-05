@@ -1,12 +1,11 @@
-
 import express from 'express';
 import { shopifyApi } from '@shopify/shopify-api';
 
 const router = express.Router();
 
-// Config will be loaded from env vars
+// Create shopify API client once
 const shopifyConfig = {
-  // Add your configuration here
+  // Config will be loaded from env vars
   scopes: ['read_products', 'read_orders', 'read_customers']
 };
 

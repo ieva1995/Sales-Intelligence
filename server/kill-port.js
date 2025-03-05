@@ -1,4 +1,3 @@
-
 import { execSync } from 'child_process';
 
 function checkCommand(command) {
@@ -12,7 +11,7 @@ function checkCommand(command) {
 
 async function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);
-  
+
   if (checkCommand('lsof')) {
     try {
       const pids = execSync(`lsof -i :${port} -t`).toString().trim().split('\n');
@@ -47,7 +46,7 @@ async function killPort(port) {
       const output = execSync(`netstat -ano | grep ${port}`).toString();
       const lines = output.split('\n');
       const pidRegex = /(\d+)$/;
-      
+
       for (const line of lines) {
         const match = line.match(pidRegex);
         if (match?.[1]) {
