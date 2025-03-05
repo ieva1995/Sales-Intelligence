@@ -7,7 +7,7 @@ import {
   LineChart, 
   Activity, 
   Zap, 
-  Milestone, 
+  Target, 
   ClipboardCheck, 
   UserPlus 
 } from "lucide-react";
@@ -46,7 +46,7 @@ const PlatformDropdown = () => {
     },
     {
       title: "Mutual Action Plans",
-      icon: <Milestone className="h-5 w-5 text-indigo-500" />,
+      icon: <Target className="h-5 w-5 text-indigo-500" />,
       path: "/platform/action-plans"
     },
     {

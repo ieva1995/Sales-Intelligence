@@ -22,18 +22,9 @@ import {
   UserPlus,
   Mail,
   CircleDot,
-  Settings,
-  Home,
-  BarChart2,
-  Users,
-  FileText,
-  Settings,
-  MessageCircle,
-  PieChart,
-  BarChart,
-  LineChart,
-  Activity,
-  Zap
+  Clock,
+  Database,
+  Bot
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NavigationPreview from './NavigationPreview';
@@ -89,7 +80,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     },
     {
       title: "Mutual Action Plans",
-      icon: Milestone,
+      icon: Target,
       path: "/platform/action-plans"
     },
     {
