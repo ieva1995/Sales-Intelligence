@@ -5,21 +5,16 @@ function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);
 
   try {
-    // Kill Node processes first
-    execSync('pkill -f "node|tsx" || true');
-    console.log('Killed Node/TSX processes');
-    
-    // Force kill any remaining processes on the port
+    // Kill processes more aggressively
+    execSync(`pkill -f "node|tsx" || true`);
     execSync(`fuser -k ${port}/tcp 2>/dev/null || true`);
     execSync(`kill -9 $(lsof -t -i:${port}) 2>/dev/null || true`);
-    console.log(`Killed processes on port ${port}`);
-
-    // Wait briefly
+    
+    // Give processes time to fully terminate
     execSync('sleep 1');
     
     return true;
   } catch (err) {
-    console.log('Error during port cleanup:', err.message);
     return false;
   }
 }
