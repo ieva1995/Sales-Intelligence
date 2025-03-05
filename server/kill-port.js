@@ -1,14 +1,13 @@
-
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);
-  
+
   try {
     // Try using lsof (available on most Unix systems)
     const lsofCommand = `lsof -i :${port} -t`;
     const pids = execSync(lsofCommand).toString().trim().split('\n');
-    
+
     if (pids && pids.length && pids[0]) {
       pids.forEach(pid => {
         try {
@@ -24,7 +23,7 @@ function killPort(port) {
   } catch (err) {
     console.log(`No process found using lsof on port ${port}`);
   }
-  
+
   try {
     // Try using fuser as an alternative (available on many Linux systems)
     execSync(`fuser -k ${port}/tcp`);
@@ -33,16 +32,16 @@ function killPort(port) {
   } catch (err) {
     console.log(`No process found on port ${port} using fuser`);
   }
-  
+
   try {
     // Another approach with netstat and grep (works on most systems)
     const netstatCommand = `netstat -ano | grep ${port}`;
     const output = execSync(netstatCommand).toString();
-    
+
     // Parse the output to find PIDs
     const lines = output.split('\n');
     const pidRegex = /(\d+)$/;
-    
+
     for (const line of lines) {
       const match = line.match(pidRegex);
       if (match && match[1]) {
@@ -60,7 +59,7 @@ function killPort(port) {
   } catch (err) {
     console.log(`No process found using netstat on port ${port}`);
   }
-  
+
   console.log(`No process found using port ${port} or failed to kill it.`);
   return false;
 }
