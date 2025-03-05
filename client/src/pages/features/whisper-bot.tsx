@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Bot, Send, TrendingUp, MessageSquare, FileText, Activity,
   Globe, Bell, RefreshCw, CheckCircle, AlertTriangle, Search,
-  Newspaper, BarChart, BookOpen, ArrowRight
+  Newspaper, BarChart, BookOpen, ArrowRight, Zap, Filter
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -72,6 +72,7 @@ function WhisperBot() {
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [reconnectTimer, setReconnectTimer] = useState<NodeJS.Timeout | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const MAX_CONNECTION_ATTEMPTS = 3;
 
   // Update cached insights whenever insights change
@@ -377,9 +378,19 @@ function WhisperBot() {
     }
   }, [isOfflineMode, generateOfflineInsight, toast]);
 
+  // Filter insights based on active filter
+  const filteredInsights = activeFilter 
+    ? insights.filter(insight => {
+        if (activeFilter === 'high') return insight.priority === 'high';
+        if (activeFilter === 'new') return insight.status === 'new';
+        if (activeFilter === 'actioned') return insight.status === 'actioned';
+        return true;
+      })
+    : insights;
+
   const NewsAnalysis = () => (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 p-4 bg-blue-500/10 rounded-lg">
+      <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-blue-500/20 to-blue-500/10 rounded-lg">
         <Newspaper className="h-5 w-5 text-blue-400" />
         <div>
           <h4 className="font-medium text-white">Latest Industry Updates</h4>
@@ -410,10 +421,10 @@ function WhisperBot() {
             summary: "Enterprise software market expected to grow 30% YoY"
           }
         ].map((news, index) => (
-          <div key={index} className="p-4 bg-white/5 rounded-lg">
+          <div key={index} className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-lg border border-white/5">
             <div className="flex justify-between items-start mb-2">
               <h5 className="font-medium text-white">{news.title}</h5>
-              <span className={`px-2 py-1 text-xs rounded ${
+              <span className={`px-2 py-1 text-xs rounded-full ${
                 news.sentiment === 'Positive' ? 'bg-green-500/20 text-green-400' :
                   news.sentiment === 'Negative' ? 'bg-red-500/20 text-red-400' :
                     'bg-blue-500/20 text-blue-400'
@@ -434,7 +445,7 @@ function WhisperBot() {
 
   const OpportunityAlerts = () => (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 p-4 bg-green-500/10 rounded-lg">
+      <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-green-500/20 to-green-500/10 rounded-lg">
         <BarChart className="h-5 w-5 text-green-400" />
         <div>
           <h4 className="font-medium text-white">Active Opportunities</h4>
@@ -465,7 +476,7 @@ function WhisperBot() {
             timeframe: "Immediate"
           }
         ].map((opp, index) => (
-          <div key={index} className="p-4 bg-white/5 rounded-lg">
+          <div key={index} className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-lg border border-white/5">
             <div className="flex justify-between items-start mb-2">
               <h5 className="font-medium text-white">{opp.company}</h5>
               <span className="text-green-400 font-medium">{opp.probability}</span>
@@ -473,7 +484,7 @@ function WhisperBot() {
             <p className="text-sm text-white mb-2">{opp.opportunity}</p>
             <div className="flex justify-between text-xs">
               <span className="text-green-400">{opp.value}</span>
-              <span className={`px-2 py-1 rounded ${
+              <span className={`px-2 py-1 rounded-full ${
                 opp.timeframe === 'Immediate' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
               }`}>
                 {opp.timeframe}
@@ -487,7 +498,7 @@ function WhisperBot() {
 
   const AutoResponse = () => (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 p-4 bg-purple-500/10 rounded-lg">
+      <div className="flex items-center gap-2 p-4 bg-gradient-to-r from-purple-500/20 to-purple-500/10 rounded-lg">
         <BookOpen className="h-5 w-5 text-purple-400" />
         <div>
           <h4 className="font-medium text-white">Smart Response Suggestions</h4>
@@ -515,17 +526,17 @@ function WhisperBot() {
             tone: "Strategic"
           }
         ].map((response, index) => (
-          <div key={index} className="p-4 bg-white/5 rounded-lg">
+          <div key={index} className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-lg border border-white/5">
             <div className="flex justify-between items-start mb-2">
               <h5 className="font-medium text-white">{response.type}</h5>
-              <span className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded">
+              <span className="text-xs px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full">
                 {response.tone}
               </span>
             </div>
             <p className="text-xs text-gray-400 mb-2">{response.context}</p>
             <p className="text-sm text-white mb-2">{response.suggestion}</p>
             <Button
-              className="w-full mt-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400"
+              className="w-full mt-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border border-purple-500/30"
               onClick={() => {
                 try {
                   navigator.clipboard.writeText(response.suggestion);
@@ -557,19 +568,19 @@ function WhisperBot() {
 
     return (
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-800">
           <DialogHeader>
-            <DialogTitle>Intelligence Action Center</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl">Intelligence Action Center</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Take action on intelligence for {selectedInsight.company}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            <div className="p-4 bg-white/5 rounded-lg">
-              <h3 className="font-medium text-lg">{selectedInsight.insight}</h3>
-              <p className="text-sm text-gray-400 mt-1">{selectedInsight.opportunity}</p>
+            <div className="p-4 bg-gradient-to-r from-slate-800 to-slate-800/70 rounded-lg border border-slate-700/50">
+              <h3 className="font-medium text-lg text-white">{selectedInsight.insight}</h3>
+              <p className="text-sm text-gray-300 mt-1">{selectedInsight.opportunity}</p>
               <div className="flex items-center mt-2 space-x-2">
-                <span className={`px-2 py-1 rounded text-xs ${
+                <span className={`px-2 py-1 rounded-full text-xs ${
                   selectedInsight.priority === 'high' ? 'bg-red-500/20 text-red-400' :
                     'bg-yellow-500/20 text-yellow-400'
                 }`}>
@@ -581,7 +592,7 @@ function WhisperBot() {
 
             <div className="grid grid-cols-2 gap-4">
               <Button
-                className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400"
+                className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 border border-blue-500/30"
                 onClick={() => {
                   // Update insight status in cached data
                   setInsights(prev => 
@@ -599,10 +610,11 @@ function WhisperBot() {
                   setIsDialogOpen(false);
                 }}
               >
+                <Zap className="mr-2 h-4 w-4" />
                 Generate Proposal
               </Button>
               <Button
-                className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400"
+                className="w-full bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30"
                 onClick={() => {
                   // Update insight status in cached data
                   setInsights(prev => 
@@ -620,10 +632,11 @@ function WhisperBot() {
                   setIsDialogOpen(false);
                 }}
               >
+                <Send className="mr-2 h-4 w-4" />
                 Schedule Contact
               </Button>
               <Button
-                className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400"
+                className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 border border-purple-500/30"
                 onClick={() => {
                   // Update insight status in cached data
                   setInsights(prev => 
@@ -641,10 +654,11 @@ function WhisperBot() {
                   setIsDialogOpen(false);
                 }}
               >
+                <Search className="mr-2 h-4 w-4" />
                 Deep Research
               </Button>
               <Button
-                className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400"
+                className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30"
                 onClick={() => {
                   toast({
                     title: "Alert Created",
@@ -653,6 +667,7 @@ function WhisperBot() {
                   setIsDialogOpen(false);
                 }}
               >
+                <Bell className="mr-2 h-4 w-4" />
                 Set Alert
               </Button>
             </div>
@@ -698,11 +713,11 @@ function WhisperBot() {
     return (
       <div className="p-4 sm:p-6 space-y-6">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold">AI Whisper Bot</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 text-transparent bg-clip-text">AI Whisper Bot</h1>
           <p className="text-muted-foreground">Working in offline mode - using cached data</p>
         </div>
 
-        <div className="bg-yellow-900/20 border border-yellow-900/30 rounded-lg p-4 mb-4">
+        <div className="bg-gradient-to-r from-yellow-900/20 to-transparent rounded-lg p-4 mb-4 border border-yellow-900/30">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="h-5 w-5 text-yellow-500" />
             <h3 className="font-medium text-white">Limited Connectivity Mode</h3>
@@ -710,12 +725,13 @@ function WhisperBot() {
           <p className="text-sm text-gray-300 mb-3">
             You're currently working with cached data while offline. Some features may be limited.
           </p>
-          <Button variant="outline" size="sm" onClick={handleManualReconnect}>
+          <Button variant="outline" size="sm" onClick={handleManualReconnect}
+            className="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
             <RefreshCw className="mr-1 h-3 w-3" /> Try Reconnecting
           </Button>
         </div>
 
-        <Card className="border-0 bg-slate-800">
+        <Card className="border-0 bg-gradient-to-b from-slate-800 to-slate-900 shadow-xl">
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center">
@@ -737,7 +753,7 @@ function WhisperBot() {
               {insights.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
+                  className="flex items-center justify-between p-4 bg-slate-700/50 hover:bg-slate-700/70 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-200 transform hover:translate-x-1"
                   onClick={() => handleInsightAction(item)}
                 >
                   <div className="flex items-center space-x-4">
@@ -756,7 +772,7 @@ function WhisperBot() {
                   <div className="text-right">
                     <p className="text-sm text-green-400">{item.opportunity}</p>
                     <p className="text-xs text-gray-400">{item.date}</p>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${
                       item.priority === 'high' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
                     }`}>
                       {item.priority}
@@ -776,7 +792,7 @@ function WhisperBot() {
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold">AI Whisper Bot</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 to-teal-400 text-transparent bg-clip-text">AI Whisper Bot</h1>
         <p className="text-muted-foreground">Industry news analysis with targeted solution suggestions</p>
       </div>
 
@@ -791,11 +807,13 @@ function WhisperBot() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card
-          className="bg-blue-500/10 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors"
+          className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 border-0 cursor-pointer hover:bg-blue-500/20 transition-colors shadow-lg"
           onClick={() => setActiveQuickAction("news")}
         >
           <CardContent className="p-4 flex items-center space-x-4">
-            <Bot className="h-8 w-8 text-blue-500" />
+            <div className="bg-blue-500/20 p-3 rounded-lg">
+              <Bot className="h-6 w-6 text-blue-500" />
+            </div>
             <div>
               <h3 className="font-semibold text-lg">News Analysis</h3>
               <p className="text-sm text-muted-foreground">Scan industry updates</p>
@@ -804,11 +822,13 @@ function WhisperBot() {
         </Card>
 
         <Card
-          className="bg-green-500/10 border-0 cursor-pointer hover:bg-green-500/20 transition-colors"
+          className="bg-gradient-to-br from-green-500/20 to-green-500/5 border-0 cursor-pointer hover:bg-green-500/20 transition-colors shadow-lg"
           onClick={() => setActiveQuickAction("opportunities")}
         >
           <CardContent className="p-4 flex items-center space-x-4">
-            <TrendingUp className="h-8 w-8 text-green-500" />
+            <div className="bg-green-500/20 p-3 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-green-500" />
+            </div>
             <div>
               <h3 className="font-semibold text-lg">Opportunity Alerts</h3>
               <p className="text-sm text-muted-foreground">Real-time notifications</p>
@@ -817,11 +837,13 @@ function WhisperBot() {
         </Card>
 
         <Card
-          className="bg-purple-500/10 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors"
+          className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 border-0 cursor-pointer hover:bg-purple-500/20 transition-colors shadow-lg"
           onClick={() => setActiveQuickAction("responses")}
         >
           <CardContent className="p-4 flex items-center space-x-4">
-            <Send className="h-8 w-8 text-purple-500" />
+            <div className="bg-purple-500/20 p-3 rounded-lg">
+              <Send className="h-6 w-6 text-purple-500" />
+            </div>
             <div>
               <h3 className="font-semibold text-lg">Auto-Response</h3>
               <p className="text-sm text-muted-foreground">Smart suggestions</p>
@@ -831,10 +853,10 @@ function WhisperBot() {
       </div>
 
       <Dialog open={activeQuickAction === "news"} onOpenChange={() => setActiveQuickAction(null)}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-800">
           <DialogHeader>
-            <DialogTitle>Industry News Analysis</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl">Industry News Analysis</DialogTitle>
+            <DialogDescription className="text-gray-400">
               AI-powered analysis of latest industry developments
             </DialogDescription>
           </DialogHeader>
@@ -843,10 +865,10 @@ function WhisperBot() {
       </Dialog>
 
       <Dialog open={activeQuickAction === "opportunities"} onOpenChange={() => setActiveQuickAction(null)}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-800">
           <DialogHeader>
-            <DialogTitle>Real-time Opportunities</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl">Real-time Opportunities</DialogTitle>
+            <DialogDescription className="text-gray-400">
               AI-detected market opportunities and leads
             </DialogDescription>
           </DialogHeader>
@@ -855,10 +877,10 @@ function WhisperBot() {
       </Dialog>
 
       <Dialog open={activeQuickAction === "responses"} onOpenChange={() => setActiveQuickAction(null)}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[600px] bg-slate-900 border-slate-800">
           <DialogHeader>
-            <DialogTitle>Smart Response Generator</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl">Smart Response Generator</DialogTitle>
+            <DialogDescription className="text-gray-400">
               AI-generated response templates based on context
             </DialogDescription>
           </DialogHeader>
@@ -866,8 +888,8 @@ function WhisperBot() {
         </DialogContent>
       </Dialog>
 
-      <Card className="border-0 bg-slate-800">
-        <CardHeader>
+      <Card className="border-0 bg-gradient-to-b from-slate-800 to-slate-900 shadow-xl">
+        <CardHeader className="pb-2">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center">
               <Activity className="h-5 w-5 mr-2 text-blue-400" />
@@ -889,18 +911,54 @@ function WhisperBot() {
               </Button>
             )}
           </CardTitle>
+
+          {/* Filter options */}
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className={`text-xs px-3 py-1 h-auto ${!activeFilter ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' : 'bg-slate-800'}`}
+              onClick={() => setActiveFilter(null)}
+            >
+              All
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className={`text-xs px-3 py-1 h-auto flex items-center ${activeFilter === 'high' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-slate-800'}`}
+              onClick={() => setActiveFilter(activeFilter === 'high' ? null : 'high')}
+            >
+              <Filter className="h-3 w-3 mr-1" /> High Priority
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className={`text-xs px-3 py-1 h-auto flex items-center ${activeFilter === 'new' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 'bg-slate-800'}`}
+              onClick={() => setActiveFilter(activeFilter === 'new' ? null : 'new')}
+            >
+              <AlertTriangle className="h-3 w-3 mr-1" /> New
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className={`text-xs px-3 py-1 h-auto flex items-center ${activeFilter === 'actioned' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-slate-800'}`}
+              onClick={() => setActiveFilter(activeFilter === 'actioned' ? null : 'actioned')}
+            >
+              <CheckCircle className="h-3 w-3 mr-1" /> Actioned
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          {insights.length === 0 ? (
+          {filteredInsights.length === 0 ? (
             <div className="text-center py-8">
               <MessageSquare className="h-8 w-8 text-gray-500 mx-auto mb-2" />
-              <p className="text-gray-400">No insights available yet</p>
-              {isOfflineMode && (
+              <p className="text-gray-400">No insights available{activeFilter ? ' for the selected filter' : ' yet'}</p>
+              {isOfflineMode && !activeFilter && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={addOfflineInsight}
-                  className="mt-4"
+                  className="mt-4 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/30"
                 >
                   <Bot className="h-4 w-4 mr-2" /> Generate Sample Insight
                 </Button>
@@ -908,10 +966,10 @@ function WhisperBot() {
             </div>
           ) : (
             <div className="space-y-4">
-              {insights.map((item, i) => (
+              {filteredInsights.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
+                  className="flex items-center justify-between p-4 bg-slate-700/50 hover:bg-slate-700/70 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-200 transform hover:translate-x-1"
                   onClick={() => handleInsightAction(item)}
                 >
                   <div className="flex items-center space-x-4">
@@ -930,7 +988,7 @@ function WhisperBot() {
                   <div className="text-right">
                     <p className="text-sm text-green-400">{item.opportunity}</p>
                     <p className="text-xs text-gray-400">{item.date}</p>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs ${
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${
                       item.priority === 'high' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
                     }`}>
                       {item.priority}
