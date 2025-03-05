@@ -98,7 +98,9 @@ process.on('unhandledRejection', (reason, promise) => {
     // Kill any existing processes on port 5000
     try {
       const { execSync } = require('child_process');
-      execSync('fuser -k 5000/tcp || true');
+      execSync('bash server/kill-port.sh');
+      // Wait a moment for ports to clear
+      await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (err) {
       console.log('Port cleanup attempt completed');
     }
