@@ -100,18 +100,8 @@ process.on('unhandledRejection', (reason, promise) => {
     // Add a pre-flight check for port availability
     console.log(`Preparing to start server on port ${port}...`);
 
-    // Kill any existing processes on port 5000
-    try {
-      const { execSync } = require('child_process');
-      execSync('bash server/kill-port.sh');
-      // Wait a moment for ports to clear
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (err) {
-      console.log('Port cleanup attempt completed');
-    }
-
     // Function to start the server with retry logic
-    function startServerWithRetry() {
+    function startServerWithRetry(retries = 3) {
       console.log(`Attempting to bind to port ${port}...`);
       
       server.listen({
@@ -120,6 +110,14 @@ process.on('unhandledRejection', (reason, promise) => {
         reusePort: true,
       }, () => {
         log(`Server running on port ${port}`);
+      }).on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE' && retries > 0) {
+          console.log(`Port ${port} in use, retrying in 1s... (${retries} attempts left)`);
+          setTimeout(() => startServerWithRetry(retries - 1), 1000);
+        } else {
+          console.error('Server failed to start:', error);
+          process.exit(1);
+        }
       });
     }
 
