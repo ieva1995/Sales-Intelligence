@@ -1,12 +1,16 @@
+
 import express from 'express';
 import { shopifyApi } from '@shopify/shopify-api';
 
 const router = express.Router();
 
-// Create shopify API client once
-const shopify = shopifyApi({
-  // Config will be loaded from env vars
-});
+// Config will be loaded from env vars
+const shopifyConfig = {
+  // Add your configuration here
+  scopes: ['read_products', 'read_orders', 'read_customers']
+};
+
+const shopify = shopifyApi(shopifyConfig);
 
 function createSession(accessToken: string, shop: string): any {
   return {
@@ -15,7 +19,7 @@ function createSession(accessToken: string, shop: string): any {
     state: 'active',
     isOnline: false,
     accessToken: accessToken,
-    scope: Array.isArray(shopify.config.scopes) ? shopify.config.scopes.join(',') : 'read_products,read_orders,read_customers',
+    scope: Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers',
     expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     onlineAccessInfo: null,
     isActive: () => true,
@@ -25,7 +29,7 @@ function createSession(accessToken: string, shop: string): any {
       state: 'active',
       isOnline: false,
       accessToken: accessToken,
-      scope: Array.isArray(shopify.config.scopes) ? shopify.config.scopes.join(',') : 'read_products,read_orders,read_customers',
+      scope: Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers',
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
     })
   };
@@ -42,7 +46,7 @@ router.get('/auth', async (req, res) => {
 
     const authUrl = `https://${shop}/admin/oauth/authorize?` +
       `client_id=${process.env.SHOPIFY_API_KEY}` +
-      `&scope=${Array.isArray(shopify.config.scopes) ? shopify.config.scopes.join(',') : 'read_products,read_orders,read_customers'}` +
+      `&scope=${Array.isArray(shopifyConfig.scopes) ? shopifyConfig.scopes.join(',') : 'read_products,read_orders,read_customers'}` +
       `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
       `&state=${Date.now()}`;
 
