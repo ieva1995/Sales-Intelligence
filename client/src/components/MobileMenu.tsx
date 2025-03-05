@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { 
@@ -20,7 +20,7 @@ import {
   LineChart,
   Activity,
   Zap,
-  Milestone,
+  Target, // Added for Mutual Action Plans
   ClipboardCheck,
   UserPlus,
   Mail
@@ -79,7 +79,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     },
     {
       title: "Mutual Action Plans",
-      icon: Milestone,
+      icon: Target,
       path: "/platform/action-plans"
     },
     {
