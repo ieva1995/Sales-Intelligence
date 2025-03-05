@@ -93,8 +93,8 @@ process.on('unhandledRejection', (reason, promise) => {
     }
     console.log('Vite middleware setup complete');
 
-    // Return to the standard port 5000 as required by Replit
-    const port = process.env.PORT || 5000;
+    // Use PORT environment variable or fallback to 8080 for deployments
+    const port = process.env.PORT || 8080;
     const maxRetries = 6; // Increased from 3 to 6 retries
     let currentRetry = 0;
 
