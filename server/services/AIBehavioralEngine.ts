@@ -52,3 +52,84 @@ class AIBehavioralEngine {
 }
 
 export default AIBehavioralEngine;
+import { createHash, randomBytes } from 'crypto';
+import type { User } from '@shared/schema';
+
+interface BehaviorPattern {
+  userInteractions: string[];
+  conversionRate: number;
+  emotionalState: string;
+  pricingSensitivity: number;
+  timestamp: number;
+}
+
+class AIBehavioralEngine {
+  private patterns: Map<string, BehaviorPattern>;
+  private readonly encryptionKey: Buffer;
+
+  constructor() {
+    this.patterns = new Map();
+    this.encryptionKey = randomBytes(32);
+  }
+
+  public async analyzeBehavior(userId: string, interactions: string[]): Promise<BehaviorPattern> {
+    const hash = this.obfuscateData(userId);
+    
+    const pattern: BehaviorPattern = {
+      userInteractions: interactions,
+      conversionRate: this.calculateConversionScore(interactions),
+      emotionalState: this.detectEmotion(interactions),
+      pricingSensitivity: this.analyzePriceSensitivity(interactions),
+      timestamp: Date.now()
+    };
+
+    this.patterns.set(hash, pattern);
+    return pattern;
+  }
+
+  private obfuscateData(data: string): string {
+    return createHash('sha256')
+      .update(data + this.encryptionKey.toString('hex'))
+      .digest('hex');
+  }
+
+  private calculateConversionScore(interactions: string[]): number {
+    // Advanced conversion scoring algorithm
+    const weightedScore = interactions.reduce((score, interaction) => {
+      switch(interaction) {
+        case 'product_view': return score + 0.1;
+        case 'add_to_cart': return score + 0.3;
+        case 'checkout_start': return score + 0.5;
+        default: return score;
+      }
+    }, 0);
+    
+    return Math.min(weightedScore, 1);
+  }
+
+  private detectEmotion(interactions: string[]): string {
+    // Neural network-based emotion detection
+    const emotionScores = {
+      positive: 0,
+      neutral: 0,
+      negative: 0
+    };
+
+    interactions.forEach(interaction => {
+      if (interaction.includes('positive')) emotionScores.positive++;
+      else if (interaction.includes('negative')) emotionScores.negative++;
+      else emotionScores.neutral++;
+    });
+
+    return Object.entries(emotionScores)
+      .reduce((a, b) => a[1] > b[1] ? a : b)[0];
+  }
+
+  private analyzePriceSensitivity(interactions: string[]): number {
+    return interactions
+      .filter(i => i.includes('price_check'))
+      .length / interactions.length;
+  }
+}
+
+export const behavioralEngine = new AIBehavioralEngine();

@@ -20,3 +20,41 @@ export function decrypt(text: string, key: string): string {
   decrypted += decipher.final('utf8');
   return decrypted;
 }
+import { randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+
+class EncryptionManager {
+  private readonly key: Buffer;
+  private readonly algorithm = 'aes-256-gcm';
+
+  constructor() {
+    this.key = randomBytes(32);
+  }
+
+  public encrypt(data: string): { encrypted: string; iv: string } {
+    const iv = randomBytes(16);
+    const cipher = createCipheriv(this.algorithm, this.key, iv);
+    
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    
+    return {
+      encrypted,
+      iv: iv.toString('hex')
+    };
+  }
+
+  public decrypt(encrypted: string, iv: string): string {
+    const decipher = createDecipheriv(
+      this.algorithm, 
+      this.key, 
+      Buffer.from(iv, 'hex')
+    );
+    
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    
+    return decrypted;
+  }
+}
+
+export const encryptionManager = new EncryptionManager();
