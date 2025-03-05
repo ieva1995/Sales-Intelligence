@@ -50,5 +50,5 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "tsx server/index.ts"
+args = "tsx --inspect server/index.ts"
 waitForPort = 5000
