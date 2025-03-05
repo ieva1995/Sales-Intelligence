@@ -1,0 +1,64 @@
+Automate due diligence by merging data from multiple sources.
+
+Users
+Startups
+Investors
+Analysts
+Modules
+Due Diligence App (Front End & Backend)
+AI Engine
+Homepage Memo Generator
+User Management
+Secure login system
+Notifications
+Features
+Smart Document Processing
+Upload PDFs, Word files, and scanned documents.
+Use built-in OCR (via Google Vision) to extract text from scans.
+Extract web content when a URL is provided.
+Automated Research and Analysis
+Gather market research and competitor data.
+Calculate market size and growth using Exa or search APIs.
+Process unstructured data with the AI engine (powered by OpenAI).
+Team and Founder Analysis
+Retrieve LinkedIn data using ProxyCurl for founder profiles.
+Extract education, work history, and skills.
+Patent Analysis
+Perform automated searches in patent databases like Google Patents and WIPO.
+Extract details such as filing dates, claims, and technology data.
+Memorandum Generation
+Auto-generate investment memorandums with detailed insights.
+Allow final review and edits by an analyst before export.
+User Management and Notifications
+Implement secure login and registration features.
+Send notifications for report completions and updates.
+Feedback and Observability
+Integrate Portkey’s feedback API to track report quality and user input.
+Integrations Recommendations
+OpenAI: Processes unstructured data and generates insights.
+Exa or Llama Cloud: Handles advanced document processing and analysis.
+ProxyCurl: Retrieves and updates team and founder details from LinkedIn.
+Google Vision: Provides OCR for document processing.
+Portkey: Manages feedback and quality monitoring.
+Google Cloud (or similar): Manages data processing, storage, and scalability.
+Inspirations for Architecture
+Langchain: Use its framework to build and orchestrate AI workflows.
+CrewAI: Draw inspiration for collaborative research and data analysis tasks.
+Replit: Use its cloud-based environment for rapid prototyping and testing.
+Portkey: Use its feedback API to monitor system performance and quality.
+Architecture
+AI Engine
+Core component that processes unstructured data using OpenAI models.
+Integrate machine learning workflows to extract insights from documents and online sources.
+Schedule and manage tasks to process data and update reports in real time.
+Data Processing
+Use Google Cloud services for document OCR and secure storage.
+Aggregate data from business tools and external APIs.
+Frontend
+Develop a responsive web app with an intuitive dashboard.
+Display key metrics, AI insights, and notifications in real time.
+Include a user profile section for managing account settings and alerts.
+Deployment
+Use Replit or similar platforms for rapid development and testing.
+Deploy on a cloud service for scalability and reliability.
+Manage continuous updates and monitor performance through Portkey integration.
