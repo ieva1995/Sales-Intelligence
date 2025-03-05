@@ -158,27 +158,28 @@ const NavigationPreview = ({ path, isVisible, position }: NavigationPreviewProps
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="absolute z-50 w-72 bg-slate-800 rounded-lg shadow-xl border border-slate-700 overflow-hidden"
+          className="absolute z-50 w-64 sm:w-72 bg-slate-800 rounded-lg shadow-xl border border-slate-700 overflow-hidden"
           style={{
             top: position?.y ? position.y + 10 : "auto",
             left: position?.x ? position.x + 10 : "auto",
+            maxWidth: "calc(100vw - 20px)" // Prevent overflow on small screens
           }}
           variants={previewVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
         >
-          <div className="p-4">
-            <h3 className="text-lg font-semibold text-white mb-1">{previewData.title}</h3>
-            <p className="text-sm text-gray-400 mb-4">{previewData.description}</p>
+          <div className="p-3 sm:p-4">
+            <h3 className="text-base sm:text-lg font-semibold text-white mb-1">{previewData.title}</h3>
+            <p className="text-xs sm:text-sm text-gray-400 mb-3 sm:mb-4">{previewData.description}</p>
 
             {previewData.stats && (
-              <div className="grid grid-cols-3 gap-2 mt-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mt-2">
                 {previewData.stats.map((stat, index) => (
-                  <div key={index} className="bg-slate-700/50 rounded-md p-2">
+                  <div key={index} className="bg-slate-700/50 rounded-md p-1.5 sm:p-2">
                     <p className="text-xs text-gray-400">{stat.label}</p>
                     <div className="flex items-center">
-                      <span className="text-white font-medium">{stat.value}</span>
+                      <span className="text-xs sm:text-sm text-white font-medium">{stat.value}</span>
                       {stat.trend && (
                         <span className={`ml-1 text-xs ${getTrendColor(stat.trend)}`}>
                           {getTrendIcon(stat.trend)}
@@ -192,7 +193,7 @@ const NavigationPreview = ({ path, isVisible, position }: NavigationPreviewProps
           </div>
 
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 h-1.5 w-full"></div>
-          <div className="px-4 py-2 bg-slate-700/50 text-xs text-slate-400">
+          <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-slate-700/50 text-xs text-slate-400">
             Click to navigate
           </div>
         </motion.div>

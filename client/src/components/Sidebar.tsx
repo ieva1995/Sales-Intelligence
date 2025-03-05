@@ -72,20 +72,20 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
         onMouseMove={handleMouseMove}
       >
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
+        <div className="p-5 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
             SalesBoost AI
           </h2>
         </div>
 
-        <nav className="space-y-6">
+        <nav className="space-y-5 sm:space-y-6">
           {/* Main Navigation */}
           <div className="space-y-1">
             {mainNavItems.map((item) => (
               <Link key={item.label} href={item.href}>
                 <a
                   className={cn(
-                    "flex items-center px-6 py-3 text-sm font-medium transition-all duration-200",
+                    "flex items-center px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-medium transition-all duration-200",
                     location === item.href
                       ? "text-white bg-slate-700"
                       : "text-gray-300 hover:text-white hover:bg-slate-700/50"
@@ -94,7 +94,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                   onMouseEnter={(e) => handleMouseEnter(item.href, e)}
                   onMouseLeave={handleMouseLeave}
                 >
-                  <item.icon className="mr-3 h-5 w-5" />
+                  <item.icon className="mr-3 sm:mr-4 h-5 w-5" />
                   <span>{item.label}</span>
                 </a>
               </Link>
@@ -103,7 +103,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
           {/* Premium Features Section */}
           <div>
-            <div className="px-6 py-2">
+            <div className="px-5 sm:px-6 py-2">
               <h3 className="text-xs uppercase tracking-wider text-gray-400 font-semibold">
                 Premium Features
               </h3>
@@ -113,7 +113,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 <Link key={item.label} href={item.href}>
                   <a
                     className={cn(
-                      "flex items-center px-6 py-3 text-sm font-medium transition-all duration-200",
+                      "flex items-center px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-medium transition-all duration-200",
                       location === item.href
                         ? "text-white bg-gradient-to-r from-blue-600 to-purple-600"
                         : "text-gray-300 hover:text-white hover:bg-slate-700/50"
@@ -122,7 +122,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     onMouseEnter={(e) => handleMouseEnter(item.href, e)}
                     onMouseLeave={handleMouseLeave}
                   >
-                    <item.icon className="mr-3 h-5 w-5" />
+                    <item.icon className="mr-3 sm:mr-4 h-5 w-5" />
                     <span>{item.label}</span>
                   </a>
                 </Link>
@@ -131,14 +131,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </div>
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
           <Link href="/settings">
             <a 
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-300 hover:bg-slate-700 hover:text-white rounded-md cursor-pointer transition-all duration-200"
+              className="flex items-center px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-medium text-gray-300 hover:bg-slate-700 hover:text-white rounded-md cursor-pointer transition-all duration-200"
               onMouseEnter={(e) => handleMouseEnter("/settings", e)}
               onMouseLeave={handleMouseLeave}
             >
-              <Settings className="mr-3 h-5 w-5" />
+              <Settings className="mr-3 sm:mr-4 h-5 w-5" />
               Settings
             </a>
           </Link>

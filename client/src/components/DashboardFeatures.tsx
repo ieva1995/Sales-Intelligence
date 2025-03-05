@@ -33,23 +33,23 @@ const FeatureCard = ({ icon: Icon, title, description, href, isNew, isEnterprise
   <Link href={href}>
     <a className="block">
       <Card className="bg-slate-800 hover:bg-slate-700/80 transition-colors relative overflow-hidden group">
-        <div className="flex items-start space-x-3 p-6">
-          <div className="p-2 bg-blue-500/10 rounded-lg">
-            <Icon className="h-5 w-5 text-blue-500" />
+        <div className="flex items-start space-x-3 p-4 sm:p-6">
+          <div className="p-1.5 sm:p-2 bg-blue-500/10 rounded-lg">
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
           </div>
-          <div className="space-y-2 flex-1 pr-20">
-            <h3 className="text-sm font-medium text-gray-100 group-hover:text-blue-400 transition-colors">{title}</h3>
-            <p className="text-xs text-gray-400 leading-relaxed">{description}</p>
+          <div className="space-y-1 sm:space-y-2 flex-1 pr-16 sm:pr-20">
+            <h3 className="text-xs sm:text-sm font-medium text-gray-100 group-hover:text-blue-400 transition-colors">{title}</h3>
+            <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">{description}</p>
           </div>
         </div>
-        <div className="absolute top-4 right-4 flex gap-2">
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex gap-1 sm:gap-2">
           {isNew && (
-            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
+            <span className="px-1 sm:px-1.5 py-0.5 text-[9px] sm:text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded-full">
               New
             </span>
           )}
           {isEnterprise && (
-            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-purple-500/20 text-purple-400 rounded-full">
+            <span className="px-1 sm:px-1.5 py-0.5 text-[9px] sm:text-[10px] font-medium bg-purple-500/20 text-purple-400 rounded-full">
               Enterprise
             </span>
           )}
@@ -178,22 +178,22 @@ const enterpriseFeatures = [
 
 export default function DashboardFeatures() {
   return (
-    <div className="mt-8 space-y-8">
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white">AI-Powered Features</h2>
-        <p className="text-gray-400">Advanced tools to boost your sales performance</p>
+    <div className="mt-6 sm:mt-8 space-y-6 sm:space-y-8">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">AI-Powered Features</h2>
+        <p className="text-xs sm:text-sm text-gray-400">Advanced tools to boost your sales performance</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {features.map((feature, index) => (
           <FeatureCard key={index} {...feature} />
         ))}
       </div>
 
-      <div className="mb-6 mt-12">
-        <h2 className="text-2xl font-bold text-white">Enterprise Turbo Sales Machine</h2>
-        <p className="text-gray-400">Premium enterprise-grade automation tools</p>
+      <div className="mb-4 sm:mb-6 mt-8 sm:mt-12">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">Enterprise Turbo Sales Machine</h2>
+        <p className="text-xs sm:text-sm text-gray-400">Premium enterprise-grade automation tools</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {enterpriseFeatures.map((feature, index) => (
           <FeatureCard key={`enterprise-${index}`} {...feature} />
         ))}
