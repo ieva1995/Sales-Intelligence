@@ -312,26 +312,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                       >
                         <motion.button
                           whileTap={{ scale: 0.98 }}
-                          className="w-full flex items-center justify-between p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors"
+                          className="w-full flex items-center justify-between p-4 hover:bg-slate-800/80 active:bg-slate-800 rounded-lg transition-colors"
                           onClick={() => toggleExpand(item.title)}
                         >
                           <div className="flex items-center">
                             <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                            <motion.span 
-                              className="text-sm font-medium bg-clip-text text-slate-200 transition-all duration-150"
-                              whileHover={{
-                                backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
-                                backgroundClip: "text",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                                x: 2
-                              }}
-                            >
-                              {item.title}
-                            </motion.span>
+                            <span className="text-sm font-medium text-slate-200">{item.title}</span>
                           </div>
                           <ChevronDown 
-                            className={`h-4 w-4 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
+                            className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
                           />
                         </motion.button>
 
@@ -347,23 +336,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                               {item.children.map((child) => (
                                 <motion.li key={child.title} whileTap={{ scale: 0.98 }}>
                                   <motion.button
-                                    className="w-full flex items-center p-4 pl-12 hover:bg-slate-700/50 active:bg-slate-700/70 text-slate-300 text-sm transition-colors"
+                                    className="w-full flex items-center p-4 pl-12 hover:bg-slate-700/50 active:bg-slate-700/70 text-sm transition-colors group"
                                     onClick={() => handleNavigation(child.path)}
                                     whileHover="hover"
                                     variants={menuItemHoverVariants}
                                   >
                                     <child.icon className="h-4 w-4 mr-3 text-indigo-400" />
-                                    <motion.span 
-                                      className="transition-all duration-150"
-                                      whileHover={{
-                                        backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
-                                        backgroundClip: "text",
-                                        WebkitBackgroundClip: "text",
-                                        WebkitTextFillColor: "transparent"
-                                      }}
-                                    >
+                                    <span className="text-slate-300 group-hover:bg-gradient-to-r from-indigo-400 to-purple-400 group-hover:bg-clip-text group-hover:text-transparent">
                                       {child.title}
-                                    </motion.span>
+                                    </span>
                                   </motion.button>
                                 </motion.li>
                               ))}
@@ -374,23 +355,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     ) : (
                       <motion.button
                         whileTap={{ scale: 0.98 }}
-                        className="w-full flex items-center p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors"
+                        className="w-full flex items-center p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors group"
                         onClick={() => handleNavigation(item.path)}
                         whileHover="hover"
                         variants={menuItemHoverVariants}
                       >
                         <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                        <motion.span 
-                          className="text-sm font-medium transition-all duration-150"
-                          whileHover={{
-                            backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
-                            backgroundClip: "text",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent"
-                          }}
-                        >
+                        <span className="text-sm font-medium text-slate-200 group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-150">
                           {item.title}
-                        </motion.span>
+                        </span>
                       </motion.button>
                     )}
                   </li>
