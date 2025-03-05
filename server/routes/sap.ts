@@ -33,4 +33,13 @@ router.get('/inventory', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/test-connection', authenticateToken, async (req, res) => {
+  try {
+    const result = await sapService.testConnection();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to test SAP connection' });
+  }
+});
+
 export default router;

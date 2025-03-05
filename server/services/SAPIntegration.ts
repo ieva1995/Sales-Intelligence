@@ -89,6 +89,20 @@ export class SAPIntegrationService {
     }
   }
 
+  async testConnection() {
+    if (!this.client) {
+      await this.connect();
+    }
+    
+    try {
+      const result = await this.client?.call('STFC_CONNECTION');
+      return result;
+    } catch (error) {
+      console.error('Error testing SAP connection:', error);
+      throw error;
+    }
+  }
+
   disconnect() {
     if (this.client) {
       this.client.close();
