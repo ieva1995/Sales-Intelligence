@@ -313,25 +313,35 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             </div>
 
             <div className="p-4 border-t border-slate-800">
-              <Button 
-                className="w-full mb-3 bg-indigo-600 hover:bg-indigo-700 active:scale-98 transition-all h-12"
-                onClick={() => {
-                  setLocation('/login');
-                  onClose();
-                }}
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Sign In
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full border-white text-white hover:bg-white/10 active:scale-98 transition-all h-12"
-                onClick={() => {
-                  window.open('https://calendly.com/demo', '_blank');
-                  onClose();
-                }}
+                <Button 
+                  className="w-full mb-3 bg-indigo-600 hover:bg-indigo-700 transition-all h-12 shadow-lg hover:shadow-indigo-500/25"
+                  onClick={() => {
+                    setLocation('/login');
+                    onClose();
+                  }}
+                >
+                  Sign In
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Request Demo
-              </Button>
+                <Button
+                  variant="outline"
+                  className="w-full border-white text-white hover:bg-white/10 transition-all h-12 shadow-lg hover:shadow-white/25"
+                  onClick={() => {
+                    window.open('https://calendly.com/demo', '_blank');
+                    onClose();
+                  }}
+                >
+                  Request Demo
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         </>
