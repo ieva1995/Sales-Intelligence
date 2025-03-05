@@ -16,6 +16,8 @@ import deviceRouter from './routes/devices'; // Import the new device routes
 import { setupWebSocketServer } from './websocket'; // Import the WebSocket setup
 import { newsService } from "./services/newsService";
 import { recommendationService } from "./services/recommendationService"; 
+import aiRoutes from './routes/ai';
+import sapRoutes from './routes/sap';
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -80,6 +82,8 @@ export async function registerRoutes(app: Express) {
   app.use('/api/shopify', shopifyRouter); 
   app.use(authRouter); 
   app.use('/api/devices', deviceRouter); // Register the new device routes
+  app.use('/api/ai', aiRoutes);
+  app.use('/api/sap', sapRoutes);
 
   // API endpoint for network connectivity check
   app.get('/api/network-check', (req, res) => {
