@@ -1,5 +1,4 @@
-
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 function killPort(port) {
   console.log(`Attempting to find and kill process using port ${port}...`);

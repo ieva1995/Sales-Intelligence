@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { 
@@ -244,6 +244,17 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const menuItemHoverVariants = {
+    hover: {
+      x: 5,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 40
+      }
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -265,7 +276,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             variants={variants}
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-800">
-              <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
+              <div className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
                 SalesBoost AI
               </div>
               <motion.div
@@ -306,7 +317,18 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                         >
                           <div className="flex items-center">
                             <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                            <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent text-sm font-medium">{item.title}</span>
+                            <motion.span 
+                              className="text-sm font-medium bg-clip-text text-slate-200 transition-all duration-150"
+                              whileHover={{
+                                backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
+                                backgroundClip: "text",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                                x: 2
+                              }}
+                            >
+                              {item.title}
+                            </motion.span>
                           </div>
                           <ChevronDown 
                             className={`h-4 w-4 transition-transform duration-200 ${expandedItems[item.title] ? 'rotate-180' : ''}`} 
@@ -324,27 +346,51 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                             >
                               {item.children.map((child) => (
                                 <motion.li key={child.title} whileTap={{ scale: 0.98 }}>
-                                  <button
+                                  <motion.button
                                     className="w-full flex items-center p-4 pl-12 hover:bg-slate-700/50 active:bg-slate-700/70 text-slate-300 text-sm transition-colors"
                                     onClick={() => handleNavigation(child.path)}
+                                    whileHover="hover"
+                                    variants={menuItemHoverVariants}
                                   >
                                     <child.icon className="h-4 w-4 mr-3 text-indigo-400" />
-                                    <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent">{child.title}</span>
-                                  </button>
+                                    <motion.span 
+                                      className="transition-all duration-150"
+                                      whileHover={{
+                                        backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
+                                        backgroundClip: "text",
+                                        WebkitBackgroundClip: "text",
+                                        WebkitTextFillColor: "transparent"
+                                      }}
+                                    >
+                                      {child.title}
+                                    </motion.span>
+                                  </motion.button>
                                 </motion.li>
                               ))}
                             </motion.ul>
                           )}
                         </AnimatePresence>
-                      </div>
+                      </motion.div>
                     ) : (
                       <motion.button
                         whileTap={{ scale: 0.98 }}
                         className="w-full flex items-center p-4 hover:bg-slate-800/80 active:bg-slate-800 text-slate-200 rounded-lg transition-colors"
                         onClick={() => handleNavigation(item.path)}
+                        whileHover="hover"
+                        variants={menuItemHoverVariants}
                       >
                         <item.icon className="h-5 w-5 mr-3 text-slate-400" />
-                        <span className="hover:bg-gradient-to-r hover:from-indigo-300 hover:to-purple-300 hover:bg-clip-text hover:text-transparent text-sm font-medium">{item.title}</span>
+                        <motion.span 
+                          className="text-sm font-medium transition-all duration-150"
+                          whileHover={{
+                            backgroundImage: "linear-gradient(to right, #818cf8, #c084fc)",
+                            backgroundClip: "text",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent"
+                          }}
+                        >
+                          {item.title}
+                        </motion.span>
                       </motion.button>
                     )}
                   </li>
