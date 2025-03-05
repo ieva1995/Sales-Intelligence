@@ -108,7 +108,7 @@ process.on('SIGINT', () => {
     });
 
     // Kill any existing processes on the Vite ports
-    await new Promise((resolve) => {
+    await new Promise(async (resolve) => {
       const { default: killPort } = await import('kill-port');
       Promise.all([
         killPort(24678).catch(() => {}),  // Vite WebSocket port
