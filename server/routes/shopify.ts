@@ -6,10 +6,11 @@ import '@shopify/shopify-api/adapters/node';
 const router = express.Router();
 
 // Check if required environment variables are available
-const hasShopifyCredentials = 
-  process.env.SHOPIFY_API_KEY && 
-  process.env.SHOPIFY_API_SECRET && 
-  process.env.SHOPIFY_SHOP_DOMAIN;
+const hasShopifyCredentials =
+  process.env.SHOPIFY_API_KEY &&
+  process.env.SHOPIFY_API_SECRET &&
+  process.env.SHOPIFY_SHOP_DOMAIN &&
+  process.env.SHOPIFY_ADMIN_API_TOKEN;
 
 // Console warnings for missing environment variables
 if (!process.env.SHOPIFY_API_KEY) {
@@ -21,6 +22,10 @@ if (!process.env.SHOPIFY_API_SECRET) {
 if (!process.env.SHOPIFY_SHOP_DOMAIN) {
   console.warn('Warning: SHOPIFY_SHOP_DOMAIN environment variable is not set');
 }
+if (!process.env.SHOPIFY_ADMIN_API_TOKEN) {
+  console.warn('Warning: SHOPIFY_ADMIN_API_TOKEN environment variable is not set');
+}
+
 
 // Create shopify API client if credentials are available
 let shopifyClient;
@@ -74,9 +79,9 @@ function createSession(accessToken: string, shop: string): any {
 router.get('/auth', async (req, res) => {
   try {
     if (!hasShopifyCredentials) {
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Shopify API credentials are not configured',
-        details: 'Please set SHOPIFY_API_KEY, SHOPIFY_API_SECRET, and SHOPIFY_SHOP_DOMAIN environment variables'
+        details: 'Please set SHOPIFY_API_KEY, SHOPIFY_API_SECRET, SHOPIFY_SHOP_DOMAIN, and SHOPIFY_ADMIN_API_TOKEN environment variables'
       });
     }
 
@@ -149,7 +154,10 @@ router.get('/products', async (req, res) => {
     }
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
-    const session = createSession(accessToken, shop);
+    const session = await shopifyClient?.session.customAppSession(shop);
+    if (!session) {
+      throw new Error('Failed to create Shopify session');
+    }
     const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'products' });
     res.json(response.body);
@@ -203,7 +211,10 @@ router.get('/orders', async (req, res) => {
     }
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
-    const session = createSession(accessToken, shop);
+    const session = await shopifyClient?.session.customAppSession(shop);
+    if (!session) {
+      throw new Error('Failed to create Shopify session');
+    }
     const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'orders' });
     res.json(response.body);
@@ -249,7 +260,10 @@ router.get('/customers', async (req, res) => {
     }
 
     const shop = process.env.SHOPIFY_SHOP_DOMAIN || '';
-    const session = createSession(accessToken, shop);
+    const session = await shopifyClient?.session.customAppSession(shop);
+    if (!session) {
+      throw new Error('Failed to create Shopify session');
+    }
     const client = new shopifyClient.clients.Rest({ session });
     const response = await client.get({ path: 'customers' });
     res.json(response.body);
