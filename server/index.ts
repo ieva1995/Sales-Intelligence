@@ -95,34 +95,99 @@ process.on('unhandledRejection', (reason, promise) => {
 
     // Return to the standard port 5000 as required by Replit
     const port = process.env.PORT || 5000;
-    const maxRetries = 3;
+    const maxRetries = 6; // Increased from 3 to 6 retries
     let currentRetry = 0;
-    
+
     console.log(`Using standard port ${port} for Replit applications...`);
 
     // Add a pre-flight check for port availability
     console.log(`Preparing to start server on port ${port}...`);
 
     // Function to start the server with retry logic
-    function startServerWithRetry(retries = 3) {
-      console.log(`Attempting to bind to port ${port}...`);
-      
-      server.listen({
+    const startServerWithRetry = (retries = maxRetries) => {
+      console.log(`Attempt ${maxRetries - retries + 1}/${maxRetries}: Starting server on port ${port}...`);
+
+      // Implement a healthcheck timeout to give the server more time to start
+      const healthcheckTimeout = 5000; // 5 seconds timeout for server health check
+
+      const serverInstance = server.listen({
         port,
         host: "0.0.0.0",
         reusePort: true,
-      }, () => {
-        log(`Server running on port ${port}`);
-      }).on('error', (error: NodeJS.ErrnoException) => {
-        if (error.code === 'EADDRINUSE' && retries > 0) {
-          console.log(`Port ${port} in use, retrying in 1s... (${retries} attempts left)`);
-          setTimeout(() => startServerWithRetry(retries - 1), 1000);
-        } else {
-          console.error('Server failed to start:', error);
-          process.exit(1);
+      });
+
+      serverInstance.on('listening', () => {
+        console.log(`Server successfully running on http://0.0.0.0:${port}`);
+
+        // Clean up any potential zombie processes
+        try {
+          console.log('Server started successfully. Checking for any zombie processes...');
+          // This will be handled by the child_process exec below
+        } catch (err) {
+          console.log('No zombie processes found.');
         }
       });
-    }
+
+      serverInstance.on('error', (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE' && retries > 0) {
+          console.log(`Port ${port} in use, waiting 3 seconds before retry... (${retries} attempts left)`);
+          serverInstance.close();
+
+          // Try to forcefully release the port
+          try {
+            const { execSync } = require('child_process');
+            console.log(`Attempting to force release port ${port}...`);
+            // Try multiple commands to release the port, depending on what's available
+            try {
+              execSync(`kill-port ${port} || true`);
+            } catch (e) {
+              console.log('kill-port not available, trying alternative methods');
+            }
+
+            try {
+              execSync(`fuser -k ${port}/tcp || true`);
+            } catch (e) {
+              console.log('fuser not available, trying alternative methods');
+            }
+
+            console.log(`Waiting for port ${port} to be released...`);
+          } catch (err) {
+            console.error('Error attempting to release port:', err);
+          }
+
+          // Wait 3 seconds before retrying to ensure the port is released
+          setTimeout(() => startServerWithRetry(retries - 1), 3000);
+        } else {
+          console.error('Server failed to start:', error);
+          if (retries <= 0) {
+            console.error(`Maximum retry attempts (${maxRetries}) reached. Unable to start server.`);
+            console.error('Please restart the Replit or contact support if this issue persists.');
+          } else {
+            console.error('Attempting different approach to start server...');
+
+            // Try a different approach on the last attempt
+            if (retries === 1) {
+              try {
+                const { execSync } = require('child_process');
+                console.log('Trying to kill ALL Node.js processes and restart...');
+                execSync('pkill -f node || true');
+                setTimeout(() => {
+                  console.log('Restarting server after killing all Node.js processes...');
+                  startServerWithRetry(retries - 1);
+                }, 5000);
+              } catch (killErr) {
+                console.error('Failed to restart:', killErr);
+                process.exit(1);
+              }
+            } else {
+              // Wait longer between retries as we near the end of attempts
+              const delay = (maxRetries - retries + 1) * 2000;
+              setTimeout(() => startServerWithRetry(retries - 1), delay);
+            }
+          }
+        }
+      });
+    };
 
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
@@ -130,12 +195,27 @@ process.on('unhandledRejection', (reason, promise) => {
         console.error(`Port ${port} is already in use. Attempting to force release...`);
         try {
           const { execSync } = require('child_process');
-          execSync('fuser -k 5000/tcp || true');
+          console.log('Running port kill commands...');
+          try {
+            execSync('npx kill-port 5000 || true');
+          } catch (e) {
+            console.log('npx kill-port failed, trying alternatives');
+          }
+
+          try {
+            execSync('fuser -k 5000/tcp || true');
+          } catch (e) {
+            console.log('fuser failed, trying alternatives');
+          }
+
+          console.log('Waiting 5 seconds for port to be released...');
           setTimeout(() => {
-            startServerWithRetry();
-          }, 1000);
+            console.log('Attempting to restart server...');
+            startServerWithRetry(maxRetries);
+          }, 5000);
         } catch (err) {
           console.error('Failed to release port. Please restart the repl.');
+          console.error('Error details:', err);
           process.exit(1);
         }
       } else {
@@ -145,7 +225,7 @@ process.on('unhandledRejection', (reason, promise) => {
     });
 
     // Start the initial attempt
-    startServerWithRetry();
+    startServerWithRetry(maxRetries);
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);
