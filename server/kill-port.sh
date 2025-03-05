@@ -1,9 +1,38 @@
-
 #!/bin/bash
-echo "Killing processes on port 5000..."
-pkill -f "node" || true
-fuser -k 5000/tcp || true
-lsof -i :5000 | grep LISTEN | awk '{print $2}' | xargs kill -9 || true
-netstat -tulpn 2>/dev/null | grep ':5000' | awk '{print $7}' | cut -d'/' -f1 | xargs kill -9 2>/dev/null || true
-echo "All processes on port 5000 should be terminated."
+
+echo "Attempting to free ports for SalesBoost AI application..."
+
+# Define ports to free
+PORTS=(5000 3000 8080 4000)
+
+for PORT in "${PORTS[@]}"; do
+  echo "Checking port $PORT..."
+
+  # Try different commands to find and kill processes
+  # Some commands might not be available in all environments
+
+  # Try using netstat
+  echo "Using netstat to find processes on port $PORT"
+  PIDS=$(netstat -tlnp 2>/dev/null | grep ":$PORT " | awk '{print $7}' | cut -d'/' -f1)
+
+  if [ -n "$PIDS" ]; then
+    echo "Found processes using port $PORT: $PIDS"
+    for PID in $PIDS; do
+      if [ -n "$PID" ] && [ "$PID" != "-" ]; then
+        echo "Killing process $PID"
+        kill -9 $PID 2>/dev/null || true
+      fi
+    done
+  else
+    echo "No specific process found for port $PORT using netstat"
+  fi
+
+  # Try a more aggressive approach to kill node processes
+  echo "Attempting to kill any node processes that might be using port $PORT"
+  pkill -f "node" || true
+
+  echo "Port $PORT should be free now"
+done
+
+echo "Port freeing complete. Starting application..."
 sleep 2

@@ -122,23 +122,14 @@ app.use((req, res, next) => {
     }
     console.log('Vite middleware setup complete');
 
-    // Return to the standard port 5000 as required by Replit
-    const port = 5000;
-    console.log(`Using standard port ${port} for Replit applications...`);
+    // Define an array of ports to try
+    const ports = [5000, 3000, 8080, 4000];
+    let portIndex = 0;
+    let serverStarted = false;
 
-    // Add a pre-flight check for port availability
-    console.log(`Preparing to start server on port ${port}...`);
-
-    // Maximum number of retry attempts
-    const maxRetries = 5;
-    // Initial retry delay in milliseconds (3 seconds)
-    const initialRetryDelay = 3000;
-    // Counter for tracking retries
-    let retryCount = 0;
-
-    // Function to start the server with retry logic
-    function startServerWithRetry(retryCount: number, retryDelay: number) {
-      console.log(`Attempt #${retryCount + 1} to bind to port ${port}...`);
+    // Function to try starting the server on a specific port
+    function tryPort(port: number) {
+      console.log(`Attempting to start server on port ${port}...`);
 
       // Attempt to start server with better error handling
       server.listen({
@@ -146,26 +137,35 @@ app.use((req, res, next) => {
         host: "0.0.0.0",
         reusePort: true,
       }, () => {
+        serverStarted = true;
         log(`Server running on port ${port}`);
+        console.log(`🚀 Server is running at http://localhost:${port}`);
       });
     }
 
     // Handle server errors properly
     server.on('error', (error: NodeJS.ErrnoException) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${port} is already in use. Please restart your workspace to clear all processes.`);
-        console.error('If the issue persists after restart, please manually kill any process using port 5000.');
+        console.error(`Port ${ports[portIndex]} is already in use.`);
+        portIndex++;
 
-        // Exit process after logging clear instructions
-        process.exit(1);
+        if (portIndex < ports.length) {
+          // Try the next port
+          tryPort(ports[portIndex]);
+        } else {
+          console.error('All ports are in use. Please free a port manually or restart your workspace.');
+          console.error('To free ports, you can run: bash server/kill-port.sh');
+          process.exit(1);
+        }
       } else {
         console.error('Server error:', error);
         process.exit(1);
       }
     });
 
-    // Start the initial attempt
-    startServerWithRetry(retryCount, initialRetryDelay);
+    // Start with the first port
+    tryPort(ports[portIndex]);
+
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);
