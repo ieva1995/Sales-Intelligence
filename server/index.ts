@@ -22,11 +22,15 @@ const tunnelConfig = {
 
 // Error handling will be done at the Express level
 
-// Rate limiting
+// Rate limiting with higher limits and proper proxy trust
+app.set('trust proxy', 1);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-}); // Added import for database table creation
+  max: 1000, // increased limit
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: 'Too many requests, please try again in 15 minutes'
+});
 
 const app = express();
 
