@@ -1,12 +1,13 @@
+
 #!/usr/bin/env node
-const { exec } = require('child_process');
+import { exec } from 'child_process';
 
 const port = 5000;
 
 console.log(`Attempting to find and kill process using port ${port}...`);
 
 // For Linux/macOS
-exec(`lsof -i :${port} | grep LISTEN | awk '{print $2}' | xargs kill -9`, (error, stdout, stderr) => {
+exec(`lsof -i :${port} | grep LISTEN | awk '{print $2}' | xargs -r kill -9`, (error, stdout, stderr) => {
   if (error) {
     console.log(`No process found on port ${port} using lsof`);
   } else {
