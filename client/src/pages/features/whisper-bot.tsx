@@ -52,63 +52,107 @@ export default function WhisperBot() {
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState(false);
   const [activeQuickAction, setActiveQuickAction] = useState<string | null>(null);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    const socket = new WebSocket(wsUrl);
+    // Only attempt connection if we haven't exceeded max attempts (3)
+    if (connectionAttempts < 3) {
+      connectWebSocket();
+    }
 
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === 'news-update') {
-          setInsights(prevInsights => {
-            const newInsight: Insight = {
-              ...message.data,
-              status: "new",
-              date: "Just now"
-            };
-            return [newInsight, ...prevInsights.slice(0, 9)];
-          });
-
-          toast({
-            title: "New Intelligence Alert",
-            description: `New insight detected for ${message.data.company}`,
-          });
-        }
-      } catch (error) {
-        console.error("Error processing WebSocket message:", error);
+    // Cleanup function
+    return () => {
+      if (socket) {
+        console.log("Closing WebSocket connection");
+        socket.close();
       }
     };
+  }, [connectionAttempts]);
 
-    socket.onopen = () => {
-      setIsConnected(true);
-      setConnectionError(false);
-      toast({
-        title: "Connected",
-        description: "Real-time intelligence feed active",
-      });
-    };
+  const connectWebSocket = () => {
+    try {
+      console.log("Attempting to connect to WebSocket");
+      // Ensure correct protocol is used
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/ws-feed`;
+      console.log(`Connecting to WebSocket URL: ${wsUrl}`);
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setIsConnected(false);
+      const newSocket = new WebSocket(wsUrl);
+
+      newSocket.onopen = () => {
+        console.log("WebSocket connection established");
+        setIsConnected(true);
+        setConnectionError(false);
+        setSocket(newSocket);
+        toast({
+          title: "Connected",
+          description: "Real-time intelligence feed active",
+        });
+      };
+
+      newSocket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'news-update') {
+            setInsights(prevInsights => {
+              const newInsight: Insight = {
+                ...message.data,
+                status: "new",
+                date: "Just now"
+              };
+              return [newInsight, ...prevInsights.slice(0, 9)];
+            });
+
+            toast({
+              title: "New Intelligence Alert",
+              description: `New insight detected for ${message.data.company}`,
+            });
+          }
+        } catch (error) {
+          console.error("Error processing WebSocket message:", error);
+        }
+      };
+
+      newSocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        setIsConnected(false);
+        setConnectionError(true);
+        setSocket(null);
+
+        // Increment connection attempts counter
+        setConnectionAttempts(prev => prev + 1);
+
+        toast({
+          title: "Connection Error",
+          description: "Unable to connect to intelligence feed - using offline mode",
+          variant: "destructive"
+        });
+      };
+
+      newSocket.onclose = (event) => {
+        console.log(`WebSocket closed with code: ${event.code}, reason: ${event.reason}`);
+        setIsConnected(false);
+        setSocket(null);
+
+        if (!connectionError) {
+          toast({
+            title: "Disconnected",
+            description: "Real-time intelligence feed disconnected",
+          });
+        }
+      };
+    } catch (error) {
+      console.error("Error setting up WebSocket:", error);
       setConnectionError(true);
+
       toast({
-        title: "Connection Error",
-        description: "Unable to connect to intelligence feed",
+        title: "Connection Setup Error",
+        description: "Failed to initialize real-time feed - using offline mode",
         variant: "destructive"
       });
-    };
-
-    socket.onclose = () => {
-      setIsConnected(false);
-    };
-
-    return () => {
-      socket.close();
-    };
-  }, []);
+    }
+  };
 
   const handleInsightAction = (insight: Insight) => {
     setSelectedInsight(insight);
@@ -377,8 +421,24 @@ export default function WhisperBot() {
         }`} />
         <span className="text-sm text-gray-400">
           {isConnected ? 'Connected to intelligence feed' :
-            connectionError ? 'Connection error' : 'Connecting...'}
+            connectionError ? `Connection error - working in offline mode` : 'Connecting...'}
         </span>
+        {connectionError && connectionAttempts < 3 && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-2 text-xs"
+            onClick={() => {
+              setConnectionAttempts(prev => prev + 1);
+              toast({
+                title: "Reconnecting",
+                description: "Attempting to reconnect to intelligence feed..."
+              });
+            }}
+          >
+            <RefreshCw className="mr-1 h-3 w-3" /> Retry
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

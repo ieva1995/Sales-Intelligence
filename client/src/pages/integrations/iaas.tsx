@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { SiGooglecloud, SiDigitalocean, SiOracle, SiVultr, SiOpenstack, SiOvh, SiScaleway, SiTerraform } from 'react-icons/si';
-import { CheckCircle, XCircle, AlertCircle, RotateCw, Database, HardDrive, Server, Cloud, Azure, Box, FileCode } from 'lucide-react';
+import { CheckCircle, XCircle, AlertCircle, RotateCw, Database, HardDrive, Server, Cloud, MessageSquare, Box, FileCode } from 'lucide-react';
+// Removed the Azure import since it doesn't exist in lucide-react
 
 interface IaasIntegrationProps {
   view: 'grid' | 'list';
@@ -50,7 +51,8 @@ export default function IaasIntegrations({ view, searchQuery }: IaasIntegrationP
       id: 'azure',
       name: 'Microsoft Azure',
       description: 'Cloud computing service for building, testing, deploying, and managing applications',
-      icon: <Azure className="h-8 w-8 text-[#0078D4]" />,
+      // Using a different icon for Azure with Microsoft blue color
+      icon: <Cloud className="h-8 w-8 text-[#0078D4]" />,
       status: 'pending',
       isPopular: true,
       isEnterprise: true,
