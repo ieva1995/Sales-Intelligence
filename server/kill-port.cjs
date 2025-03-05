@@ -55,17 +55,9 @@ function killPort(port) {
       console.log('netstat command not available, continuing with alternatives');
     }
 
-    // 5. More aggressive approach: kill all Node.js processes (last resort)
-    try {
-      console.log('Attempting more aggressive approach - killing specific Node processes...');
-      // Kill only Node processes that mention the port in their command line
-      execSync(`ps aux | grep "node.*${port}" | grep -v grep | awk '{print $2}' | xargs -r kill -9 2>/dev/null || true`);
-    } catch (err) {
-      console.log('Advanced targeting of Node processes failed, continuing...');
-    }
 
     // Give processes time to fully terminate
-    console.log('Waiting for processes to terminate completely...');
+    console.log('Attempting to kill processes on port...');
     execSync('sleep 3');
 
     // Verify if the port is now free
