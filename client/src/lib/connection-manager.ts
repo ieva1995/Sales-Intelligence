@@ -48,7 +48,7 @@ interface ConnectionManagerState {
   connectionData: ConnectionData;
   isConnecting: boolean;
   isOfflineMode: boolean;
-  
+
   // Actions
   detectWiFiConnection: () => Promise<boolean>;
   searchAvailableDevices: () => Promise<Device[]>;
@@ -81,20 +81,20 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
     deviceStatus: {},
     exceptions: []
   },
-  
+
   // Methods that implement the connection workflow
   detectWiFiConnection: async () => {
     set({ connectionState: 'detecting-wifi' });
-    
+
     try {
       // Check if navigator is online
       const isOnline = navigator.onLine;
-      
+
       if (!isOnline) {
         set({ connectionState: 'wifi-failed', isOfflineMode: true });
         return false;
       }
-      
+
       // Additional network check (ping test)
       try {
         const response = await fetch('/api/network-check', { 
@@ -102,7 +102,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
           cache: 'no-cache',
           headers: { 'Cache-Control': 'no-cache' }
         });
-        
+
         if (!response.ok) {
           set({ connectionState: 'wifi-failed', isOfflineMode: true });
           return false;
@@ -112,7 +112,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
         set({ connectionState: 'wifi-failed', isOfflineMode: true });
         return false;
       }
-      
+
       return true;
     } catch (error) {
       console.error('WiFi detection error:', error);
@@ -120,10 +120,10 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
       return false;
     }
   },
-  
+
   searchAvailableDevices: async () => {
     set({ connectionState: 'searching-devices' });
-    
+
     try {
       // API call to fetch available devices on the network
       const response = await fetch('/api/devices/scan', { 
@@ -132,69 +132,69 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to scan devices');
       }
-      
+
       const devices: Device[] = await response.json();
       set({ devices, connectionState: 'device-selection' });
       return devices;
     } catch (error) {
       console.error('Device search error:', error);
       set({ connectionState: 'exception' });
-      
+
       // Return empty array on error
       return [];
     }
   },
-  
+
   selectDevice: (deviceId: string) => {
     const { devices, selectedDevices } = get();
-    const device = devices.find(d => d.id === deviceId);
-    
-    if (device && !selectedDevices.some(d => d.id === deviceId)) {
+    const device = devices.find((d: Device) => d.id === deviceId);
+
+    if (device && !selectedDevices.some((d: Device) => d.id === deviceId)) {
       set({ selectedDevices: [...selectedDevices, device] });
     }
   },
-  
+
   deselectDevice: (deviceId: string) => {
     const { selectedDevices } = get();
-    set({ selectedDevices: selectedDevices.filter(d => d.id !== deviceId) });
+    set({ selectedDevices: selectedDevices.filter((d: Device) => d.id !== deviceId) });
   },
-  
+
   establishConnection: async () => {
     const { selectedDevices } = get();
-    
+
     if (selectedDevices.length === 0) {
       console.error('No devices selected');
       return false;
     }
-    
+
     set({ 
       connectionState: 'connecting',
       isConnecting: true,
       connectionAttempts: get().connectionAttempts + 1
     });
-    
+
     try {
       // Create device IDs list for connection
-      const deviceIds = selectedDevices.map(device => device.id);
-      
+      const deviceIds = selectedDevices.map((device: Device) => device.id);
+
       // Establish WebSocket connection
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws`;
-      
+
       return new Promise<boolean>((resolve) => {
         const socket = new WebSocket(wsUrl);
-        
+
         socket.onopen = () => {
           // Send initial connection message with selected devices
           socket.send(JSON.stringify({
             type: 'connect',
             data: { deviceIds }
           }));
-          
+
           set({ 
             socket,
             connectionState: 'connected',
@@ -204,15 +204,15 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
               connectionTime: Date.now()
             }
           });
-          
+
           // Start monitoring processes
           get().monitorConnection();
           get().displayControlInterface();
           get().monitorUploadData();
-          
+
           resolve(true);
         };
-        
+
         socket.onerror = (event) => {
           console.error('WebSocket connection error:', event);
           set({ 
@@ -221,7 +221,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
           });
           resolve(false);
         };
-        
+
         // Set timeout for connection attempt
         setTimeout(() => {
           if (get().connectionState === 'connecting') {
@@ -243,15 +243,15 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
       return false;
     }
   },
-  
+
   sendControlInstruction: async (instruction: string, params = {}) => {
     const { socket, connectionState } = get();
-    
+
     if (!socket || connectionState !== 'connected') {
       console.error('Cannot send instruction: Not connected');
       return false;
     }
-    
+
     try {
       const message = {
         type: 'instruction',
@@ -259,9 +259,9 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
         params,
         timestamp: Date.now()
       };
-      
+
       socket.send(JSON.stringify(message));
-      
+
       // Update last instruction in state
       set({
         connectionData: {
@@ -269,7 +269,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
           lastInstruction: instruction
         }
       });
-      
+
       return true;
     } catch (error) {
       console.error('Failed to send instruction:', error);
@@ -277,17 +277,17 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
       return false;
     }
   },
-  
+
   monitorConnection: () => {
     const { socket } = get();
-    
+
     if (!socket) return;
-    
+
     // Setup message handler
-    socket.onmessage = (event) => {
+    socket.onmessage = (event: MessageEvent) => {
       try {
         const message = JSON.parse(event.data);
-        
+
         switch (message.type) {
           case 'status':
             // Update device status
@@ -301,7 +301,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
               }
             });
             break;
-            
+
           case 'data':
             // Store uploaded data
             set({
@@ -314,7 +314,7 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
               }
             });
             break;
-            
+
           case 'error':
             // Store error in exceptions
             set({
@@ -326,12 +326,12 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
                 ]
               }
             });
-            
+
             if (message.critical) {
               get().handleDisconnection('Critical error');
             }
             break;
-            
+
           default:
             console.log('Unknown message type:', message.type);
         }
@@ -339,38 +339,38 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
         console.error('Error processing message:', error);
       }
     };
-    
+
     // Setup close handler
     socket.onclose = () => {
       get().handleDisconnection('Connection closed by server');
     };
   },
-  
+
   monitorUploadData: () => {
     // This would typically set up periodic checks or listeners for data uploads
     console.log('Started monitoring upload data');
-    
+
     // In a real implementation, this might set up timers or additional event listeners
   },
-  
+
   displayControlInterface: () => {
     // This would update the UI to show the control interface
     // In this implementation, we just update the state
     set({ connectionState: 'connected' });
     console.log('Control interface ready');
   },
-  
+
   handleDisconnection: (reason = 'Unknown reason') => {
     const { socket } = get();
-    
+
     console.warn('Disconnection occurred:', reason);
-    
+
     // Update state to disconnected
     set({ 
       connectionState: 'disconnected',
       isConnecting: false
     });
-    
+
     // Add the disconnection reason to exceptions
     set({
       connectionData: {
@@ -381,18 +381,18 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
         ]
       }
     });
-    
+
     // Close socket if still open
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.close();
     }
-    
+
     set({ socket: null });
   },
-  
+
   closeConnection: () => {
     const { socket, connectionData } = get();
-    
+
     // Close the socket connection if open
     if (socket) {
       if (socket.readyState === WebSocket.OPEN) {
@@ -400,15 +400,15 @@ export const useConnectionManager = create<ConnectionManagerState>((set, get) =>
       }
       set({ socket: null });
     }
-    
+
     // Store the data
     // In a real implementation, you would send this to the server
     console.log('Stored connection data:', connectionData);
-    
+
     // Move to closed state
     set({ connectionState: 'closed' });
   },
-  
+
   resetConnectionState: () => {
     // Reset the entire connection state
     set({
