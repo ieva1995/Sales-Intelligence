@@ -14,16 +14,17 @@ import { seedUsers } from "./seedUsers";
 import { createTables } from './createTables';
 
 // Create secure tunnel
-const tunnelProxy = tunnel.createTunnel({
+const tunnelProxy = tunnel({
   host: '0.0.0.0',
-  port: 8000,
-  debug: process.env.NODE_ENV === 'development'
+  port: 8000
 });
 
-// Handle tunnel errors
-tunnelProxy.on('error', (err) => {
-  console.error('Tunnel error:', err);
-});
+// Set up error handling
+if (tunnelProxy && typeof tunnelProxy.on === 'function') {
+  tunnelProxy.on('error', (err) => {
+    console.error('Tunnel error:', err);
+  });
+}
 
 // Rate limiting
 const limiter = rateLimit({
