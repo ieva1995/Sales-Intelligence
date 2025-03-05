@@ -15,7 +15,7 @@ import {
   Settings,
   Sparkles,
   Rocket,
-  PieChart,
+  PieChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

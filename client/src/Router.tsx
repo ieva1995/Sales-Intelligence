@@ -43,6 +43,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "./hooks/use-auth";
 import PageTransition from "./components/PageTransition";
 import AppMobileMenu from "./components/AppMobileMenu";
+import EnterpriseToolbar from "./components/EnterpriseToolbar"; // Import the EnterpriseToolbar component
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,6 +80,9 @@ export default function Router() {
     <div className="min-h-screen bg-slate-950 text-gray-100">
       {shouldShowAppShell() && (
         <>
+          {/* Enterprise Toolbar - Visible when authenticated */}
+          {isAuthenticated && <EnterpriseToolbar />}
+
           <Button
             variant="ghost"
             size="icon"
