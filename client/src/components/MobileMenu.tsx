@@ -20,7 +20,20 @@ import {
   Target,
   ClipboardCheck,
   UserPlus,
-  Mail
+  Mail,
+  CircleDot,
+  Settings,
+  Home,
+  BarChart2,
+  Users,
+  FileText,
+  Settings,
+  MessageCircle,
+  PieChart,
+  BarChart,
+  LineChart,
+  Activity,
+  Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NavigationPreview from './NavigationPreview';
