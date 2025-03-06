@@ -44,6 +44,11 @@ export class WebSocketManager {
         ws.on('error', (error) => {
           console.error('[WebSocket Client Error]:', error);
         });
+
+        // Send initial connection success message
+        if (this.path === '/hmr/') {
+          ws.send(JSON.stringify({ type: 'connected' }));
+        }
       });
 
       // Handle connection events
