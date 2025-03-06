@@ -196,6 +196,8 @@ process.on('SIGINT', () => {
       } else {
         process.env.VITE_WS_HOST = '0.0.0.0';
         process.env.VITE_HMR_PORT = '24678';
+        process.env.VITE_HMR_PROTOCOL = 'ws';
+        process.env.VITE_HMR_HOSTNAME = '0.0.0.0';
       }
       
       server.listen(port, "0.0.0.0", () => {
