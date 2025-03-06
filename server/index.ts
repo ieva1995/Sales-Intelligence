@@ -26,43 +26,12 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(500).send('Something broke!');
 });
 
-// Create HTTP server
+// Create HTTP server with timeouts
 const server = createServer(app);
-
-// Configure server timeouts
 server.keepAliveTimeout = 65000;
 server.headersTimeout = 66000;
 
-// Error handling for server
-server.on('error', (error) => {
-  console.error('Server error:', error);
-  if (error.code === 'EADDRINUSE') {
-    console.log('Port is in use, attempting to kill existing process...');
-    import('./kill-port.cjs');
-  }
-});
-
-// Handle process termination gracefully
-process.on('SIGTERM', () => {
-  clearInterval(healthCheckInterval);
-  wss.clients.forEach(client => {
-    client.terminate();
-  });
-  wss.close(() => {
-    console.log('WebSocket server closed');
-  });
-  server.close(() => {
-    console.log('Server shutdown completed');
-  });
-});
-
-
-// Keep the process alive
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled rejection:', err);
-});
-
-// Enhanced WebSocket configuration for deployments
+// Enhanced WebSocket configuration
 const wss = new WebSocketServer({ 
   server,
   path: '/ws-feed',
@@ -79,12 +48,9 @@ const wss = new WebSocketServer({
   maxPayload: 1024 * 1024
 });
 
-// WebSocket error handling
-wss.on('error', (error) => {
-  console.error('WebSocket server error:', error);
-});
+// WebSocket error and connection handling
+wss.on('error', console.error);
 
-// Connection handling with health checks
 wss.on('connection', (ws: any) => {
   console.log('Client connected to WebSocket');
   ws.isAlive = true;
@@ -94,9 +60,7 @@ wss.on('connection', (ws: any) => {
   });
 
   ws.on('error', console.error);
-  ws.on('close', () => {
-    console.log('Client disconnected');
-  });
+  ws.on('close', () => console.log('Client disconnected'));
 });
 
 // Health check interval
@@ -111,18 +75,18 @@ const healthCheckInterval = setInterval(() => {
   });
 }, 30000);
 
-wss.on('listening', () => {
-  console.log('WebSocket server is listening');
-});
-
-
-// Register all routes
+// Register routes and health check endpoint
 registerRoutes(app);
 
-// Start the server with increased timeouts
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+app.get('/health', (req, res) => {
+  res.send({
+    uptime: process.uptime(),
+    status: 'UP',
+    timestamp: Date.now()
+  });
+});
 
+// Start server
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
@@ -135,36 +99,14 @@ server.listen(port, "0.0.0.0", () => {
   process.exit(1);
 });
 
-// Add health check endpoint
-app.get('/health', (req, res) => {
-  const healthcheck = {
-    uptime: process.uptime(),
-    status: 'UP',
-    timestamp: Date.now()
-  };
-  try {
-    res.send(healthcheck);
-  } catch (e) {
-    healthcheck.status = 'DOWN';
-    res.status(503).send();
-  }
+// Graceful shutdown handling
+process.on('SIGTERM', () => {
+  clearInterval(healthCheckInterval);
+  wss.clients.forEach(client => client.terminate());
+  wss.close(() => console.log('WebSocket server closed'));
+  server.close(() => console.log('Server shutdown completed'));
 });
 
-// Monitor server events
-server.on('close', () => {
-  console.log('Server closed');
-});
-
-server.on('connection', (socket) => {
-  socket.on('error', (err) => {
-    console.error('Socket error:', err);
-  });
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+// Global error handlers
+process.on('uncaughtException', console.error);
+process.on('unhandledRejection', console.error);
