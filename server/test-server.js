@@ -7,6 +7,10 @@ app.get('/', (req, res) => {
   res.send('Port 5000 is available and this test server is running!');
 });
 
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Detailed logging for the listening process
 console.log('Attempting to start minimal test server on port 5000...');
 
