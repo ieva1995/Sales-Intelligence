@@ -122,14 +122,21 @@ process.on('SIGINT', () => {
       try {
         const vite = await setupVite(app, server);
         console.log('Development server with Vite HMR enabled');
-        
+
         // Configure WebSocket server for HMR
         server.on('upgrade', (req, socket, head) => {
-          if (req.headers['sec-websocket-protocol'] === 'vite-hmr') {
-            vite.ws.handleUpgrade(req, socket, head);
+          if (req.url?.startsWith('/hmr')) {
+            vite.ws.handleUpgrade(req, socket, head, (ws) => {
+              vite.ws.emit('connection', ws, req);
+            });
           }
         });
 
+        // Log WebSocket status
+        setInterval(() => {
+          const clients = vite.ws.clients.size;
+          console.log(`Active HMR connections: ${clients}`);
+        }, 30000);
       } catch (error) {
         console.error('Vite setup failed:', error);
         console.log('Falling back to static serving mode');
