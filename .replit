@@ -51,4 +51,4 @@ author = 40181154
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run build && NODE_ENV=production node dist/server/index.js"
+args = "npm run dev"
