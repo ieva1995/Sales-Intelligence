@@ -1,4 +1,3 @@
-import { Server } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { log } from './vite';
 
@@ -9,9 +8,10 @@ import { log } from './vite';
 export class WebSocketManager {
   private wss: WebSocketServer | null = null;
   private healthCheckInterval: NodeJS.Timeout | null = null;
+  private reconnectInterval: NodeJS.Timeout | null = null;
   private clients = new Set<WebSocket>();
   private path: string;
-  private isRecovering = false;
+  private isReconnecting = false;
   private retryCount: number | null = null;
 
   constructor(path: string = '/hmr/') {
@@ -52,8 +52,8 @@ export class WebSocketManager {
         this.wss?.clients.forEach(client => {
           client.send(JSON.stringify({ type: 'error', message: 'Connection issue detected' }));
         });
-        if (!this.isRecovering) {
-          this.isRecovering = true;
+        if (!this.isReconnecting) {
+          this.isReconnecting = true;
           this.retryCount = (this.retryCount || 0) + 1;
 
           if (this.retryCount > 5) {
@@ -76,7 +76,7 @@ export class WebSocketManager {
                 await clearHangingWebSocketPorts();
               }
             } finally {
-              this.isRecovering = false;
+              this.isReconnecting = false;
             }
           }, backoffDelay);
         }
@@ -206,6 +206,11 @@ export class WebSocketManager {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
       this.healthCheckInterval = null;
+    }
+
+    if (this.reconnectInterval) {
+      clearInterval(this.reconnectInterval);
+      this.reconnectInterval = null;
     }
 
     if (this.wss) {

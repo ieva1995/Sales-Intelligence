@@ -18,10 +18,42 @@ const server = createServer(app);
 const wss = new WebSocketServer({ 
   server,
   path: '/ws-feed',
-  perMessageDeflate: false, // Disable compression for better stability
+  perMessageDeflate: false,
   clientTracking: true,
-  maxPayload: 1024 * 1024 // 1MB max payload
+  maxPayload: 1024 * 1024,
+  backlog: 100,
+  verifyClient: (info, cb) => {
+    cb(true); // Accept all connections for now
+  }
 });
+
+// Handle connection errors
+wss.on('error', (error) => {
+  console.error('WebSocket server error:', error);
+});
+
+// Connection handling with ping/pong
+wss.on('connection', (ws) => {
+  console.log('Client connected to WebSocket');
+  ws.isAlive = true;
+  
+  ws.on('pong', () => {
+    ws.isAlive = true;
+  });
+  
+  ws.on('error', console.error);
+});
+
+// Heartbeat
+const interval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+    if (!ws.isAlive) {
+      return ws.terminate();
+    }
+    ws.isAlive = false;
+    ws.ping();
+  });
+}, 30000);
 
 wss.on('connection', (ws) => {
   console.log('Client connected to WebSocket');
