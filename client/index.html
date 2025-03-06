@@ -17,6 +17,7 @@
       window.process.env.VITE_HMR_HOSTNAME = window.location.hostname;
       window.process.env.VITE_HMR_PORT = '443';
       window.process.env.VITE_HMR_PATH = '/ws-feed';
+window.process.env.VITE_WS_URL = `wss://${window.location.host}`;
 
       // Check if we're in recovery mode from previous failures
       const isHmrDisabled = sessionStorage.getItem('vite-hmr-disabled') === 'true';
