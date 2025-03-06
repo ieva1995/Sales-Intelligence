@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
@@ -6,7 +5,7 @@ import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000; // Using standard Replit port
 
 // Create HTTP server with timeouts
 const server = createServer(app);
