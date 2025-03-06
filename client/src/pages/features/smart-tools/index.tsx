@@ -136,6 +136,9 @@ const pricingPlans = [
     },
   ];
 
+export default function SalesTools() {
+  const { toast } = useToast();
+
   const handleSubscribe = async (priceId: string) => {
     try {
       console.log('Starting subscription process for price:', priceId);
@@ -149,9 +152,6 @@ const pricingPlans = [
       });
     }
   };
-
-  export default function SalesTools() {
-  const { toast } = useToast();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800">
