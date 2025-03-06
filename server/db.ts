@@ -1,6 +1,5 @@
-
-import pkg from 'pg';
-const { Pool } = pkg;
+import { Pool } from 'pg';
+import { drizzle } from 'drizzle-orm/node-postgres';
 
 const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
@@ -36,8 +35,11 @@ pool.on('connect', () => {
   retries = 5; // Reset retries on successful connection
 });
 
-// Export as ES module
-export const db = pool;
+// Create Drizzle database instance
+export const db = drizzle(pool);
+
+// Also provide a raw query interface
+export const query = (text: string, params?: any[]) => pool.query(text, params);
 
 // Also export the pool for direct usage
 export const dbPool = pool;
