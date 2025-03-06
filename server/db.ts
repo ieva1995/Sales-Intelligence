@@ -1,5 +1,6 @@
-import { Pool } from 'pg';
-import { drizzle } from 'drizzle-orm/node-postgres';
+
+import pkg from 'pg';
+const { Pool } = pkg;
 
 const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
@@ -29,17 +30,11 @@ pool.on('error', (err: any) => {
   }
 });
 
-// Add connection validation
 pool.on('connect', () => {
   console.log('Database connected successfully');
-  retries = 5; // Reset retries on successful connection
+  retries = 5;
 });
 
-// Create Drizzle database instance
 export const db = drizzle(pool);
-
-// Also provide a raw query interface
 export const query = (text: string, params?: any[]) => pool.query(text, params);
-
-// Also export the pool for direct usage
 export const dbPool = pool;
