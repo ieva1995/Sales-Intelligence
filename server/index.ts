@@ -67,14 +67,14 @@ const wss = new WebSocketServer({
   }
 });
 
-// Basic error handling
+// WebSocket error handling
 wss.on('error', (error) => {
   console.error('WebSocket server error:', error);
 });
 
-// Connection handling
-wss.on('connection', (ws) => {
-  console.log('Client connected');
+// Connection handling with health checks
+wss.on('connection', (ws: any) => {
+  console.log('Client connected to WebSocket');
   ws.isAlive = true;
 
   ws.on('pong', () => {
@@ -90,7 +90,7 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Health check and connection monitoring
+// Health check interval
 const healthCheckInterval = setInterval(() => {
   wss.clients.forEach((ws: any) => {
     if (!ws.isAlive) {
@@ -109,42 +109,13 @@ wss.on('listening', () => {
 // Cleanup on shutdown
 process.on('SIGTERM', () => {
   clearInterval(healthCheckInterval);
-  wss.close(() => {
-    console.log('WebSocket server closed');
-  });
-});
-
-
-// Ensure proper WebSocket cleanup
-process.on('SIGTERM', () => {
   wss.clients.forEach(client => {
     client.terminate();
   });
-  wss.close();
-  server.close();
-});
-
-// Handle connection errors
-wss.on('error', (error) => {
-  console.error('WebSocket server error:', error);
-});
-
-// Connection handling with ping/pong
-wss.on('connection', (ws) => {
-  console.log('Client connected to WebSocket');
-  ws.isAlive = true;
-
-  ws.on('pong', () => {
-    ws.isAlive = true;
+  wss.close(() => {
+    console.log('WebSocket server closed');
   });
-
-  ws.on('error', console.error);
-});
-
-
-wss.on('connection', (ws) => {
-  console.log('Client connected to WebSocket');
-  ws.on('error', console.error);
+  server.close();
 });
 
 // Register all routes
