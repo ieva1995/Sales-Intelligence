@@ -1,4 +1,6 @@
-import { Pool } from 'pg';
+
+import pkg from 'pg';
+const { Pool } = pkg;
 
 const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
@@ -11,7 +13,6 @@ const pool = new Pool({
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000
 });
-
 
 let retries = 5;
 
