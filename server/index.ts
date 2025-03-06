@@ -1,3 +1,4 @@
+
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
@@ -48,26 +49,10 @@ const wss = new WebSocketServer({
   maxPayload: 1024 * 1024
 });
 
-// WebSocket error and connection handling
-wss.on('error', console.error);
-
-wss.on('connection', (ws: any) => {
-  console.log('Client connected to WebSocket');
-  ws.isAlive = true;
-
-  ws.on('pong', () => {
-    ws.isAlive = true;
-  });
-
-  ws.on('error', console.error);
-  ws.on('close', () => console.log('Client disconnected'));
-});
-
 // Health check interval
 const healthCheckInterval = setInterval(() => {
   wss.clients.forEach((ws: any) => {
     if (!ws.isAlive) {
-      console.log('Terminating inactive connection');
       return ws.terminate();
     }
     ws.isAlive = false;
@@ -75,9 +60,22 @@ const healthCheckInterval = setInterval(() => {
   });
 }, 30000);
 
+// WebSocket event handlers
+wss.on('error', console.error);
+wss.on('connection', (ws: any) => {
+  console.log('Client connected to WebSocket');
+  ws.isAlive = true;
+  
+  ws.on('pong', () => {
+    ws.isAlive = true;
+  });
+  
+  ws.on('error', console.error);
+  ws.on('close', () => console.log('Client disconnected'));
+});
+
 // Register routes and health check endpoint
 registerRoutes(app);
-
 app.get('/health', (req, res) => {
   res.send({
     uptime: process.uptime(),
@@ -99,7 +97,7 @@ server.listen(port, "0.0.0.0", () => {
   process.exit(1);
 });
 
-// Graceful shutdown handling
+// Global error handlers and graceful shutdown
 process.on('SIGTERM', () => {
   clearInterval(healthCheckInterval);
   wss.clients.forEach(client => client.terminate());
@@ -107,6 +105,5 @@ process.on('SIGTERM', () => {
   server.close(() => console.log('Server shutdown completed'));
 });
 
-// Global error handlers
 process.on('uncaughtException', console.error);
 process.on('unhandledRejection', console.error);
