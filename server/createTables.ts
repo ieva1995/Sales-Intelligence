@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { query } from "./db";
 import { 
   trends, predictions, alerts,
   transactions, products, sales,
@@ -13,7 +13,7 @@ export async function createTables() {
     console.log('Creating database tables if they do not exist...');
 
     // Create users table
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email TEXT NOT NULL UNIQUE,
@@ -30,7 +30,7 @@ export async function createTables() {
     `);
 
     // Create login_tokens table
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS login_tokens (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -44,7 +44,7 @@ export async function createTables() {
     `);
 
     // Create sessions table
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -59,7 +59,7 @@ export async function createTables() {
     `);
 
     // Create other necessary tables
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS trends (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -70,7 +70,7 @@ export async function createTables() {
       )
     `);
 
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS predictions (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -80,7 +80,7 @@ export async function createTables() {
       )
     `);
 
-    await db.query(sql`
+    await query(sql`
       CREATE TABLE IF NOT EXISTS alerts (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,

@@ -642,7 +642,7 @@ export class DatabaseStorage implements IStorage {
 
   async clearExpiredTokens(): Promise<void> {
     try {
-      await dbPool.query(
+      await query(
         'DELETE FROM login_tokens WHERE expires_at < NOW() OR used_at IS NOT NULL'
       );
     } catch (error) {
@@ -652,7 +652,7 @@ export class DatabaseStorage implements IStorage {
 
   async revokeAllUserSessions(userId: string): Promise<void> {
     try {
-      await dbPool.query(
+      await query(
         'DELETE FROM sessions WHERE user_id = $1',
         [userId]
       );
@@ -666,7 +666,7 @@ export class DatabaseStorage implements IStorage {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      await dbPool.query(
+      await query(
         'DELETE FROM sessions WHERE expires_at < NOW() OR last_activity < $1',
         [thirtyDaysAgo]
       );
