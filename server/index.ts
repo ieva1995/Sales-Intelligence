@@ -7,6 +7,7 @@ import config from './config';
 import logger from './utils/logger';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 
 // Get current file location for ES modules (replacement for __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -99,8 +100,16 @@ wss.on('connection', (ws: any) => {
   });
 });
 
-// Serve static assets directly
-app.use(express.static(join(__dirname, '../dist/client')));
+// Check if dist/client directory exists for static assets
+const clientDistPath = join(__dirname, '../dist/client');
+if (fs.existsSync(clientDistPath)) {
+  // Serve static assets directly if built
+  logger.info(`Serving static assets from ${clientDistPath}`);
+  app.use(express.static(clientDistPath));
+} else {
+  logger.warn(`Static assets directory ${clientDistPath} not found. Running in development mode.`);
+  // In development mode, we'll be using Vite's dev server
+}
 
 // Simple health check endpoint for monitoring
 app.get('/health', (req, res) => {

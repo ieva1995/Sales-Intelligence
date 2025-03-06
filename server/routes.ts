@@ -17,6 +17,7 @@ import autonomousSalesRouter from './routes/autonomousSales';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import fs from 'fs';
 
 // Get current file location for ES modules (replacement for __dirname)
 const __filename = fileURLToPath(import.meta.url);
@@ -177,18 +178,61 @@ export async function registerRoutes(app: Express) {
   });
 
   // Serve static files from the Vite-built client
-  app.use(express.static(resolve(__dirname, '../dist/client')));
+  const clientDistPath = resolve(__dirname, '../dist/client');
+  if (fs.existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
 
-  // Fallback route for client-side routing
-  app.get('*', (req, res) => {
-    // Exclude API routes from the fallback
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
+    // Fallback route for client-side routing
+    app.get('*', (req, res) => {
+      // Exclude API routes from the fallback
+      if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ error: 'API endpoint not found' });
+      }
 
-    // Send the index.html for all other routes to handle client-side routing
-    res.sendFile(resolve(__dirname, '../dist/client/index.html'));
-  });
+      // Send the index.html for all other routes to handle client-side routing
+      const indexPath = resolve(clientDistPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send('Application is still building. Please refresh in a moment.');
+      }
+    });
+  } else {
+    // In development mode, we're using Vite's dev server
+    console.log('Running in development mode - static files will be served by Vite');
+
+    // Default fallback for non-API routes in development mode
+    app.get('*', (req, res, next) => {
+      if (!req.path.startsWith('/api/')) {
+        return res.status(200).send(`
+          <html>
+            <head>
+              <title>SalesBoost AI - Development Mode</title>
+              <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 2rem; text-align: center; }
+                .container { max-width: 800px; margin: 0 auto; }
+                h1 { color: #3f51b5; }
+                .card { background: #f5f5f5; border-radius: 8px; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                code { background: #e0e0e0; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 90%; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>SalesBoost AI Platform</h1>
+                <div class="card">
+                  <h2>Development Mode</h2>
+                  <p>The application is running in development mode. To view the application UI, you need to build the client:</p>
+                  <code>npm run build</code>
+                  <p>API endpoints are available at <code>/api/...</code></p>
+                </div>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+      next();
+    });
+  }
 
   return httpServer;
 }
