@@ -652,9 +652,10 @@ export class DatabaseStorage implements IStorage {
 
   async revokeAllUserSessions(userId: string): Promise<void> {
     try {
-      await db
-        .delete(sessions)
-        .where(eq(sessions.userId, userId));
+      await db.query(
+        'DELETE FROM sessions WHERE user_id = $1',
+        [userId]
+      );
     } catch (error) {
       console.error('Error revoking user sessions:', error);
     }
