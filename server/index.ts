@@ -190,8 +190,13 @@ process.on('SIGINT', () => {
     console.log(`Starting server on port ${port}...`);
 
     const startServer = () => {
-      process.env.VITE_WS_HOST = '0.0.0.0';
-      process.env.VITE_HMR_PORT = '24678';
+      // Disable HMR in production
+      if (process.env.NODE_ENV === 'production') {
+        process.env.VITE_HMR_ENABLE = 'false';
+      } else {
+        process.env.VITE_WS_HOST = '0.0.0.0';
+        process.env.VITE_HMR_PORT = '24678';
+      }
       
       server.listen(port, "0.0.0.0", () => {
         console.log(`Server successfully running on http://0.0.0.0:${port}`);
