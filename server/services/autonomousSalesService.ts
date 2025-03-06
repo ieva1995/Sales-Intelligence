@@ -197,7 +197,7 @@ class AutonomousSalesService {
 
       // For this implementation, we'll use OpenAI to generate a strategy based on provided data
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -251,7 +251,7 @@ class AutonomousSalesService {
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -522,7 +522,7 @@ class AutonomousSalesService {
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
@@ -554,7 +554,7 @@ class AutonomousSalesService {
       }
 
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4",
         messages: [
           {
             role: "system",

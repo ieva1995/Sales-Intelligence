@@ -98,6 +98,7 @@ export default function Router() {
   }
 
   return (
+    <ErrorBoundary fallback={<div>Something went wrong. Please refresh.</div>}>
     <div className="min-h-screen bg-slate-950 text-gray-100">
       {shouldShowAppShell() && (
         <>

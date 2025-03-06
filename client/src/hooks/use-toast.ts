@@ -126,7 +126,11 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
+const MAX_LISTENERS = 10;
 const listeners: Array<(state: State) => void> = []
+const cleanupInterval = setInterval(() => {
+  memoryState.toasts = memoryState.toasts.filter(t => !t.expired);
+}, 60000);
 
 let memoryState: State = { toasts: [] }
 
