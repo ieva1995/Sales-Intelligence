@@ -7,7 +7,7 @@ import { wsManager, clearHangingWebSocketPorts } from './websocket-utils';
 
 const dev = process.env.NODE_ENV !== 'production';
 const app = express();
-const nextApp = next({ dev, dir: './client' });
+const nextApp = next({ dev, dir: './client/src' });
 const handle = nextApp.getRequestHandler();
 
 app.use(express.json());
