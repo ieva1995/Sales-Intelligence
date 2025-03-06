@@ -52,3 +52,11 @@ author = 40181154
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
+
+[[workflows.workflow]]
+name = "Start"
+author = 40181154
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
