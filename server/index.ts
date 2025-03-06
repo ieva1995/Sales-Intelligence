@@ -90,10 +90,11 @@ wss.on('connection', (ws) => {
   });
 });
 
-// Health check interval
-const interval = setInterval(() => {
+// Health check and connection monitoring
+const healthCheckInterval = setInterval(() => {
   wss.clients.forEach((ws: any) => {
     if (!ws.isAlive) {
+      console.log('Terminating inactive connection');
       return ws.terminate();
     }
     ws.isAlive = false;
@@ -101,46 +102,18 @@ const interval = setInterval(() => {
   });
 }, 30000);
 
-wss.on('close', () => {
-  clearInterval(interval);
-});
-
-// Connection monitoring
-let connectionCheckInterval: NodeJS.Timeout;
 wss.on('listening', () => {
   console.log('WebSocket server is listening');
-  connectionCheckInterval = setInterval(() => {
-    wss.clients.forEach((ws: any) => {
-      if (!ws.isAlive) {
-        console.log('Terminating inactive connection');
-        return ws.terminate();
-      }
-      ws.isAlive = false;
-      ws.ping();
-    });
-  }, 30000);
 });
 
 // Cleanup on shutdown
 process.on('SIGTERM', () => {
-  clearInterval(connectionCheckInterval);
+  clearInterval(healthCheckInterval);
   wss.close(() => {
     console.log('WebSocket server closed');
   });
 });
 
-// Implement connection heartbeat
-const pingInterval = setInterval(() => {
-  wss.clients.forEach((ws) => {
-    if (!ws.isAlive) return ws.terminate();
-    ws.isAlive = false;
-    ws.ping();
-  });
-}, 30000);
-
-wss.on('close', () => {
-  clearInterval(pingInterval);
-});
 
 // Ensure proper WebSocket cleanup
 process.on('SIGTERM', () => {
@@ -160,24 +133,14 @@ wss.on('error', (error) => {
 wss.on('connection', (ws) => {
   console.log('Client connected to WebSocket');
   ws.isAlive = true;
-  
+
   ws.on('pong', () => {
     ws.isAlive = true;
   });
-  
+
   ws.on('error', console.error);
 });
 
-// Heartbeat
-const interval = setInterval(() => {
-  wss.clients.forEach((ws) => {
-    if (!ws.isAlive) {
-      return ws.terminate();
-    }
-    ws.isAlive = false;
-    ws.ping();
-  });
-}, 30000);
 
 wss.on('connection', (ws) => {
   console.log('Client connected to WebSocket');
