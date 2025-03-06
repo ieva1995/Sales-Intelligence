@@ -49,6 +49,7 @@ import PageTransition from "./components/PageTransition";
 import AppMobileMenu from "./components/AppMobileMenu";
 import EnterpriseToolbar from "./components/EnterpriseToolbar"; 
 import SalesPerformanceToolbar from "./components/enterprise-features/SalesPerformanceToolbar"; 
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -99,86 +100,87 @@ export default function Router() {
 
   return (
     <ErrorBoundary fallback={<div>Something went wrong. Please refresh.</div>}>
-    <div className="min-h-screen bg-slate-950 text-gray-100">
-      {shouldShowAppShell() && (
-        <>
-          {/* Enterprise Toolbar - Visible when authenticated */}
-          {isAuthenticated && <EnterpriseToolbar />}
+      <div className="min-h-screen bg-slate-950 text-gray-100">
+        {shouldShowAppShell() && (
+          <>
+            {/* Enterprise Toolbar - Visible when authenticated */}
+            {isAuthenticated && <EnterpriseToolbar />}
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="fixed top-4 left-4 md:hidden z-50"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="fixed top-4 left-4 md:hidden z-50"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
 
-          <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
-          <Header />
+            <Sidebar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+            <Header />
 
-          {/* Mobile Menu - Only shown for authenticated users */}
-          <AppMobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+            {/* Mobile Menu - Only shown for authenticated users */}
+            <AppMobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
-          {/* Sales Performance Toolbar - Only shown on specific pages */}
-          {isAuthenticated && showSalesToolbar && <SalesPerformanceToolbar />}
-        </>
-      )}
+            {/* Sales Performance Toolbar - Only shown on specific pages */}
+            {isAuthenticated && showSalesToolbar && <SalesPerformanceToolbar />}
+          </>
+        )}
 
-      <main className={shouldShowAppShell() ? "main-content" : ""}>
-        <div className={shouldShowAppShell() ? "page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8" : ""}>
-          <PageTransition>
-            <Switch>
-              <Route path="/" component={LandingPage} />
-              <Route path="/login" component={Login} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/trend-analysis" component={TrendAnalysis} />
-              <Route path="/predictions" component={Predictions} />
-              <Route path="/crm" component={CRM} />
-              <Route path="/crm-menu" component={CRMMenu} />
-              <Route path="/marketing" component={Marketing} />
-              <Route path="/content" component={Content} />
-              <Route path="/commerce" component={Commerce} />
-              <Route path="/commerce/overview" component={CommerceOverview} />
-              <Route path="/commerce/shopify" component={ShopifyDashboard} />
-              <Route path="/commerce/performance" component={ShopifyPerformance} />
-              <Route path="/automations" component={Automations} />
-              <Route path="/reporting" component={Reporting} />
-              <Route path="/data" component={DataManagement} />
+        <main className={shouldShowAppShell() ? "main-content" : ""}>
+          <div className={shouldShowAppShell() ? "page-container max-w-[1200px] mx-auto p-4 sm:p-6 md:p-8" : ""}>
+            <PageTransition>
+              <Switch>
+                <Route path="/" component={LandingPage} />
+                <Route path="/login" component={Login} />
+                <Route path="/dashboard" component={Dashboard} />
+                <Route path="/trend-analysis" component={TrendAnalysis} />
+                <Route path="/predictions" component={Predictions} />
+                <Route path="/crm" component={CRM} />
+                <Route path="/crm-menu" component={CRMMenu} />
+                <Route path="/marketing" component={Marketing} />
+                <Route path="/content" component={Content} />
+                <Route path="/commerce" component={Commerce} />
+                <Route path="/commerce/overview" component={CommerceOverview} />
+                <Route path="/commerce/shopify" component={ShopifyDashboard} />
+                <Route path="/commerce/performance" component={ShopifyPerformance} />
+                <Route path="/automations" component={Automations} />
+                <Route path="/reporting" component={Reporting} />
+                <Route path="/data" component={DataManagement} />
 
-              {/* Library Routes */}
-              <Route path="/library" component={Library} />
-              <Route path="/library/templates" component={Templates} />
-              <Route path="/library/meetings" component={Meetings} />
-              <Route path="/library/files" component={Files} />
-              <Route path="/library/documents" component={Documents} />
-              <Route path="/library/trends" component={TrendsExplorer} />
-              <Route path="/library/playbooks" component={Playbooks} />
-              <Route path="/library/snippets" component={Snippets} />
-              <Route path="/library/coaching" component={Coaching} />
+                {/* Library Routes */}
+                <Route path="/library" component={Library} />
+                <Route path="/library/templates" component={Templates} />
+                <Route path="/library/meetings" component={Meetings} />
+                <Route path="/library/files" component={Files} />
+                <Route path="/library/documents" component={Documents} />
+                <Route path="/library/trends" component={TrendsExplorer} />
+                <Route path="/library/playbooks" component={Playbooks} />
+                <Route path="/library/snippets" component={Snippets} />
+                <Route path="/library/coaching" component={Coaching} />
 
-              <Route path="/settings" component={Settings} />
-              <Route path="/contacts" component={Contacts} />
-              <Route path="/workflows" component={Workflows} />
-              <Route path="/reports" component={Reports} />
-              <Route path="/analytics" component={Analytics} />
+                <Route path="/settings" component={Settings} />
+                <Route path="/contacts" component={Contacts} />
+                <Route path="/workflows" component={Workflows} />
+                <Route path="/reports" component={Reports} />
+                <Route path="/analytics" component={Analytics} />
 
-              {/* Premium Features */}
-              <Route path="/features/smart-tools" component={SmartTools} />
-              <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
-              <Route path="/features/deal-predictor" component={DealPredictor} />
-              <Route path="/features/smart-proposal" component={SmartProposal} />
-              <Route path="/features/whisper-bot" component={WhisperBot} />
-              <Route path="/features/stealth-audit" component={StealthAudit} />
-              <Route path="/features/analytics-suite" component={AnalyticsSuite} />
-              <Route path="/features/product-recommendations" component={ProductRecommendations} />
-              <Route path="/features/smart-sales-engine" component={SmartSalesEngine} />
+                {/* Premium Features */}
+                <Route path="/features/smart-tools" component={SmartTools} />
+                <Route path="/features/enterprise-turbo" component={EnterpriseTurbo} />
+                <Route path="/features/deal-predictor" component={DealPredictor} />
+                <Route path="/features/smart-proposal" component={SmartProposal} />
+                <Route path="/features/whisper-bot" component={WhisperBot} />
+                <Route path="/features/stealth-audit" component={StealthAudit} />
+                <Route path="/features/analytics-suite" component={AnalyticsSuite} />
+                <Route path="/features/product-recommendations" component={ProductRecommendations} />
+                <Route path="/features/smart-sales-engine" component={SmartSalesEngine} />
 
-              <Route component={NotFound} />
-            </Switch>
-          </PageTransition>
-        </div>
-      </main>
-    </div>
+                <Route component={NotFound} />
+              </Switch>
+            </PageTransition>
+          </div>
+        </main>
+      </div>
+    </ErrorBoundary>
   );
 }
