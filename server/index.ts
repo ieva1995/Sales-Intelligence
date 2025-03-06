@@ -10,6 +10,22 @@ const app = express();
 const nextApp = next({ dev, dir: './client' });
 const handle = nextApp.getRequestHandler();
 
+// Configure Vite HMR
+if (dev) {
+  const vite = await import('vite');
+  const viteServer = await vite.createServer({
+    server: {
+      middlewareMode: true,
+      hmr: {
+        port: 5000,
+        host: '0.0.0.0',
+        protocol: 'ws'
+      }
+    }
+  });
+  app.use(viteServer.middlewares);
+}
+
 // Enable CORS for development
 if (dev) {
   app.use((req, res, next) => {
