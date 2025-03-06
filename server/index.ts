@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
@@ -6,7 +5,7 @@ import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 80; // Changed from 5000 to 80
 
 // Configure for production
 const productionConfig = {
@@ -65,11 +64,11 @@ wss.on('error', console.error);
 wss.on('connection', (ws: any) => {
   console.log('Client connected to WebSocket');
   ws.isAlive = true;
-  
+
   ws.on('pong', () => {
     ws.isAlive = true;
   });
-  
+
   ws.on('error', console.error);
   ws.on('close', () => console.log('Client disconnected'));
 });
@@ -90,7 +89,7 @@ server.listen(port, "0.0.0.0", () => {
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
 }).on('error', (error) => {
   console.error('Server failed to start:', error);
-  if (error.code === 'EADDRINUSE') {
+  if ((error as any).code === 'EADDRINUSE') {
     console.log('Port is in use, attempting to kill existing process...');
     import('./kill-port.cjs');
   }
