@@ -665,7 +665,7 @@ export class DatabaseStorage implements IStorage {
     try {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+
       await db.query(
         'DELETE FROM sessions WHERE expires_at < NOW() OR last_activity < $1',
         [thirtyDaysAgo]
