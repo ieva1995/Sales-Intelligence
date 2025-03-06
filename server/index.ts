@@ -1,3 +1,4 @@
+
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
@@ -7,7 +8,12 @@ import { registerRoutes } from './routes';
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Ensure clean shutdown on errors
+// Create HTTP server with timeouts
+const server = createServer(app);
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
+// Now we can use server variable
 server.on('error', (error: any) => {
   if (error.code === 'EADDRINUSE') {
     console.error(`Port ${port} is in use. Please try again in a few seconds.`);
@@ -36,11 +42,6 @@ const productionConfig = {
     res.status(500).send('Something broke!');
   })
 };
-
-// Create HTTP server with timeouts
-const server = createServer(app);
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
 
 // Enhanced WebSocket configuration
 const wss = new WebSocketServer({ 
@@ -97,7 +98,7 @@ server.listen(port, "0.0.0.0", () => {
   process.exit(1);
 });
 
-// Consolidated error handlers and graceful shutdown
+// Error handlers and graceful shutdown
 const errorHandlers = {
   SIGTERM: () => {
     clearInterval(healthCheckInterval);
