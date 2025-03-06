@@ -62,9 +62,12 @@ const healthCheckInterval = setInterval(() => {
 }, 30000);
 
 // WebSocket event handlers
-wss.on('error', console.error);
+wss.on('error', (error) => {
+  console.error('WebSocket Server Error:', error);
+});
 wss.on('connection', (ws: any) => {
   console.log('Client connected to WebSocket');
+  ws.send(JSON.stringify({ type: 'connected' }));
   ws.isAlive = true;
 
   ws.on('pong', () => {
