@@ -30,7 +30,8 @@ export class WebSocketManager {
         server,
         path: this.path,
         clientTracking: true,
-        perMessageDeflate: false // Disable compression for better stability
+        perMessageDeflate: false, // Disable compression for better stability
+        maxPayload: 50 * 1024 * 1024 // 50MB max payload
       });
 
       // Handle connection events
