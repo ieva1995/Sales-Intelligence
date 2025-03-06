@@ -94,10 +94,6 @@ server.listen(port, "0.0.0.0", () => {
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
 }).on('error', (error) => {
   console.error('Server failed to start:', error);
-  if ((error as any).code === 'EADDRINUSE') {
-    console.log('Port is in use, attempting to kill existing process...');
-    import('./kill-port.cjs');
-  }
   process.exit(1);
 });
 
