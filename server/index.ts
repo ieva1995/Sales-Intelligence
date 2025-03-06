@@ -1,4 +1,7 @@
-const express = require('express');
+import express from 'express';
+import { createServer } from 'http';
+import './kill-port.cjs'; // Import the kill-port script
+
 const app = express();
 const port = process.env.PORT || 5000;
 const server = app.listen(port, "0.0.0.0", () => {
@@ -8,7 +11,7 @@ const server = app.listen(port, "0.0.0.0", () => {
   console.error('Server failed to start:', error);
   if (error.code === 'EADDRINUSE') {
     console.log('Port is in use, attempting to kill existing process...');
-    require('./kill-port.cjs')(port);
+    import('./kill-port.cjs');
   }
   process.exit(1);
 });
