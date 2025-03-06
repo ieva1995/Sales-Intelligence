@@ -119,21 +119,29 @@ process.on('SIGINT', () => {
     // Set up Vite in development or serve static files in production
     console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
-      let retries = 5;
-      while (retries > 0) {
-        try {
-          await setupVite(app, server);
-          console.log('Development server with Vite HMR enabled');
-          break;
-        } catch (error) {
-          console.error(`Vite setup attempt failed, ${retries - 1} retries remaining:`, error);
-          retries--;
-          if (retries === 0) {
-            console.log('Falling back to static serving mode');
-            serveStatic(app);
+      try {
+        await setupVite(app, server);
+        console.log('Development server with Vite HMR enabled');
+        
+        // Configure WebSocket heartbeat
+        const wsHeartbeat = setInterval(() => {
+          if (server.ws) {
+            server.ws.clients.forEach((client) => {
+              if (client.readyState === 1) {
+                client.ping();
+              }
+            });
           }
-          await new Promise(resolve => setTimeout(resolve, 5000));
-        }
+        }, 30000);
+
+        server.on('close', () => {
+          clearInterval(wsHeartbeat);
+        });
+
+      } catch (error) {
+        console.error('Vite setup failed:', error);
+        console.log('Falling back to static serving mode');
+        serveStatic(app);
       }
     } else {
       serveStatic(app);
