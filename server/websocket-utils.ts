@@ -44,29 +44,35 @@ export class WebSocketManager {
         maxPayload: 1024 * 1024 // 1MB max payload
       });
 
-      this.wss.on('error', (error) => {
+      this.wss.on('error', async (error) => {
         console.error('[WebSocket Error]:', error);
         if (!this.isRecovering) {
           this.isRecovering = true;
           this.retryCount = (this.retryCount || 0) + 1;
           
-          if (this.retryCount > 3) {
-            console.error('[WebSocket] Max retries exceeded, service needs attention');
+          if (this.retryCount > 5) {
+            console.error('[WebSocket] Max retries exceeded, forcing server restart');
+            await this.forceRestart(server);
             return;
           }
 
+          const backoffDelay = Math.min(1000 * Math.pow(2, this.retryCount - 1), 10000);
           setTimeout(async () => {
             try {
               await this.cleanup();
-              await this.killHangingSockets();
+              await clearHangingWebSocketPorts();
               this.wss = await this.initialize(server);
               this.retryCount = 0;
+              console.log('[WebSocket] Recovery successful');
             } catch (e) {
               console.error('[WebSocket Recovery Failed]:', e);
+              if (e.code === 'EADDRINUSE') {
+                await clearHangingWebSocketPorts();
+              }
             } finally {
               this.isRecovering = false;
             }
-          }, Math.min(1000 * this.retryCount, 5000));
+          }, backoffDelay);
         }
       });
 

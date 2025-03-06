@@ -13,9 +13,26 @@ const pool = new Pool({
 });
 
 
+let retries = 5;
+
 pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('Database connection error:', err);
+  if (retries > 0) {
+    retries--;
+    console.log(`Retrying database connection... (${retries} attempts remaining)`);
+    setTimeout(() => {
+      pool.connect().catch(console.error);
+    }, 5000);
+  } else {
+    console.error('Max database connection retries exceeded');
+    process.exit(-1);
+  }
+});
+
+// Add connection validation
+pool.on('connect', () => {
+  console.log('Database connected successfully');
+  retries = 5; // Reset retries on successful connection
 });
 
 
