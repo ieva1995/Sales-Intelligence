@@ -44,10 +44,18 @@ server.on('error', (error) => {
 
 // Handle process termination gracefully
 process.on('SIGTERM', () => {
+  clearInterval(healthCheckInterval);
+  wss.clients.forEach(client => {
+    client.terminate();
+  });
+  wss.close(() => {
+    console.log('WebSocket server closed');
+  });
   server.close(() => {
     console.log('Server shutdown completed');
   });
 });
+
 
 // Keep the process alive
 process.on('unhandledRejection', (err) => {
@@ -85,10 +93,7 @@ wss.on('connection', (ws: any) => {
     ws.isAlive = true;
   });
 
-  ws.on('error', (error) => {
-    console.error('Client connection error:', error);
-  });
-
+  ws.on('error', console.error);
   ws.on('close', () => {
     console.log('Client disconnected');
   });
@@ -110,17 +115,6 @@ wss.on('listening', () => {
   console.log('WebSocket server is listening');
 });
 
-// Cleanup on shutdown
-process.on('SIGTERM', () => {
-  clearInterval(healthCheckInterval);
-  wss.clients.forEach(client => {
-    client.terminate();
-  });
-  wss.close(() => {
-    console.log('WebSocket server closed');
-  });
-  server.close();
-});
 
 // Register all routes
 registerRoutes(app);
