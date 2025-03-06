@@ -5,7 +5,7 @@ import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
 const app = express();
-const port = process.env.PORT || 80; // Changed from 5000 to 80
+const port = process.env.PORT || 5000;
 
 // Configure for production
 const productionConfig = {
