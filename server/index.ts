@@ -1,6 +1,6 @@
-
 import express from 'express';
 import { createServer } from 'http';
+import { WebSocketServer } from 'ws';
 import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
@@ -14,15 +14,27 @@ app.use(express.urlencoded({ extended: true }));
 // Create HTTP server
 const server = createServer(app);
 
-// Enable WebSocket keepalive
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
-server.timeout = 120000;
+// Enhanced WebSocket configuration for deployments
+const wss = new WebSocketServer({ 
+  server,
+  path: '/ws-feed',
+  perMessageDeflate: false, // Disable compression for better stability
+  clientTracking: true,
+  maxPayload: 1024 * 1024 // 1MB max payload
+});
+
+wss.on('connection', (ws) => {
+  console.log('Client connected to WebSocket');
+  ws.on('error', console.error);
+});
 
 // Register all routes
-registerRoutes(app, server); // Pass server instance to routes
+registerRoutes(app);
 
-// Start the server
+// Start the server with increased timeouts
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
@@ -68,7 +80,3 @@ process.on('uncaughtException', (error) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
-
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
-server.timeout = 120000;
