@@ -29,7 +29,8 @@ export class WebSocketManager {
       this.wss = new WebSocketServer({ 
         server,
         path: this.path,
-        clientTracking: true 
+        clientTracking: true,
+        perMessageDeflate: false // Disable compression for better stability
       });
 
       // Handle connection events
