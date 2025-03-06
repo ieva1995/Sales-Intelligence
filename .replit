@@ -19,7 +19,7 @@ localPort = 24678
 externalPort = 3000
 
 [workflows]
-runButton = "Start application"
+runButton = "Start"
 
 [[workflows.workflow]]
 name = "Project"
@@ -42,5 +42,13 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "tsx --inspect server/index.ts"
+args = "npm run dev"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Start"
+author = 40181154
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
