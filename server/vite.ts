@@ -42,28 +42,22 @@ export async function setupVite(app: Express, server: Server) {
       watch: {
         usePolling: true,
         interval: 1000,
-        useFsEvents: false
+        useFsEvents: false,
+        ignored: ['**/node_modules/**', '**/.git/**']
       },
       fs: {
         strict: false,
         allow: ['.']
+      },
+      hmr: {
+        overlay: true,
+        errorOverlay: true
       }
     },
     optimizeDeps: {
       force: true
     },
-    allowedHosts: true,
-    server: {
-      watch: {
-        ignored: ['**/node_modules/**', '**/.git/**'],
-        usePolling: true,
-        interval: 1000,
-      },
-      hmr: {
-        overlay: true,
-        errorOverlay: true,
-      }
-    }
+    allowedHosts: true
   };
 
   const vite = await createViteServer({
