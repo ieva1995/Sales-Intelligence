@@ -37,13 +37,32 @@ server.on('error', (error) => {
 const wss = new WebSocketServer({ 
   server,
   path: '/ws-feed',
-  perMessageDeflate: false,
+  perMessageDeflate: {
+    zlibDeflateOptions: { chunkSize: 1024, memLevel: 7, level: 3 },
+    zlibInflateOptions: { chunkSize: 10 * 1024 },
+    clientNoContextTakeover: true,
+    serverNoContextTakeover: true,
+    threshold: 1024
+  },
   clientTracking: true,
   maxPayload: 1024 * 1024,
   backlog: 100,
   verifyClient: (info, cb) => {
     cb(true);
   }
+});
+
+// Implement connection heartbeat
+const pingInterval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+    if (!ws.isAlive) return ws.terminate();
+    ws.isAlive = false;
+    ws.ping();
+  });
+}, 30000);
+
+wss.on('close', () => {
+  clearInterval(pingInterval);
 });
 
 // Ensure proper WebSocket cleanup
