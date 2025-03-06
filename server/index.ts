@@ -96,7 +96,7 @@ app.use((req, res, next) => {
       return handle(req, res);
     });
 
-    const port = parseInt(process.env.PORT || "5000", 10);
+    const port = process.env.PORT || 5000;
     const server = app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on http://0.0.0.0:${port}`);
     });
