@@ -189,19 +189,23 @@ process.on('SIGINT', () => {
     const port = process.env.PORT || 8080;
     console.log(`Starting server on port ${port}...`);
 
-    server.listen(port, "0.0.0.0", () => {
-      console.log(`Server successfully running on http://0.0.0.0:${port}`);
-    }).on('error', (error: NodeJS.ErrnoException) => {
-      if (error.code === 'EADDRINUSE') {
-          console.error(`Port ${port} is already in use.  Attempting to release...`);
-          // Add port release logic here if needed (similar to original code)
-          console.error('Failed to release port. Please restart the repl.');
-          process.exit(1);
-      } else {
+    const startServer = () => {
+      server.listen(port, "0.0.0.0", () => {
+        console.log(`Server successfully running on http://0.0.0.0:${port}`);
+      }).on('error', async (error: NodeJS.ErrnoException) => {
+        if (error.code === 'EADDRINUSE') {
+          console.error(`Port ${port} is already in use. Waiting 5 seconds before retry...`);
+          await new Promise(resolve => setTimeout(resolve, 5000));
+          server.close();
+          startServer();
+        } else {
           console.error('Server error:', error);
           process.exit(1);
-      }
-    });
+        }
+      });
+    };
+
+    startServer();
   } catch (error) {
     console.error('Fatal error starting server:', error);
     process.exit(1);
