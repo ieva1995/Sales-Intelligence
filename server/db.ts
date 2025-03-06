@@ -35,6 +35,7 @@ pool.on('connect', () => {
   retries = 5;
 });
 
+import { drizzle } from 'drizzle-orm/node-postgres';
 export const db = drizzle(pool);
 export const query = (text: string, params?: any[]) => pool.query(text, params);
 export const dbPool = pool;
