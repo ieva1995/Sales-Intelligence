@@ -12,6 +12,32 @@ const server = app.listen(port, "0.0.0.0", () => {
   process.exit(1);
 });
 
+// Add health check endpoint
+app.get('/health', (req, res) => {
+  const healthcheck = {
+    uptime: process.uptime(),
+    status: 'UP',
+    timestamp: Date.now()
+  };
+  try {
+    res.send(healthcheck);
+  } catch (e) {
+    healthcheck.status = 'DOWN';
+    res.status(503).send();
+  }
+});
+
+// Monitor server events
+server.on('close', () => {
+  console.log('Server closed');
+});
+
+server.on('connection', (socket) => {
+  socket.on('error', (err) => {
+    console.error('Socket error:', err);
+  });
+});
+
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });

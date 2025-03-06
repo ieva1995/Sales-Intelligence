@@ -48,19 +48,39 @@ export class WebSocketManager {
         console.error('[WebSocket Error]:', error);
         if (!this.isRecovering) {
           this.isRecovering = true;
+          this.retryCount = (this.retryCount || 0) + 1;
+          
+          if (this.retryCount > 3) {
+            console.error('[WebSocket] Max retries exceeded, service needs attention');
+            return;
+          }
+
           setTimeout(async () => {
             try {
               await this.cleanup();
-              await clearHangingWebSocketPorts();
+              await this.killHangingSockets();
               this.wss = await this.initialize(server);
+              this.retryCount = 0;
             } catch (e) {
               console.error('[WebSocket Recovery Failed]:', e);
             } finally {
               this.isRecovering = false;
             }
-          }, 3000);
+          }, Math.min(1000 * this.retryCount, 5000));
         }
       });
+
+      // Monitor connection health
+      setInterval(() => {
+        this.wss.clients.forEach((client) => {
+          if (!client.isAlive) {
+            client.terminate();
+            return;
+          }
+          client.isAlive = false;
+          client.ping();
+        });
+      }, 30000);
 
       this.wss.on('connection', (ws) => {
         console.log('[WebSocket Connected] Client connected to path:', this.path);
