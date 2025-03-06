@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db, query } from "./db";
 import { 
   trends, predictions, alerts,
   transactions, products, sales,
