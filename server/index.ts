@@ -58,13 +58,51 @@ process.on('unhandledRejection', (err) => {
 const wss = new WebSocketServer({ 
   server,
   path: '/ws-feed',
-  perMessageDeflate: false, // Disable compression for better stability
+  perMessageDeflate: false,
   clientTracking: true,
   maxPayload: 1024 * 1024,
   backlog: 100,
   verifyClient: (info, cb) => {
     cb(true);
   }
+});
+
+// Basic error handling
+wss.on('error', (error) => {
+  console.error('WebSocket server error:', error);
+});
+
+// Connection handling
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  ws.isAlive = true;
+
+  ws.on('pong', () => {
+    ws.isAlive = true;
+  });
+
+  ws.on('error', (error) => {
+    console.error('Client connection error:', error);
+  });
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+// Health check interval
+const interval = setInterval(() => {
+  wss.clients.forEach((ws: any) => {
+    if (!ws.isAlive) {
+      return ws.terminate();
+    }
+    ws.isAlive = false;
+    ws.ping();
+  });
+}, 30000);
+
+wss.on('close', () => {
+  clearInterval(interval);
 });
 
 // Connection monitoring
