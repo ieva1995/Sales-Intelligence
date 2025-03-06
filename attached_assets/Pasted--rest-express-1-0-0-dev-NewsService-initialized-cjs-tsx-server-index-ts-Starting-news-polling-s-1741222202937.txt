@@ -1,0 +1,64 @@
+
+> rest-express@1.0.0 dev
+NewsService initialized.cjs && tsx server/index.ts
+Starting news polling service
+GhostGuard: Honeypot accounts initialized
+ ⚠ Duplicate page detected. src/pages/crm.tsx and src/pages/crm/index.tsx resolve to /crm
+ ⚠ Duplicate page detected. src/pages/crm.tsx and src/pages/crm/index.tsx resolve to /crm
+[ws-manager] Clearing any hanging WebSocket ports...
+[ws-manager] Cleared port 24678 (HMR WebSocket)
+[ws-manager] Waiting for ports to be fully released...
+Initializing database tables...
+Creating database tables if they do not exist...
+Database connection successful
+Database tables created successfully
+Database tables initialized successfully
+Seeding initial users...
+Users already exist, skipping seeding
+Users seeded successfully
+WebSocket server initialized on path /ws-feed
+[ws-manager] Initializing WebSocket server on path /hmr/
+Server running on http://0.0.0.0:8080
+ ○ Compiling /login ...
+ ⨯ ./src/components/MobileMenu.tsx:18:1
+Module not found: Can't resolve '@/components/ui/button'
+  16 |   Truck
+  17 | } from 'lucide-react';
+> 18 | import { Button } from '@/components/ui/button';
+     | ^
+  19 | import NavigationPreview, { PreviewData } from './NavigationPreview';
+  20 |
+  21 | interface MobileMenuProps {
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/pages/login.tsx
+ ⨯ ./src/components/MobileMenu.tsx:18:1
+Module not found: Can't resolve '@/components/ui/button'
+  16 |   Truck
+  17 | } from 'lucide-react';
+> 18 | import { Button } from '@/components/ui/button';
+     | ^
+  19 | import NavigationPreview, { PreviewData } from './NavigationPreview';
+  20 |
+  21 | interface MobileMenuProps {
+
+https://nextjs.org/docs/messages/module-not-found
+
+Import trace for requested module:
+./src/pages/login.tsx
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at ShadowPortal (/home/runner/workspace/node_modules/next/src/client/components/react-dev-overlay/ui/components/shadow-portal.tsx:5:32)
+    at DevOverlay (/home/runner/workspace/node_modules/next/src/client/components/react-dev-overlay/ui/dev-overlay.tsx:14:3)
+    at ReactDevOverlay (/home/runner/workspace/node_modules/next/src/server/dev/next-dev-server.ts:82:10)
+    at div
+    at Body (/home/runner/workspace/node_modules/next/src/server/render.tsx:1263:19)
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at ShadowPortal (/home/runner/workspace/node_modules/next/src/client/components/react-dev-overlay/ui/components/shadow-portal.tsx:5:32)
+    at DevOverlay (/home/runner/workspace/node_modules/next/src/client/components/react-dev-overlay/ui/dev-overlay.tsx:14:3)
+    at ReactDevOverlay (/home/runner/workspace/node_modules/next/src/server/dev/next-dev-server.ts:82:10)
+    at div
+    at Body (/home/runner/workspace/node_modules/next/src/server/render.tsx:1263:19)
+ GET /login 500 in 5813ms
+[ws-manager] WebSocket health check: 0 active connections
