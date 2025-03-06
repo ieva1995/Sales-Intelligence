@@ -40,7 +40,7 @@ export class WebSocketManager {
 
       this.wss.on('connection', (ws) => {
         console.log('[WebSocket Connected] Client connected to path:', this.path);
-        
+
         ws.on('error', (error) => {
           console.error('[WebSocket Client Error]:', error);
         });
