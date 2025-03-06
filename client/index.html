@@ -6,27 +6,24 @@
       let reconnectAttempts = 0;
       const maxReconnectAttempts = 10;
       const baseDelay = 1000;
-      const wsPath = '/hmr/';
 
-      // Configure Vite HMR
+      // Configure Vite HMR to use the correct port and protocol
       window.process = window.process || {};
       window.process.env = window.process.env || {};
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${wsProtocol}//${window.location.host}`;
-      
-      const ws = new WebSocket(wsUrl);
-      ws.onopen = () => console.log('WebSocket connected');
-      ws.onerror = (error) => console.error('WebSocket error:', error);
-      ws.onclose = () => console.log('WebSocket closed');
-      
-      window.process = {
-        env: {
-          VITE_WS_URL: wsUrl,
-          VITE_HMR_PROTOCOL: wsProtocol === 'wss:' ? 'wss' : 'ws',
-          VITE_HMR_HOSTNAME: window.location.hostname,
-          VITE_HMR_PORT: window.location.port || '443',
-          VITE_HMR_PATH: '/ws-feed'
-        }
+      const wsPort = '5000'; // Explicitly using port 5000
+      const wsHost = window.location.hostname;
+      const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}`;
+
+      console.log('WebSocket connecting to:', wsUrl);
+
+      // Setup environment for consistent port usage
+      window.process.env = {
+        VITE_WS_URL: wsUrl,
+        VITE_HMR_PROTOCOL: wsProtocol === 'wss:' ? 'wss' : 'ws',
+        VITE_HMR_HOSTNAME: wsHost,
+        VITE_HMR_PORT: wsPort,
+        VITE_HMR_PATH: '/ws-feed'
       };
 
       // Check if we're in recovery mode from previous failures

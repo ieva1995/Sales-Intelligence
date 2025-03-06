@@ -3,116 +3,150 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import './kill-port.cjs';
 import { registerRoutes } from './routes';
+import config from './config';
+import logger from './utils/logger';
 
+// Initialize Express app
 const app = express();
-const port = process.env.PORT || 5000; // Using standard Replit port
 
-// Create HTTP server with timeouts
+// Create HTTP server with configured timeouts
 const server = createServer(app);
-server.keepAliveTimeout = 65000;
-server.headersTimeout = 66000;
+server.keepAliveTimeout = config.server.timeouts.server;
+server.headersTimeout = config.server.timeouts.headers;
 
-// Now we can use server variable
+// Error handling for server
 server.on('error', (error: any) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${port} is in use. Please try again in a few seconds.`);
+    logger.error(`Port ${config.server.port} is in use. Attempting to reconnect...`);
     setTimeout(() => {
       server.close();
-      server.listen(port);
+      server.listen(config.server.port);
     }, 1000);
+  } else {
+    logger.error(`Server error: ${error.message}`);
   }
 });
 
-// Configure for production
-const productionConfig = {
-  trustProxy: app.set('trust proxy', 1),
-  security: app.disable('x-powered-by'),
-  json: app.use(express.json({ limit: '50mb' })),
-  urlencoded: app.use(express.urlencoded({ extended: true, limit: '50mb' })),
-  cors: app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Connection', 'keep-alive');
-    next();
-  }),
-  errorHandler: app.use((err: any, req: any, res: any, next: any) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-  })
-};
+// Configure Express middleware
+app.use(express.json({ limit: config.server.limits.json }));
+app.use(express.urlencoded({ extended: true, limit: config.server.limits.urlencoded }));
 
-// Enhanced WebSocket configuration
+// CORS configuration
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', config.server.cors.origin);
+  res.header('Access-Control-Allow-Methods', config.server.cors.methods);
+  res.header('Access-Control-Allow-Headers', config.server.cors.allowedHeaders);
+  res.header('Connection', 'keep-alive');
+
+  // Request timeout
+  res.setTimeout(config.server.timeouts.request, () => {
+    logger.warn(`Request timeout after ${config.server.timeouts.request}ms`, 'request');
+    res.status(408).send('Request timeout');
+  });
+
+  next();
+});
+
+// Initialize WebSocket server on the same HTTP server instance
 const wss = new WebSocketServer({
   server,
-  path: '/ws-feed',
+  path: config.websocket.path,
   clientTracking: true,
-  perMessageDeflate: {
-    zlibDeflateOptions: { chunkSize: 1024, level: 3 },
-    clientNoContextTakeover: true,
-    serverNoContextTakeover: true
-  }
+  perMessageDeflate: config.websocket.compression
 });
 
-// Health check interval
+// WebSocket health check interval
 const healthCheckInterval = setInterval(() => {
+  logger.debug('Running WebSocket health check', 'websocket');
   wss.clients.forEach((ws: any) => {
     if (!ws.isAlive) {
+      logger.debug('Terminating inactive WebSocket connection', 'websocket');
       return ws.terminate();
     }
     ws.isAlive = false;
     ws.ping();
   });
-}, 30000);
+}, config.websocket.pingInterval);
 
 // WebSocket event handlers
 wss.on('error', (error) => {
-  console.error('WebSocket Server Error:', error);
+  logger.error(`WebSocket Server Error: ${error.message}`, 'websocket');
 });
+
 wss.on('connection', (ws: any) => {
-  console.log('Client connected to WebSocket');
-  ws.send(JSON.stringify({ type: 'connected' }));
+  const clientIp = ws._socket?.remoteAddress || 'unknown';
+  logger.info(`WebSocket client connected from ${clientIp}`, 'websocket');
+
+  ws.send(JSON.stringify({ type: 'connected', message: 'Successfully connected to SalesBoost AI' }));
   ws.isAlive = true;
 
   ws.on('pong', () => {
     ws.isAlive = true;
   });
 
-  ws.on('error', console.error);
-  ws.on('close', () => console.log('Client disconnected'));
-});
+  ws.on('error', (err: Error) => {
+    logger.error(`WebSocket client error: ${err.message}`, 'websocket');
+  });
 
-// Register routes and health check endpoint
-registerRoutes(app);
-app.get('/health', (req, res) => {
-  res.send({
-    uptime: process.uptime(),
-    status: 'UP',
-    timestamp: Date.now()
+  ws.on('close', () => {
+    logger.info(`WebSocket client disconnected from ${clientIp}`, 'websocket');
   });
 });
 
+// Simple health check endpoint for monitoring
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'UP',
+    uptime: process.uptime(),
+    port: config.server.port,
+    timestamp: Date.now(),
+    memory: process.memoryUsage(),
+    host: req.headers.host
+  });
+});
+
+// Register all application routes
+registerRoutes(app);
+
 // Start server
-server.listen(port, () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
-  console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
-}).on('error', (error) => {
-  console.error('Server failed to start:', error);
-  process.exit(1);
+server.listen(config.server.port, () => {
+  logger.info(`Server running on ${config.urls.getServerUrl()}`);
+  logger.info(`Access URL: ${config.urls.getPublicUrl()}`);
+}).on('error', (error: any) => {
+  logger.error(`Server failed to start: ${error.message}`);
+  if (error.code === 'EADDRINUSE') {
+    logger.info('Port is in use, attempting to kill existing process...');
+    try {
+      import('./kill-port.cjs');
+    } catch (e) {
+      logger.error(`Failed to kill port: ${e.message}`);
+    }
+  } else {
+    process.exit(1);
+  }
 });
 
 // Error handlers and graceful shutdown
 const errorHandlers = {
   SIGTERM: () => {
+    logger.info('SIGTERM received, shutting down gracefully');
     clearInterval(healthCheckInterval);
     wss.clients.forEach(client => client.terminate());
-    wss.close(() => console.log('WebSocket server closed'));
-    server.close(() => console.log('Server shutdown completed'));
+    wss.close(() => logger.info('WebSocket server closed'));
+    server.close(() => logger.info('HTTP server closed'));
+    process.exit(0);
   },
-  uncaughtException: console.error,
-  unhandledRejection: console.error
+  uncaughtException: (error: Error) => {
+    logger.error(`Uncaught Exception: ${error.message}\n${error.stack}`);
+  },
+  unhandledRejection: (reason: any) => {
+    logger.error(`Unhandled Promise Rejection: ${reason}`);
+  }
 };
 
 process.on('SIGTERM', errorHandlers.SIGTERM);
 process.on('uncaughtException', errorHandlers.uncaughtException);
 process.on('unhandledRejection', errorHandlers.unhandledRejection);
+
+// Export for testing
+export { app, server, wss };
