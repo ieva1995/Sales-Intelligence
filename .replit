@@ -7,12 +7,16 @@ channel = "stable-24_05"
 
 [deployment]
 deploymentTarget = "cloudrun"
-build = ["sh", "-c", "npm install && npm run build && mkdir -p dist/public && cp -r dist/* dist/public/"]
+build = ["sh", "-c", "cd client && npm run build && cd .. && mkdir -p dist/public && cp -r client/dist/* dist/public/"]
 run = ["sh", "-c", "NODE_ENV=production PORT=8080 USE_SAMPLE_DATA=true node dist/index.js"]
 
 [[ports]]
 localPort = 8080
 externalPort = 80
+
+[[ports]]
+localPort = 24678
+externalPort = 3000
 
 [workflows]
 runButton = "Start application"

@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedUsers } from "./seedUsers";
 import { createTables } from './createTables'; // Added import for database table creation
+import { wsManager, clearHangingWebSocketPorts } from './websocket-utils'; // Import WebSocket manager
 
 const app = express();
 app.use(express.json());
@@ -50,8 +51,11 @@ process.on('uncaughtException', (error) => {
 });
 
 // Handle shutdown gracefully
+let server: any = null;
+
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
+  wsManager.cleanup();
   server?.close(() => {
     console.log('Server closed');
     process.exit(0);
@@ -60,6 +64,7 @@ process.on('SIGTERM', () => {
 
 process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully');
+  wsManager.cleanup();
   server?.close(() => {
     console.log('Server closed');
     process.exit(0);
@@ -72,6 +77,9 @@ process.on('SIGINT', () => {
     process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/postgres';
     process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'dev_session_secret';
     process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+    // Clear any hanging WebSocket ports
+    await clearHangingWebSocketPorts();
 
     // Initialize database tables
     console.log('Initializing database tables...');
@@ -89,7 +97,7 @@ process.on('SIGINT', () => {
   try {
     // Register routes and create server
     console.log('Registering routes and creating HTTP server...');
-    const server = await registerRoutes(app);
+    server = await registerRoutes(app);
     console.log('Routes registered successfully');
 
     // Set up error handler for express
@@ -102,7 +110,7 @@ process.on('SIGINT', () => {
     });
 
     // Kill any existing processes on the Vite ports
-    await new Promise(async (resolve) => {
+    await new Promise<void>(async (resolve) => {
       const { default: killPort } = await import('kill-port');
       await Promise.all([
         killPort(24678).catch(() => {}),  // Vite WebSocket port
@@ -118,34 +126,57 @@ process.on('SIGINT', () => {
 
     // Set up Vite in development or serve static files in production
     console.log('Setting up Vite middleware...');
+    const MAX_VITE_SETUP_ATTEMPTS = 3;
+    let viteSetupAttempts = 0;
+    let viteSuccess = false;
+
+    // Setup WebSocket upgrade handler
+    server.on('upgrade', (req: any, socket: any, head: any) => {
+      // Let our WebSocket manager handle the upgrade
+      const handled = wsManager.handleUpgrade(req, socket, head);
+
+      if (!handled) {
+        // Close the connection if not handled
+        socket.destroy();
+      }
+    });
+
     if (app.get("env") === "development") {
-      try {
-        const vite = await setupVite(app, server);
-        console.log('Development server with Vite HMR enabled');
+      while (viteSetupAttempts < MAX_VITE_SETUP_ATTEMPTS && !viteSuccess) {
+        try {
+          viteSetupAttempts++;
+          console.log(`Vite setup attempt ${viteSetupAttempts}/${MAX_VITE_SETUP_ATTEMPTS}...`);
 
-        // Configure WebSocket server for HMR
-        server.on('upgrade', (req, socket, head) => {
-          if (req.url?.startsWith('/hmr') && vite?.ws) {
-            vite.ws.handleUpgrade(req, socket, head, (ws) => {
-              vite.ws.emit('connection', ws, req);
-            });
+          await setupVite(app, server);
+          console.log('Development server with Vite HMR enabled');
+
+          // Initialize WebSocket manager with the server
+          wsManager.initialize(server);
+
+          // Monitor active clients
+          setInterval(() => {
+            const clientCount = wsManager.getClientCount();
+            console.log(`Active HMR connections: ${clientCount}`);
+          }, 30000);
+
+          viteSuccess = true;
+        } catch (error) {
+          console.error(`Vite setup attempt ${viteSetupAttempts} failed:`, error);
+
+          if (viteSetupAttempts < MAX_VITE_SETUP_ATTEMPTS) {
+            console.log(`Waiting before retry...`);
+            await new Promise(resolve => setTimeout(resolve, 3000));
+          } else {
+            console.log('Maximum Vite setup attempts reached, falling back to static serving mode');
+            serveStatic(app);
           }
-        });
-
-        // Log WebSocket status
-        setInterval(() => {
-          const clients = vite.ws.clients.size;
-          console.log(`Active HMR connections: ${clients}`);
-        }, 30000);
-      } catch (error) {
-        console.error('Vite setup failed:', error);
-        console.log('Falling back to static serving mode');
-        serveStatic(app);
+        }
       }
     } else {
       serveStatic(app);
       console.log('Production static server enabled on port', process.env.PORT || 8080);
     }
+
     app.get('*', (req, res, next) => {
       if (req.path.includes('.') || req.path.startsWith('/api')) {
         next();
