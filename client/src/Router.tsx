@@ -4,7 +4,8 @@ import Dashboard from "@/pages/dashboard";
 import TrendAnalysis from "@/pages/trend-analysis";
 import Predictions from "@/pages/predictions";
 import Marketing from "@/pages/marketing";
-import CRM from "@/pages/crm";
+import CRM from "@/pages/crm/index"; // Import from the crm directory
+import CRMMenu from "@/pages/crm-menu"; // Menu component for CRM section
 import Content from "@/pages/content";
 import Commerce from "@/pages/commerce";
 import CommerceOverview from "@/pages/commerce/Overview";
@@ -31,9 +32,9 @@ import WhisperBot from "@/pages/features/whisper-bot";
 import StealthAudit from "@/pages/features/stealth-audit";
 import SmartTools from "@/pages/features/smart-tools";
 import EnterpriseTurbo from "@/pages/features/enterprise-turbo";
-import AnalyticsSuite from "@/pages/features/analytics-suite"; // Import the new analytics suite page
-import ProductRecommendations from "@/pages/features/product-recommendations"; // Import the new product recommendations page
-import SmartSalesEngine from "@/pages/features/smart-sales-engine"; // Import the new S.L.A.S.E page
+import AnalyticsSuite from "@/pages/features/analytics-suite"; 
+import ProductRecommendations from "@/pages/features/product-recommendations"; 
+import SmartSalesEngine from "@/pages/features/smart-sales-engine"; 
 import Contacts from "@/pages/contacts";
 import Workflows from "@/pages/workflows";
 import Reports from "@/pages/reports";
@@ -46,8 +47,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "./hooks/use-auth";
 import PageTransition from "./components/PageTransition";
 import AppMobileMenu from "./components/AppMobileMenu";
-import EnterpriseToolbar from "./components/EnterpriseToolbar"; // Import the EnterpriseToolbar component
-import SalesPerformanceToolbar from "./components/enterprise-features/SalesPerformanceToolbar"; // Import the new SalesPerformanceToolbar
+import EnterpriseToolbar from "./components/EnterpriseToolbar"; 
+import SalesPerformanceToolbar from "./components/enterprise-features/SalesPerformanceToolbar"; 
 
 export default function Router() {
   const [isOpen, setIsOpen] = useState(false);
@@ -133,6 +134,7 @@ export default function Router() {
               <Route path="/trend-analysis" component={TrendAnalysis} />
               <Route path="/predictions" component={Predictions} />
               <Route path="/crm" component={CRM} />
+              <Route path="/crm-menu" component={CRMMenu} />
               <Route path="/marketing" component={Marketing} />
               <Route path="/content" component={Content} />
               <Route path="/commerce" component={Commerce} />
@@ -167,9 +169,9 @@ export default function Router() {
               <Route path="/features/smart-proposal" component={SmartProposal} />
               <Route path="/features/whisper-bot" component={WhisperBot} />
               <Route path="/features/stealth-audit" component={StealthAudit} />
-              <Route path="/features/analytics-suite" component={AnalyticsSuite} /> {/* Add the new route for analytics suite */}
-              <Route path="/features/product-recommendations" component={ProductRecommendations} /> {/* Add the new route for product recommendations */}
-              <Route path="/features/smart-sales-engine" component={SmartSalesEngine} /> {/* Add the new route for S.L.A.S.E */}
+              <Route path="/features/analytics-suite" component={AnalyticsSuite} />
+              <Route path="/features/product-recommendations" component={ProductRecommendations} />
+              <Route path="/features/smart-sales-engine" component={SmartSalesEngine} />
 
               <Route component={NotFound} />
             </Switch>
