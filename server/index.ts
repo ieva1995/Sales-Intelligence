@@ -5,7 +5,18 @@ import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
+
+// Ensure clean shutdown on errors
+server.on('error', (error: any) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`Port ${port} is in use. Please try again in a few seconds.`);
+    setTimeout(() => {
+      server.close();
+      server.listen(port, "0.0.0.0");
+    }, 1000);
+  }
+});
 
 // Configure for production
 const productionConfig = {
