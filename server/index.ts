@@ -120,22 +120,14 @@ process.on('SIGINT', () => {
     console.log('Setting up Vite middleware...');
     if (app.get("env") === "development") {
       try {
-        await setupVite(app, server);
+        const vite = await setupVite(app, server);
         console.log('Development server with Vite HMR enabled');
         
-        // Configure WebSocket heartbeat
-        const wsHeartbeat = setInterval(() => {
-          if (server.ws) {
-            server.ws.clients.forEach((client) => {
-              if (client.readyState === 1) {
-                client.ping();
-              }
-            });
+        // Configure WebSocket server for HMR
+        server.on('upgrade', (req, socket, head) => {
+          if (req.headers['sec-websocket-protocol'] === 'vite-hmr') {
+            vite.ws.handleUpgrade(req, socket, head);
           }
-        }, 30000);
-
-        server.on('close', () => {
-          clearInterval(wsHeartbeat);
         });
 
       } catch (error) {
