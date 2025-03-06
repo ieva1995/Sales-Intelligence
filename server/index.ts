@@ -18,7 +18,7 @@ server.on('error', (error: any) => {
     console.error(`Port ${port} is in use. Please try again in a few seconds.`);
     setTimeout(() => {
       server.close();
-      server.listen(port, "0.0.0.0");
+      server.listen(port);
     }, 1000);
   }
 });
@@ -93,7 +93,7 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-server.listen(port, "0.0.0.0", () => {
+server.listen(port, () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
 }).on('error', (error) => {
