@@ -53,38 +53,8 @@ export async function registerRoutes(app: Express) {
     }
   });
 
-  // Setup WebSocket server
-  try {
-    const wss = new WebSocketServer({ 
-      server: httpServer, 
-      path: '/ws-feed',
-      clientTracking: true,
-      perMessageDeflate: {
-        zlibDeflateOptions: { chunkSize: 1024, memLevel: 7, level: 3 },
-        zlibInflateOptions: { chunkSize: 10 * 1024 },
-        concurrencyLimit: 10,
-        threshold: 1024
-      }
-    });
-
-    wss.on('connection', (ws, req) => {
-      const clientIp = req.socket.remoteAddress;
-      console.log(`Client connected to WebSocket from ${clientIp}`);
-      try {
-        newsService.addClient(ws);
-      } catch (error) {
-        console.error('Error adding WebSocket client:', error);
-      }
-    });
-
-    wss.on('error', (error) => {
-      console.error('WebSocket server error:', error);
-    });
-
-    console.log('WebSocket server initialized on path /ws-feed');
-  } catch (error) {
-    console.error('Failed to initialize WebSocket server:', error);
-  }
+  // WebSocket server is initialized in index.ts
+  console.log('Using WebSocket server from index.ts');
 
   // Register routers
   app.use(chatRouter);
