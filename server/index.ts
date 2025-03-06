@@ -125,7 +125,7 @@ process.on('SIGINT', () => {
 
         // Configure WebSocket server for HMR
         server.on('upgrade', (req, socket, head) => {
-          if (req.url?.startsWith('/hmr')) {
+          if (req.url?.startsWith('/hmr') && vite?.ws) {
             vite.ws.handleUpgrade(req, socket, head, (ws) => {
               vite.ws.emit('connection', ws, req);
             });
