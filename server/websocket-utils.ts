@@ -11,6 +11,8 @@ export class WebSocketManager {
   private healthCheckInterval: NodeJS.Timeout | null = null;
   private clients = new Set<WebSocket>();
   private path: string;
+  private isRecovering = false;
+  private retryCount: number | null = null;
 
   constructor(path: string = '/hmr/') {
     this.path = path;
@@ -44,15 +46,19 @@ export class WebSocketManager {
         maxPayload: 1024 * 1024 // 1MB max payload
       });
 
-      this.wss.on('error', async (error) => {
+      this.wss.on('error', (error) => {
         console.error('[WebSocket Error]:', error);
+        // Notify clients of connection issues
+        this.wss?.clients.forEach(client => {
+          client.send(JSON.stringify({ type: 'error', message: 'Connection issue detected' }));
+        });
         if (!this.isRecovering) {
           this.isRecovering = true;
           this.retryCount = (this.retryCount || 0) + 1;
-          
+
           if (this.retryCount > 5) {
             console.error('[WebSocket] Max retries exceeded, forcing server restart');
-            await this.forceRestart(server);
+            this.forceRestart(server);
             return;
           }
 
@@ -221,6 +227,13 @@ export class WebSocketManager {
     }
 
     this.clients.clear();
+  }
+
+  private async forceRestart(server: Server) {
+    this.cleanup();
+    await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
+    server.close();
+    // Restart the server here.  Implementation depends on your server setup.
   }
 }
 
