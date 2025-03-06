@@ -104,10 +104,16 @@ process.on('SIGINT', () => {
     // Kill any existing processes on the Vite ports
     await new Promise(async (resolve) => {
       const { default: killPort } = await import('kill-port');
-      Promise.all([
+      await Promise.all([
         killPort(24678).catch(() => {}),  // Vite WebSocket port
         killPort(5173).catch(() => {})    // Vite dev server port
-      ]).finally(resolve);
+      ]);
+      resolve();
+    });
+
+    // Set up proper error handlers for the server
+    server.on('error', (error: Error) => {
+      console.error('Server error:', error);
     });
 
     // Set up Vite in development or serve static files in production

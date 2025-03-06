@@ -13,13 +13,20 @@
           console.log(`Vite WebSocket error, attempting reconnect in ${delay}ms...`);
           reconnectAttempts++;
           setTimeout(() => {
-            const event = new CustomEvent('vite:ws:reconnect');
-            window.dispatchEvent(event);
-            window.location.reload();
+            try {
+              const event = new CustomEvent('vite:ws:reconnect');
+              window.dispatchEvent(event);
+              if (reconnectAttempts % 3 === 0) {
+                window.location.reload();
+              }
+            } catch (err) {
+              console.error('Reconnection failed:', err);
+            }
           }, delay);
         } else {
-          console.log('Max reconnection attempts reached, falling back to full page reload');
-          window.location.href = window.location.href;
+          console.warn('Max reconnection attempts reached, switching to static mode');
+          sessionStorage.setItem('vite-hmr-disabled', 'true');
+          window.location.reload();
         }
       }
 
