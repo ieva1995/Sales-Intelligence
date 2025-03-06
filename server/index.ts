@@ -1,6 +1,7 @@
+
 import express from 'express';
 import { createServer } from 'http';
-import './kill-port.cjs'; // Import the kill-port script
+import './kill-port.cjs';
 import { registerRoutes } from './routes';
 
 const app = express();
@@ -10,8 +11,11 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Create HTTP server
+const server = createServer(app);
+
 // Register all routes
-const server = registerRoutes(app);
+registerRoutes(app);
 
 // Start the server
 server.listen(port, "0.0.0.0", () => {
