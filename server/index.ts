@@ -58,19 +58,37 @@ process.on('unhandledRejection', (err) => {
 const wss = new WebSocketServer({ 
   server,
   path: '/ws-feed',
-  perMessageDeflate: {
-    zlibDeflateOptions: { chunkSize: 1024, memLevel: 7, level: 3 },
-    zlibInflateOptions: { chunkSize: 10 * 1024 },
-    clientNoContextTakeover: true,
-    serverNoContextTakeover: true,
-    threshold: 1024
-  },
+  perMessageDeflate: false, // Disable compression for better stability
   clientTracking: true,
   maxPayload: 1024 * 1024,
   backlog: 100,
   verifyClient: (info, cb) => {
     cb(true);
   }
+});
+
+// Connection monitoring
+let connectionCheckInterval: NodeJS.Timeout;
+wss.on('listening', () => {
+  console.log('WebSocket server is listening');
+  connectionCheckInterval = setInterval(() => {
+    wss.clients.forEach((ws: any) => {
+      if (!ws.isAlive) {
+        console.log('Terminating inactive connection');
+        return ws.terminate();
+      }
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, 30000);
+});
+
+// Cleanup on shutdown
+process.on('SIGTERM', () => {
+  clearInterval(connectionCheckInterval);
+  wss.close(() => {
+    console.log('WebSocket server closed');
+  });
 });
 
 // Implement connection heartbeat
