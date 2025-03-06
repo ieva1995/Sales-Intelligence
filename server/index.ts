@@ -42,8 +42,17 @@ const wss = new WebSocketServer({
   maxPayload: 1024 * 1024,
   backlog: 100,
   verifyClient: (info, cb) => {
-    cb(true); // Accept all connections for now
+    cb(true);
   }
+});
+
+// Ensure proper WebSocket cleanup
+process.on('SIGTERM', () => {
+  wss.clients.forEach(client => {
+    client.terminate();
+  });
+  wss.close();
+  server.close();
 });
 
 // Handle connection errors
