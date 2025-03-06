@@ -44,7 +44,8 @@ const productionConfig = {
 };
 
 // Enhanced WebSocket configuration
-const wss = new WebSocketServer({ 
+const wss = new WebSocketServer({
+  noServer: true, 
   server,
   path: '/ws-feed',
   clientTracking: true

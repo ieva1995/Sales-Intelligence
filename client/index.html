@@ -11,15 +11,23 @@
       // Configure Vite HMR
       window.process = window.process || {};
       window.process.env = window.process.env || {};
-      window.process = window.process || {};
-      window.process.env = window.process.env || {};
-      window.process.env.VITE_HMR_PROTOCOL = 'wss';
-      window.process.env.VITE_HMR_HOSTNAME = window.location.hostname;
-      window.process.env.VITE_HMR_PORT = window.location.port || '443';
-      window.process.env.VITE_HMR_PATH = '/ws-feed';
-      window.process.env.VITE_WS_URL = window.location.protocol === 'https:' 
-        ? `wss://${window.location.host}` 
-        : `ws://${window.location.host}`;
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}`;
+      
+      const ws = new WebSocket(wsUrl);
+      ws.onopen = () => console.log('WebSocket connected');
+      ws.onerror = (error) => console.error('WebSocket error:', error);
+      ws.onclose = () => console.log('WebSocket closed');
+      
+      window.process = {
+        env: {
+          VITE_WS_URL: wsUrl,
+          VITE_HMR_PROTOCOL: wsProtocol === 'wss:' ? 'wss' : 'ws',
+          VITE_HMR_HOSTNAME: window.location.hostname,
+          VITE_HMR_PORT: window.location.port || '443',
+          VITE_HMR_PATH: '/ws-feed'
+        }
+      };
 
       // Check if we're in recovery mode from previous failures
       const isHmrDisabled = sessionStorage.getItem('vite-hmr-disabled') === 'true';
