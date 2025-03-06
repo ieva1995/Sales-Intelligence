@@ -34,6 +34,18 @@ export class WebSocketManager {
         maxPayload: 50 * 1024 * 1024 // 50MB max payload
       });
 
+      this.wss.on('error', (error) => {
+        console.error('[WebSocket Error]:', error);
+      });
+
+      this.wss.on('connection', (ws) => {
+        console.log('[WebSocket Connected] Client connected to path:', this.path);
+        
+        ws.on('error', (error) => {
+          console.error('[WebSocket Client Error]:', error);
+        });
+      });
+
       // Handle connection events
       this.wss.on('connection', (ws: WebSocket) => {
         log(`New WebSocket client connected, total: ${this.wss?.clients.size || 0}`, 'ws-manager');
