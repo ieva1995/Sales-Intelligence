@@ -851,8 +851,7 @@ export default function SmartSalesEngine() {
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-slate-400">Coverage</span>
                             <span className="text-sm">3 Competitors</span>
-                          </div>
-                        </div>
+                          </div```</div>
                         <div className="bg-slate-800 p-3 rounded-lg">
                           <div className="flex items-center mb-2">
                             <Globe className="h-4 w-4 mr-2 text-amber-400" />
