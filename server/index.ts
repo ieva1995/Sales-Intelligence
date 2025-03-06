@@ -21,6 +21,18 @@ app.use((req, res, next) => {
 // Create HTTP server
 const server = createServer(app);
 
+// Configure server timeouts
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+
+// Error handling for server
+server.on('error', (error) => {
+  console.error('Server error:', error);
+  if (error.code === 'EADDRINUSE') {
+    console.log('Port is in use, attempting to kill existing process...');
+  }
+});
+
 // Enhanced WebSocket configuration for deployments
 const wss = new WebSocketServer({ 
   server,
