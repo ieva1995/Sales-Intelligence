@@ -32,6 +32,7 @@ pool.on('error', (err: any) => {
 
 pool.on('connect', () => {
   console.log('Database connected successfully');
+  console.log('Connection pool size:', pool.totalCount);
   retries = 5;
 });
 

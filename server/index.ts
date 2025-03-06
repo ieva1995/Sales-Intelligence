@@ -45,10 +45,14 @@ const productionConfig = {
 
 // Enhanced WebSocket configuration
 const wss = new WebSocketServer({
-  noServer: true, 
   server,
   path: '/ws-feed',
-  clientTracking: true
+  clientTracking: true,
+  perMessageDeflate: {
+    zlibDeflateOptions: { chunkSize: 1024, level: 3 },
+    clientNoContextTakeover: true,
+    serverNoContextTakeover: true
+  }
 });
 
 // Health check interval
