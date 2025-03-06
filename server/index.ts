@@ -9,23 +9,23 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Configure for production
-app.set('trust proxy', 1);
-app.disable('x-powered-by');
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Connection', 'keep-alive');
-  next();
-});
-
-// Add error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
+const productionConfig = {
+  trustProxy: app.set('trust proxy', 1),
+  security: app.disable('x-powered-by'),
+  json: app.use(express.json({ limit: '50mb' })),
+  urlencoded: app.use(express.urlencoded({ extended: true, limit: '50mb' })),
+  cors: app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Connection', 'keep-alive');
+    next();
+  }),
+  errorHandler: app.use((err: any, req: any, res: any, next: any) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+  })
+};
 
 // Create HTTP server with timeouts
 const server = createServer(app);
@@ -97,13 +97,18 @@ server.listen(port, "0.0.0.0", () => {
   process.exit(1);
 });
 
-// Global error handlers and graceful shutdown
-process.on('SIGTERM', () => {
-  clearInterval(healthCheckInterval);
-  wss.clients.forEach(client => client.terminate());
-  wss.close(() => console.log('WebSocket server closed'));
-  server.close(() => console.log('Server shutdown completed'));
-});
+// Consolidated error handlers and graceful shutdown
+const errorHandlers = {
+  SIGTERM: () => {
+    clearInterval(healthCheckInterval);
+    wss.clients.forEach(client => client.terminate());
+    wss.close(() => console.log('WebSocket server closed'));
+    server.close(() => console.log('Server shutdown completed'));
+  },
+  uncaughtException: console.error,
+  unhandledRejection: console.error
+};
 
-process.on('uncaughtException', console.error);
-process.on('unhandledRejection', console.error);
+process.on('SIGTERM', errorHandlers.SIGTERM);
+process.on('uncaughtException', errorHandlers.uncaughtException);
+process.on('unhandledRejection', errorHandlers.unhandledRejection);
