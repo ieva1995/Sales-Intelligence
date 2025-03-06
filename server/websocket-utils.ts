@@ -25,7 +25,7 @@ export class WebSocketManager {
       this.cleanup();
 
       log(`Initializing WebSocket server on path ${this.path}`, 'ws-manager');
-      
+
       this.wss = new WebSocketServer({ 
         server,
         path: this.path,
@@ -85,9 +85,9 @@ export class WebSocketManager {
    */
   broadcast(message: string | object) {
     if (!this.wss) return;
-    
+
     const data = typeof message === 'string' ? message : JSON.stringify(message);
-    
+
     this.wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(data);
@@ -100,7 +100,7 @@ export class WebSocketManager {
    */
   handleUpgrade(req: any, socket: any, head: any) {
     if (!this.wss) return false;
-    
+
     if (req.url?.startsWith(this.path)) {
       this.wss.handleUpgrade(req, socket, head, (ws) => {
         this.wss?.emit('connection', ws, req);
@@ -150,7 +150,7 @@ export class WebSocketManager {
       }
       this.wss = null;
     }
-    
+
     this.clients.clear();
   }
 }
@@ -164,7 +164,8 @@ export const wsManager = new WebSocketManager('/hmr/');
  */
 export async function clearHangingWebSocketPorts() {
   try {
-    const { execSync } = require('child_process');
+    // Use dynamic import to avoid require errors in different environments.
+    const { execSync } = await import('child_process');
     log('Clearing any hanging WebSocket ports...', 'ws-manager');
 
     // Try to kill processes on the HMR port
@@ -177,7 +178,7 @@ export async function clearHangingWebSocketPorts() {
 
     log('Waiting for ports to be fully released...', 'ws-manager');
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     return true;
   } catch (error) {
     log(`Error clearing WebSocket ports: ${(error as Error).message}`, 'ws-manager');
