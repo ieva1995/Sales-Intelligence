@@ -642,14 +642,9 @@ export class DatabaseStorage implements IStorage {
 
   async clearExpiredTokens(): Promise<void> {
     try {
-      await db
-        .delete(loginTokens)
-        .where(
-          or(
-            sql`expires_at < NOW()`,
-            sql`used_at IS NOT NULL`
-          )
-        );
+      await db.query(
+        'DELETE FROM login_tokens WHERE expires_at < NOW() OR used_at IS NOT NULL'
+      );
     } catch (error) {
       console.error('Error clearing expired tokens:', error);
     }
@@ -667,18 +662,13 @@ export class DatabaseStorage implements IStorage {
 
   async cleanupSessions(): Promise<void> {
     try {
-      // Delete expired sessions
-      await db
-        .delete(sessions)
-        .where(sql`expires_at < NOW()`);
-
-      // Delete inactive sessions (no activity for 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-      await db
-        .delete(sessions)
-        .where(lt(sessions.lastActivity, thirtyDaysAgo));
+      
+      await db.query(
+        'DELETE FROM sessions WHERE expires_at < NOW() OR last_activity < $1',
+        [thirtyDaysAgo]
+      );
     } catch (error) {
       console.error('Error cleaning up sessions:', error);
     }
