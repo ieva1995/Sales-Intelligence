@@ -14,6 +14,13 @@ import authRouter from './routes/auth';
 import { newsService } from "./services/newsService";
 import { recommendationService } from "./services/recommendationService";
 import autonomousSalesRouter from './routes/autonomousSales';
+import express from 'express';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+// Get current file location for ES modules (replacement for __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Circuit breaker for database
 let dbFailureCount = 0;
@@ -167,6 +174,20 @@ export async function registerRoutes(app: Express) {
       return res.status(404).json({ error: "Alert not found" });
     }
     res.json(alert);
+  });
+
+  // Serve static files from the Vite-built client
+  app.use(express.static(resolve(__dirname, '../dist/client')));
+
+  // Fallback route for client-side routing
+  app.get('*', (req, res) => {
+    // Exclude API routes from the fallback
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+
+    // Send the index.html for all other routes to handle client-side routing
+    res.sendFile(resolve(__dirname, '../dist/client/index.html'));
   });
 
   return httpServer;

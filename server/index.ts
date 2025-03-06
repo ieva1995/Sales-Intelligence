@@ -5,6 +5,12 @@ import './kill-port.cjs';
 import { registerRoutes } from './routes';
 import config from './config';
 import logger from './utils/logger';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Get current file location for ES modules (replacement for __dirname)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Initialize Express app
 const app = express();
@@ -93,6 +99,9 @@ wss.on('connection', (ws: any) => {
   });
 });
 
+// Serve static assets directly
+app.use(express.static(join(__dirname, '../dist/client')));
+
 // Simple health check endpoint for monitoring
 app.get('/health', (req, res) => {
   res.json({
@@ -119,7 +128,7 @@ server.listen(config.server.port, () => {
     try {
       import('./kill-port.cjs');
     } catch (e) {
-      logger.error(`Failed to kill port: ${e.message}`);
+      logger.error(`Failed to kill port: ${(e as Error).message}`);
     }
   } else {
     process.exit(1);
