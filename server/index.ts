@@ -38,7 +38,20 @@ server.on('error', (error) => {
   console.error('Server error:', error);
   if (error.code === 'EADDRINUSE') {
     console.log('Port is in use, attempting to kill existing process...');
+    import('./kill-port.cjs');
   }
+});
+
+// Handle process termination gracefully
+process.on('SIGTERM', () => {
+  server.close(() => {
+    console.log('Server shutdown completed');
+  });
+});
+
+// Keep the process alive
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled rejection:', err);
 });
 
 // Enhanced WebSocket configuration for deployments
