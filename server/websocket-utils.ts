@@ -46,15 +46,20 @@ export class WebSocketManager {
 
       this.wss.on('error', (error) => {
         console.error('[WebSocket Error]:', error);
-        // Attempt recovery
-        setTimeout(() => {
-          try {
-            this.cleanup();
-            this.initialize(server);
-          } catch (e) {
-            console.error('[WebSocket Recovery Failed]:', e);
-          }
-        }, 5000);
+        if (!this.isRecovering) {
+          this.isRecovering = true;
+          setTimeout(async () => {
+            try {
+              await this.cleanup();
+              await clearHangingWebSocketPorts();
+              this.wss = await this.initialize(server);
+            } catch (e) {
+              console.error('[WebSocket Recovery Failed]:', e);
+            } finally {
+              this.isRecovering = false;
+            }
+          }, 3000);
+        }
       });
 
       this.wss.on('connection', (ws) => {
