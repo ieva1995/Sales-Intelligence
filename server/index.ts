@@ -1,10 +1,20 @@
 import express from 'express';
 import { createServer } from 'http';
 import './kill-port.cjs'; // Import the kill-port script
+import { registerRoutes } from './routes';
 
 const app = express();
 const port = process.env.PORT || 5000;
-const server = app.listen(port, "0.0.0.0", () => {
+
+// Parse JSON and URL-encoded bodies
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Register all routes
+const server = registerRoutes(app);
+
+// Start the server
+server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
   console.log('Access URL:', `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
 }).on('error', (error) => {

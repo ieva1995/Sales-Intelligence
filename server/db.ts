@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 
 const pool = new Pool({ 
   connectionString: process.env.DATABASE_URL,
@@ -15,7 +15,7 @@ const pool = new Pool({
 
 let retries = 5;
 
-pool.on('error', (err) => {
+pool.on('error', (err: any) => {
   console.error('Database connection error:', err);
   if (retries > 0) {
     retries--;
@@ -35,7 +35,10 @@ pool.on('connect', () => {
   retries = 5; // Reset retries on successful connection
 });
 
-
-module.exports = {
-  query: (text, params) => pool.query(text, params),
+// Export as ES module
+export const db = {
+  query: (text: any, params: any) => pool.query(text, params),
 };
+
+// Also export the pool for direct usage
+export const dbPool = pool;

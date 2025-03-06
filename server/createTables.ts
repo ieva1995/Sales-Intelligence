@@ -1,4 +1,3 @@
-
 import { db } from "./db";
 import { 
   trends, predictions, alerts,
@@ -12,9 +11,9 @@ import { sql } from "drizzle-orm";
 export async function createTables() {
   try {
     console.log('Creating database tables if they do not exist...');
-    
+
     // Create users table
-    await db.execute(sql`
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         email TEXT NOT NULL UNIQUE,
@@ -29,9 +28,9 @@ export async function createTables() {
         updated TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
-    
+
     // Create login_tokens table
-    await db.execute(sql`
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS login_tokens (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -43,9 +42,9 @@ export async function createTables() {
         created TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
-    
+
     // Create sessions table
-    await db.execute(sql`
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS sessions (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
@@ -58,9 +57,9 @@ export async function createTables() {
         created TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
-    
+
     // Create other necessary tables
-    await db.execute(sql`
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS trends (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -70,8 +69,8 @@ export async function createTables() {
         metadata JSONB
       )
     `);
-    
-    await db.execute(sql`
+
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS predictions (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -80,8 +79,8 @@ export async function createTables() {
         timestamp TIMESTAMP NOT NULL
       )
     `);
-    
-    await db.execute(sql`
+
+    await db.query(sql`
       CREATE TABLE IF NOT EXISTS alerts (
         id SERIAL PRIMARY KEY,
         keyword TEXT NOT NULL,
@@ -89,7 +88,7 @@ export async function createTables() {
         active BOOLEAN NOT NULL DEFAULT TRUE
       )
     `);
-    
+
     console.log('Database tables created successfully');
   } catch (error) {
     console.error('Error creating database tables:', error);
