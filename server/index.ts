@@ -14,8 +14,13 @@ app.use(express.urlencoded({ extended: true }));
 // Create HTTP server
 const server = createServer(app);
 
+// Enable WebSocket keepalive
+server.keepAliveTimeout = 65000;
+server.headersTimeout = 66000;
+server.timeout = 120000;
+
 // Register all routes
-registerRoutes(app);
+registerRoutes(app, server); // Pass server instance to routes
 
 // Start the server
 server.listen(port, "0.0.0.0", () => {
