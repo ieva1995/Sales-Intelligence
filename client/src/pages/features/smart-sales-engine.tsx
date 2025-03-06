@@ -49,7 +49,7 @@ import {
 } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { SiTensorflow, SiOpenai, SiGooglecloud, SiAmazon, SiMicrosoftazure } from "react-icons/si";
+import { SiTensorflow, SiOpenai, SiGooglecloud, SiAmazon } from "react-icons/si";
 
 // Types from the backend
 interface CustomerBehavior {
