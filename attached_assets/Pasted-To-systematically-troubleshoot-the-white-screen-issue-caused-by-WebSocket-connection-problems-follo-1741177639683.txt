@@ -1,0 +1,83 @@
+To systematically troubleshoot the white screen issue caused by WebSocket connection problems, follow these steps:
+
+Verify WebSocket URL:
+
+Ensure the WebSocket URL is correct and uses the appropriate protocol (ws:// or wss:// for secure connections).
+
+Confirm that the WebSocket server is running on the specified URL and port.
+
+Network Connectivity:
+
+Check if the client machine can reach the WebSocket server.
+
+Use ping or curl to verify server accessibility.
+
+Confirm that any firewall rules or proxy configurations allow WebSocket traffic.
+
+Server Logs:
+
+Review WebSocket server logs for errors or exceptions during connection attempts.
+
+Enable detailed logging if necessary.
+
+Client-Side Errors:
+
+Open the browser developer console (F12 or Ctrl+Shift+I) and check for WebSocket-related errors.
+
+Look for messages like WebSocket connection failed or WebSocket is closed before the connection is established.
+
+TLS/SSL Configuration:
+
+If using wss://, verify the server’s SSL certificate is correctly configured and trusted by the client.
+
+Check for mixed content issues (secure page trying to load insecure WebSocket connection).
+
+Cross-Origin Requests:
+
+Ensure that the server’s CORS policy allows WebSocket connections from the client’s origin.
+
+Add necessary headers to the server response:
+
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+
+Timeouts and Heartbeats:
+
+Verify that the server sends periodic ping/pong messages to keep the connection alive.
+
+Adjust client or server timeout settings if the connection is dropping unexpectedly.
+
+Browser Compatibility:
+
+Test the WebSocket connection in different browsers to rule out browser-specific issues.
+
+Ensure the browser version supports WebSockets.
+
+Error Handling:
+
+Implement WebSocket onerror, onclose, and onmessage event handlers to capture and log connection issues.
+
+Example:
+
+socket.onerror = (error) => console.error('WebSocket Error:', error);
+socket.onclose = (event) => console.log('WebSocket Closed:', event);
+socket.onmessage = (message) => console.log('WebSocket Message:', message.data);
+
+Third-Party Dependencies:
+
+If using libraries or frameworks (e.g., Socket.IO), ensure they are up-to-date and compatible with your setup.
+
+Code Review:
+
+Double-check the client-side connection code for syntax errors or misconfigurations.
+
+Example WebSocket initialization:
+
+const socket = new WebSocket('wss://yourserver.com/socket');
+socket.onopen = () => console.log('WebSocket Connected');
+socket.onmessage = (message) => console.log('Message:', message.data);
+socket.onclose = () => console.log('WebSocket Disconnected');
+
+By following these steps, the root cause of the WebSocket connection issue can be systematically identified and resolved.
+

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script type="module">
+      let reconnectAttempts = 0;
+      const maxReconnectAttempts = 10;
+      const baseDelay = 1000;
+
+      // Configure Vite HMR to use the correct port and protocol
+      window.process = window.process || {};
+      window.process.env = window.process.env || {};
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsPort = '5000'; // Explicitly using port 5000
+      const wsHost = window.location.hostname;
+      const wsUrl = `${wsProtocol}//${wsHost}:${wsPort}`;
+
+      console.log('WebSocket connecting to:', wsUrl);
+
+      // Setup environment for consistent port usage
+      window.process.env = {
+        VITE_WS_URL: wsUrl,
+        VITE_HMR_PROTOCOL: wsProtocol === 'wss:' ? 'wss' : 'ws',
+        VITE_HMR_HOSTNAME: wsHost,
+        VITE_HMR_PORT: wsPort,
+        VITE_HMR_PATH: '/ws-feed'
+      };
+
+      // Check if we're in recovery mode from previous failures
+      const isHmrDisabled = sessionStorage.getItem('vite-hmr-disabled') === 'true';
+      if (isHmrDisabled) {
+        console.log('HMR is disabled due to previous connection failures. Serving static content.');
+        document.documentElement.classList.add('vite-hmr-disabled');
+      }
+
+      function handleWsError() {
+        if (reconnectAttempts < maxReconnectAttempts && !isHmrDisabled) {
+          const delay = Math.min(baseDelay * Math.pow(2, reconnectAttempts), 10000);
+          console.log(`Vite WebSocket error, attempting reconnect in ${delay}ms...`);
+          reconnectAttempts++;
+
+          // Try to clean up any hanging connections
+          try {
+            const existingWs = window.__vite_ws;
+            if (existingWs) {
+              existingWs.onclose = null;
+              existingWs.onerror = null;
+              existingWs.close();
+              window.__vite_ws = null;
+            }
+          } catch (err) {
+            console.warn('Failed to clean up WebSocket:', err);
+          }
+
+          setTimeout(() => {
+            try {
+              const event = new CustomEvent('vite:ws:reconnect');
+              window.dispatchEvent(event);
+              if (reconnectAttempts % 3 === 0) {
+                // Full page reload every 3 attempts to clear any stale state
+                window.location.reload();
+              }
+            } catch (err) {
+              console.error('Reconnection failed:', err);
+            }
+          }, delay);
+        } else {
+          console.warn('Max reconnection attempts reached, switching to static mode');
+          sessionStorage.setItem('vite-hmr-disabled', 'true');
+          // Force reload in static mode
+          window.location.reload();
+        }
+      }
+
+      // Reset reconnect counter when successfully connected
+      function handleWsConnect() {
+        console.log('Vite HMR WebSocket connected successfully');
+        reconnectAttempts = 0;
+        // Clear static mode flag if we were previously in static mode
+        if (sessionStorage.getItem('vite-hmr-disabled') === 'true') {
+          sessionStorage.removeItem('vite-hmr-disabled');
+          console.log('Restored HMR functionality');
+        }
+      }
+
+      window.addEventListener('vite:ws:error', handleWsError);
+      window.addEventListener('vite:ws:connect', handleWsConnect);
+
+      // Add a utility to force reset HMR when needed
+      window.resetViteHmr = function() {
+        sessionStorage.removeItem('vite-hmr-disabled');
+        reconnectAttempts = 0;
+        console.log('Manually reset HMR state. Reloading...');
+        window.location.reload();
+      };
+
+      // Detect if we're in a broken HMR state by checking if updates stop arriving
+      let lastHmrUpdate = Date.now();
+      const hmrWatchdog = setInterval(() => {
+        // Only check if we're not already in static mode
+        if (!isHmrDisabled && document.readyState === 'complete') {
+          const timeSinceUpdate = Date.now() - lastHmrUpdate;
+          // If no update for 2 minutes and page is idle, try reconnecting
+          if (timeSinceUpdate > 120000 && !document.hidden) {
+            console.warn('No HMR updates received for 2 minutes, attempting to reconnect');
+            const event = new CustomEvent('vite:ws:error');
+            window.dispatchEvent(event);
+          }
+        }
+      }, 60000);
+
+      // Update timestamp on any HMR update
+      window.addEventListener('vite:beforeUpdate', () => {
+        lastHmrUpdate = Date.now();
+      });
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sidebar-width: 240px;
+    --header-height: 64px;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-slate-950 text-white;
+  }
+
+  /* Responsive text sizes */
+  h1 {
+    @apply text-2xl sm:text-3xl md:text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl sm:text-2xl md:text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-lg sm:text-xl md:text-2xl font-medium;
+  }
+
+  p {
+    @apply text-sm sm:text-base;
+  }
+}
+
+/* Grid pattern background */
+.bg-grid-white {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+}
+
+.sidebar {
+  @apply fixed top-0 left-0 h-full w-[var(--sidebar-width)] bg-slate-800 text-white transition-transform duration-200 ease-in-out z-40;
+}
+
+.main-content {
+  @apply ml-0 md:ml-[var(--sidebar-width)] min-h-screen bg-slate-950 transition-all duration-200;
+}
+
+.header {
+  @apply fixed top-0 right-0 left-0 md:left-[var(--sidebar-width)] h-[var(--header-height)] bg-slate-900 border-b border-slate-800 z-30;
+}
+
+.page-container {
+  @apply pt-[calc(var(--header-height)+24px)] px-4 sm:px-6 md:px-8 pb-6 sm:pb-8;
+}
+
+.card {
+  @apply bg-slate-800 rounded-lg border border-slate-700 shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+
+/* Responsive container classes */
+.container-sm {
+  @apply max-w-screen-sm mx-auto px-4 sm:px-6;
+}
+
+.container-md {
+  @apply max-w-screen-md mx-auto px-4 sm:px-6 md:px-8;
+}
+
+.container-lg {
+  @apply max-w-screen-lg mx-auto px-4 sm:px-6 md:px-8;
+}
+
+.container-xl {
+  @apply max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8;
+}
+
+/* Responsive padding utilities */
+.padding-responsive {
+  @apply px-4 py-3 sm:px-5 sm:py-4 md:px-6 md:py-5;
+}
+
+.padding-x-responsive {
+  @apply px-4 sm:px-5 md:px-6;
+}
+
+.padding-y-responsive {
+  @apply py-3 sm:py-4 md:py-5;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-500 text-white;
+}
+
+.btn-outline {
+  @apply border border-slate-700 text-white hover:bg-slate-800;
+}
+
+/* Text with gradient */
+.text-gradient {
+  @apply bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent;
+}
+
+/* Responsive text sizes utility classes */
+.text-responsive-xs {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-sm {
+  @apply text-sm sm:text-base;
+}
+
+.text-responsive-base {
+  @apply text-base sm:text-lg md:text-xl;
+}
+
+.text-responsive-lg {
+  @apply text-lg sm:text-xl md:text-2xl;
+}
+
+.text-responsive-xl {
+  @apply text-xl sm:text-2xl md:text-3xl;
+}
+
+.text-responsive-2xl {
+  @apply text-2xl sm:text-3xl md:text-4xl;
+}
+
+/* Dashboard card variations */
+.stat-card {
+  @apply p-4 sm:p-6 bg-slate-800 border border-slate-700 rounded-lg;
+}
+
+.chart-container {
+  @apply p-4 sm:p-6 bg-slate-800 border border-slate-700 rounded-lg overflow-hidden;
+}
+
+/* Login Form Rainbow Effects */
+.rainbow-glow-input:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  animation: rainbow-glow 2s linear infinite;
+}
+
+@keyframes rainbow-glow {
+  0% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+  20% { box-shadow: 0 0 5px rgba(111, 103, 252, 0.8), 0 0 10px rgba(111, 103, 252, 0.5), 0 0 15px rgba(111, 103, 252, 0.3); }
+  40% { box-shadow: 0 0 5px rgba(155, 89, 240, 0.8), 0 0 10px rgba(155, 89, 240, 0.5), 0 0 15px rgba(155, 89, 240, 0.3); }
+  60% { box-shadow: 0 0 5px rgba(215, 89, 203, 0.8), 0 0 10px rgba(215, 89, 203, 0.5), 0 0 15px rgba(215, 89, 203, 0.3); }
+  80% { box-shadow: 0 0 5px rgba(249, 92, 136, 0.8), 0 0 10px rgba(249, 92, 136, 0.5), 0 0 15px rgba(249, 92, 136, 0.3); }
+  100% { box-shadow: 0 0 5px rgba(62, 151, 255, 0.8), 0 0 10px rgba(62, 151, 255, 0.5), 0 0 15px rgba(62, 151, 255, 0.3); }
+}
+
+/* Add rainbow border to the main content card */
+.login-card {
+  position: relative;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+  background-size: 200% 200%;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-card:hover::before {
+  opacity: 0.7;
+  animation: rotate-rainbow 6s linear infinite;
+}
+
+@keyframes rotate-rainbow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Button hover effect */
+.interactive-button {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.interactive-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.interactive-button:active {
+  transform: translateY(0);
+}
+
+.interactive-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #3e97ff, #6f67fc, #9b59f0, #d759cb, #f95c88, #3e97ff);
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.interactive-button:hover::after {
+  opacity: 0.2;
+  animation: rainbow-shift 2s linear infinite;
+}
+
+@keyframes rainbow-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Verification code input styling */
+.verification-input {
+  @apply w-10 h-10 sm:w-12 sm:h-12 text-center text-lg sm:text-xl bg-slate-800 border border-slate-700 rounded-md text-white;
+  transition: all 0.2s ease;
+}
+
+.verification-input:focus {
+  @apply border-blue-500;
+  transform: scale(1.05);
+}
+
+/* Screen edges rainbow effect */
+.screen-edges-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.screen-edges-glow::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.screen-edges-glow.active::before {
+  opacity: 1;
+  animation: edge-rainbow 3s linear infinite;
+}
+
+@keyframes edge-rainbow {
+  0% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+  20% { box-shadow: inset 0 0 30px rgba(111, 103, 252, 0.3); }
+  40% { box-shadow: inset 0 0 30px rgba(155, 89, 240, 0.3); }
+  60% { box-shadow: inset 0 0 30px rgba(215, 89, 203, 0.3); }
+  80% { box-shadow: inset 0 0 30px rgba(249, 92, 136, 0.3); }
+  100% { box-shadow: inset 0 0 30px rgba(62, 151, 255, 0.3); }
+}
+
+/* Tab Styling */
+.tab-active {
+  @apply pb-2 sm:pb-3 border-b-2 border-blue-500 text-blue-400 font-medium transition-all duration-200;
+}
+
+.tab-inactive {
+  @apply pb-2 sm:pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-600 transition-all duration-200;
+}
+
+/* Mobile Menu Styling */
+.mobile-menu-overlay {
+  @apply fixed inset-0 bg-black/70 backdrop-blur-sm z-50 transition-opacity duration-300;
+}
+
+.mobile-menu-container {
+  @apply fixed inset-y-0 left-0 w-[280px] max-w-[90vw] bg-slate-900 border-r border-slate-800 z-50 flex flex-col shadow-xl transition-transform duration-300 ease-in-out;
+}
+
+.mobile-menu-header {
+  @apply flex items-center justify-between p-4 border-b border-slate-800;
+}
+
+.mobile-menu-item {
+  @apply flex items-center p-3 hover:bg-slate-800 text-slate-200 rounded-md transition-colors duration-200;
+}
+
+.mobile-menu-item-active {
+  @apply bg-slate-800/80 text-blue-400;
+}
+
+.mobile-submenu {
+  @apply bg-slate-800/50 rounded-md mt-1 overflow-hidden;
+}
+
+.mobile-submenu-item {
+  @apply flex items-center p-3 pl-11 hover:bg-slate-700/50 text-slate-300 text-sm;
+}

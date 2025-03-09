@@ -1,0 +1,34 @@
+Financial & Revenue Metrics
+Monthly Recurring Revenue (MRR) – Total predictable monthly revenue.
+Annual Recurring Revenue (ARR) – Yearly revenue based on subscriptions.
+Average Revenue Per User (ARPU) – MRR divided by the total number of customers.
+Customer Lifetime Value (CLV) – Predicted revenue from a customer over their lifetime.
+Customer Acquisition Cost (CAC) – Total cost to acquire a new customer.
+Gross Margin – (Total Revenue - Cost of Goods Sold) ÷ Total Revenue.
+CAC Payback Period – Time it takes to recover the customer acquisition cost.
+Growth & Customer Metrics
+Customer Growth Rate – Percentage of new customers over a specific period.
+Customer Churn Rate – Percentage of customers who cancel their subscription.
+Net Revenue Retention (NRR) – Revenue retained from existing customers (including upsells and downgrades).
+Lead Conversion Rate – Percentage of leads that turn into paying customers.
+Trial-to-Paid Conversion Rate – Percentage of trial users that become paid users.
+Engagement & Usage Metrics
+Daily Active Users (DAU) – Number of active users daily.
+Monthly Active Users (MAU) – Number of active users monthly.
+Feature Adoption Rate – Percentage of users actively using specific features.
+Average Session Duration – How long users engage with the platform.
+Customer Satisfaction Score (CSAT) – Customer feedback on satisfaction after interactions.
+Operational & Support Metrics
+Customer Support Response Time – Average time to respond to customer inquiries.
+First Contact Resolution Rate (FCR) – Percentage of issues resolved on the first interaction.
+System Uptime Percentage – System availability and reliability.
+Bonus KPIs (Advanced Metrics)
+Revenue Churn Rate – Lost revenue from cancellations and downgrades.
+Marketing ROI – Revenue generated from marketing campaigns.
+Referral Rate – Percentage of customers who refer others.
+Product Stickiness – How often users return (DAU ÷ MAU).
+What Next?
+I can help you build an automated Notion, Google Sheets, or Airtable dashboard that tracks these metrics using APIs or third-party tools like:
+
+Google Analytics
+Mixpanel

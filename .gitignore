@@ -1,1 +1,10 @@
+<<<<<<< HEAD
 .vercel
+=======
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+>>>>>>> 4acce3df2e34d293f07ffccb1361ff5558676439
