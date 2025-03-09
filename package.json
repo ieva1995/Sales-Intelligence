@@ -3,12 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'No build step specified' && exit 0",
+    "dev": "vite",
+    "build": "vite build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "vite": "^6.2.1"
+  }
 }
-

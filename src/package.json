@@ -1,0 +1,6 @@
+"scripts": {
+  "dev": "vite",              // <-- Added this line
+  "build": "vite build",
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+
